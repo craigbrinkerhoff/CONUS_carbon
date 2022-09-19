@@ -58,12 +58,12 @@ calibratedParameters <- list('Cbz_riv'=200,
 ######################
 #### SETUP STATIC BRANCHING OF BASINS PER PROCESSING LEVEL-----------------------------------------------------
 #####################
-#Headwater basins (no upstream basins, these terminate into other basins or the ocean)
-mapped_lvl0 <- tar_map(
+#headwater terminal basins (can be run completely independently)
+mapped_lvlTerminal <- tar_map(
        unlist=FALSE,
        values = tibble(
          method_function = rlang::syms("setupHydrography"),
-         huc4 = lookUpTable[lookUpTable$level == 0,]$HUC4),
+         huc4 = lookUpTable[lookUpTable$level == 0 & is.na(lookUpTable$toBasin) == 1,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
     #   tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, NA,
@@ -71,6 +71,25 @@ mapped_lvl0 <- tar_map(
     #                                                          upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
     #                                                          myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
+       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,C_atmosphere)), #get exported CO2 and reach end node for routing to next downstream basins
+       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+)
+
+#Headwater basins that export into the next level of basins
+mapped_lvl0 <- tar_map(
+       unlist=FALSE,
+       values = tibble(
+         method_function = rlang::syms("setupHydrography"),
+         huc4 = lookUpTable[lookUpTable$level == 0 & is.na(lookUpTable$toBasin) == 0,]$HUC4),
+       names = "huc4",
+       tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
+    #   tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, NA,
+    #                                                          lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+    #                                                          upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+    #                                                          myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,C_atmosphere)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -88,6 +107,7 @@ mapped_lvl1 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl0)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -105,6 +125,7 @@ mapped_lvl2 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl1)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -122,6 +143,7 @@ mapped_lvl3 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl2)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -139,6 +161,7 @@ mapped_lvl4 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl3)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -156,6 +179,7 @@ mapped_lvl5 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl4)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -173,6 +197,7 @@ mapped_lvl6 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl5)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -190,6 +215,7 @@ mapped_lvl7 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl6)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -207,6 +233,7 @@ mapped_lvl8 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl7)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -225,6 +252,7 @@ mapped_lvl9 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl8)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -243,6 +271,7 @@ mapped_lvl10 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl9)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -261,6 +290,7 @@ mapped_lvl11 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl10)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -279,6 +309,7 @@ mapped_lvl12 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl11)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -297,6 +328,7 @@ mapped_lvl13 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl12)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -315,6 +347,7 @@ mapped_lvl14 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl13)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -333,6 +366,7 @@ mapped_lvl15 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl14)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -350,6 +384,7 @@ mapped_lvl16 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl15)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -368,6 +403,7 @@ mapped_lvl17 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl16)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
@@ -386,6 +422,7 @@ mapped_lvl18 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl17)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
 
@@ -396,6 +433,10 @@ mapped_lvl18 <- tar_map(
 #### ACTUAL PIPELINE----------------------------------
 ######################
 list(
+  ### level 0 but terminal (can be run independently)
+  mapped_lvlTerminal,
+  tar_combine(combined_emissions_lvlTerminal, mapped_lvlTerminal$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+
   #### level 0
   mapped_lvl0,
   tar_combine(combined_emissions_lvl0, mapped_lvl0$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
@@ -491,16 +532,36 @@ list(
   tar_combine(combined_emissions_lvl18, mapped_lvl18$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### run raymond upscaling per HUC2 (must be hardcoded, unfortuantely, to get the HUC4 network objects)
-  tar_target(raymond_01, runRaymondModel(path_to_dataRaymond, '01', raymond_coscat_lookup, final_0101, final_0102, final_0103, final_0104, final_0105, final_0106, final_0107, final_0108, final_0109, final_0110), deployment = "main"),
+  tar_target(raymond_01, runRaymondModel(path_to_dataRaymond, '01', raymond_coscat_lookup, list(final_0101, final_0102, final_0103, final_0104, final_0105, final_0106, final_0107, final_0108, final_0109, final_0110))),
+  tar_target(raymond_02, runRaymondModel(path_to_dataRaymond, '02', raymond_coscat_lookup, list(final_0202, final_0203, final_0204, final_0205))),
+  tar_target(raymond_03, runRaymondModel(path_to_dataRaymond, '03', raymond_coscat_lookup, list(final_0301, final_0302, final_0303, final_0304, final_0305, final_0306, final_0307, final_0308, final_0309, final_0310, final_0311, final_0312, final_0313, final_0314, final_0315, final_0316, final_0317, final_0318))),
+  tar_target(raymond_04, runRaymondModel(path_to_dataRaymond, '04', raymond_coscat_lookup, list(final_0401,final_0402, final_0403, final_0404, final_0405, final_0406, final_0407, final_0408, final_0409, final_0410, final_0411, final_0412, final_0413, final_0414, final_0418, final_0419, final_0420, final_0424,
+                                                                                            final_0426, final_0427, final_0428, final_0429, final_0430))),
+  tar_target(raymond_05, runRaymondModel(path_to_dataRaymond, '05', raymond_coscat_lookup, list(final_0501, final_0502, final_0503, final_0504, final_0505, final_0506, final_0507, final_0508, final_0509, final_0510, final_0511, final_0512, final_0513, final_0514))),
+  tar_target(raymond_06, runRaymondModel(path_to_dataRaymond, '06', raymond_coscat_lookup, list(final_0601, final_0602, final_0603, final_0604))),
+  tar_target(raymond_07, runRaymondModel(path_to_dataRaymond, '07', raymond_coscat_lookup, list(final_0701, final_0702, final_0703, final_0704, final_0705, final_0706, final_0707, final_0708, final_0709, final_0710, final_0711, final_0712, final_0713, final_0714))),
+  tar_target(raymond_08, runRaymondModel(path_to_dataRaymond, '08', raymond_coscat_lookup, list(final_0801, final_0802, final_0803, final_0804, final_0805, final_0806, final_0808, final_0809))),
+  tar_target(raymond_09, runRaymondModel(path_to_dataRaymond, '09', raymond_coscat_lookup, list(final_0901, final_0902, final_0903, final_0904))),
+  tar_target(raymond_10, runRaymondModel(path_to_dataRaymond, '10', raymond_coscat_lookup, list(final_1002, final_1003, final_1004, final_1005, final_1006, final_1007, final_1008, final_1009, final_1010, final_1011, final_1012, final_1013, final_1014, final_1015,
+                                                                                            final_1016, final_1017, final_1018, final_1019, final_1020, final_1021, final_1022, final_1023, final_1024, final_1025, final_1026, final_1027, final_1028, final_1029, final_1030))),
+  tar_target(raymond_11, runRaymondModel(path_to_dataRaymond, '11', raymond_coscat_lookup, list(final_1101, final_1103, final_1103, final_1104, final_1105, final_1106, final_1107, final_1108, final_1109, final_1110, final_1111, final_1112, final_1113, final_1114))),
+  tar_target(raymond_12, runRaymondModel(path_to_dataRaymond, '12', raymond_coscat_lookup, list(final_1201, final_1202, final_1203, final_1204, final_1205, final_1206, final_1207, final_1208, final_1209, final_1210, final_1211))),
+  tar_target(raymond_13, runRaymondModel(path_to_dataRaymond, '13', raymond_coscat_lookup, list(final_1301, final_1302, final_1303, final_1304, final_1305, final_1306, final_1307, final_1308, final_1309))),
+  tar_target(raymond_14, runRaymondModel(path_to_dataRaymond, '14', raymond_coscat_lookup, list(final_1401, final_1402, final_1403, final_1404, final_1405, final_1406, final_1407, final_1408))),
+  tar_target(raymond_15, runRaymondModel(path_to_dataRaymond, '15', raymond_coscat_lookup, list(final_1501, final_1502, final_1503, final_1504, final_1505, final_1506, final_1507, final_1508))),
+  tar_target(raymond_16, runRaymondModel(path_to_dataRaymond, '16', raymond_coscat_lookup, list(final_1601, final_1602, final_1603, final_1604, final_1605, final_1606))),
+  tar_target(raymond_17, runRaymondModel(path_to_dataRaymond, '17', raymond_coscat_lookup, list(final_1701, final_1702, final_1703, final_1704, final_1705, final_1706, final_1707, final_1708, final_1709, final_1710, final_1711, final_1712))),
+  tar_target(raymond_18, runRaymondModel(path_to_dataRaymond, '18', raymond_coscat_lookup, list(final_1801, final_1802, final_1803, final_1804, final_1805, final_1806, final_1807, final_1808, final_1809, final_1810))),
 
   #### bring together all levels of results via utility functions (can't combine a combined for some reason...)
-  tar_target(allModelResults, aggregateAllLevels(combined_emissions_lvl0, combined_emissions_lvl1, combined_emissions_lvl2, combined_emissions_lvl3, combined_emissions_lvl4,
+  tar_target(allModelResults, aggregateAllLevels(combined_emissions_lvlTerminal, combined_emissions_lvl0, combined_emissions_lvl1, combined_emissions_lvl2, combined_emissions_lvl3, combined_emissions_lvl4,
                                                  combined_emissions_lvl5, combined_emissions_lvl6, combined_emissions_lvl7, combined_emissions_lvl8, combined_emissions_lvl9,
                                                  combined_emissions_lvl10, combined_emissions_lvl11, combined_emissions_lvl12, combined_emissions_lvl13, combined_emissions_lvl14,
                                                  combined_emissions_lvl15, combined_emissions_lvl16, combined_emissions_lvl17, combined_emissions_lvl18), deployment = "main"),
 
   #### join raymond model and aggregate to HUC2 level
-  tar_target(allResults, abstractAllResults(allModelResults, raymond_01), deployment = "main")
+  tar_target(allResults, abstractAllResults(allModelResults, list(raymond_01, raymond_02, raymond_03, raymond_04, raymond_05, raymond_06, raymond_07, raymond_08, raymond_09, raymond_10,
+                                                                  raymond_11, raymond_12, raymond_13, raymond_14, raymond_15, raymond_16, raymond_17, raymond_18)), deployment = "main")
 
   # validate discharge model
 

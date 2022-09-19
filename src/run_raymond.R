@@ -20,7 +20,7 @@
 #' @import dplyr
 #'
 #' @return final upscaled CO2 flux estimates for a given HUC2 region
-runRaymondModel <- function(path_to_data, HUC2, glorich_data,final_0101, final_0102, final_0103, final_0104, final_0105, final_0106, final_0107, final_0108, final_0109, final_0110) {
+runRaymondModel <- function(path_to_data, HUC2, glorich_data,hydrographyList) {
   ##READ IN HYDROSHEDS AND SET UP RIVER NETWORK PETE STYLE------------------
   hydrosheds <- terra::vect(paste0(path_to_data, '/HUC_', HUC2, '/hydrosheds_', HUC2, '.shp'))
   dem <- terra::rast(paste0(path_to_data, '/HUC_', HUC2, '/GMTED2010_', HUC2, '.tif'))
@@ -37,7 +37,7 @@ runRaymondModel <- function(path_to_data, HUC2, glorich_data,final_0101, final_0
   lakeCO2 <- glorich_data[glorich_data$HUC2 == HUC2,]$lake #[ppm]
 
   #Use our water temperature data to get a basin average schmidt number
-  results <- rbind(final_0101, final_0102, final_0103, final_0104, final_0105, final_0106, final_0107, final_0108, final_0109, final_0110)
+  results <- do.call("rbind", hydrographyList) #make HUC2 river network
   temp_c <- mean(results$Water_temp_c, na.rm=T)
   henry <- henry_func(mean(results$Water_temp_c, na.rm=T))
   sc <- 1911-118.11*mean(temp_c, na.rm=T)+3.453*mean(temp_c, na.rm=T)^2-0.0413*mean(temp_c, na.rm=T)^3 #Raymond2012/Wanninkof 1991

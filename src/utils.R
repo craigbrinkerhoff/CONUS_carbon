@@ -417,12 +417,12 @@ fixBadTemps <- function(temp, fromNode, toNode_vec, temp_vec) {
 #'
 #'
 #' @return data frame of all combined targets at each processing level into a single dataset of basin flux results
-aggregateAllLevels <- function(combined_emissions_lvl0, combined_emissions_lvl1, combined_emissions_lvl2, combined_emissions_lvl3, combined_emissions_lvl4,
+aggregateAllLevels <- function(combined_emissions_lvlTerminal, combined_emissions_lvl0, combined_emissions_lvl1, combined_emissions_lvl2, combined_emissions_lvl3, combined_emissions_lvl4,
                                                combined_emissions_lvl5, combined_emissions_lvl6, combined_emissions_lvl7, combined_emissions_lvl8, combined_emissions_lvl9,
                                                combined_emissions_lvl10, combined_emissions_lvl11, combined_emissions_lvl12, combined_emissions_lvl13, combined_emissions_lvl14,
                                                combined_emissions_lvl15, combined_emissions_lvl16, combined_emissions_lvl17, combined_emissions_lvl18){
   #aggregate our model results at huc4
-  out <- rbind(combined_emissions_lvl0, combined_emissions_lvl1, combined_emissions_lvl2, combined_emissions_lvl3, combined_emissions_lvl4,
+  out <- rbind(combined_emissions_lvlTerminal, combined_emissions_lvl0, combined_emissions_lvl1, combined_emissions_lvl2, combined_emissions_lvl3, combined_emissions_lvl4,
                                                  combined_emissions_lvl5, combined_emissions_lvl6, combined_emissions_lvl7, combined_emissions_lvl8, combined_emissions_lvl9,
                                                  combined_emissions_lvl10, combined_emissions_lvl11, combined_emissions_lvl12, combined_emissions_lvl13, combined_emissions_lvl14,
                                                  combined_emissions_lvl15, combined_emissions_lvl16, combined_emissions_lvl17, combined_emissions_lvl18)
@@ -443,21 +443,35 @@ aggregateAllLevels <- function(combined_emissions_lvl0, combined_emissions_lvl1,
 #'
 #'
 #' @return data frame of all model results per HUC2 region AND all raymond upscaling results per HUC2 region
-abstractAllResults <- function(allResults, raymond){
+abstractAllResults <- function(allResults, raymondList){
+  raymond <- do.call("rbind", raymondList) #make raymond model object
+
   huc2Results <- dplyr::group_by(allResults, huc2) %>%
         dplyr::summarise(sumFCO2_conus_TgC_yr = sum(sumFCO2_conus_TgC_yr),
                          sumFCO2_TgC_yr = sum(sumFCO2_TgC_yr),
                          n = sum(n))
 
-  huc2Raymond <- group_by(raymond, huc2) %>%
-        summarise(sumFCO2_raymond_TgC_yr = sum(sumFCO2_RG_TgC_yr))
-  huc2Raymond$huc2 <- '01'
+  huc2Raymond <- dplyr::group_by(raymond, huc2) %>%
+        dplyr::summarise(sumFCO2_raymond_TgC_yr = sum(sumFCO2_RG_TgC_yr))
+  #huc2Raymond$huc2 <- '01'
 
   out <- left_join(huc2Results, huc2Raymond, by='huc2')
   return(out)
 }
 
 
+#' Write selected river networks to csv so that brian can map them and play with them. Uses `fwrite` from the data.table package to be as efficient as possible
+#'
+#' @name writeToFile
+#'
+#' @param rivnet: target object for final routed river network
+#' @param huc4: huc4 basin ID code
+#'
+#' @return print statement but write to file
+writeToFile <- function(rivnet, huc4){
+  data.table::fwrite(rivnet, paste0('cache/final_', huc4, '.csv'))
+  return('Written to file')
+}
 
 
 

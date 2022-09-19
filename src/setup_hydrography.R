@@ -55,55 +55,76 @@ setupHydrography <- function(path_to_data, huc4){
 
   #get mean annual T (direct column indexing because of typos in USGS tables...)
   NHD_HR_temp_01 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM01", quiet=TRUE) #additional 'value-added' attributes
-  NHD_HR_temp_01 <- NHD_HR_temp_01[,c(1,3)]
-  temp <- data.frame('NHDPlusID'=NHD_HR_temp_01$NHDPlusID,
-                     'temp_c_01' = NHD_HR_temp_01$TempMM01 / 100)
+  temp <- data.frame('NHDPlusID'=NHD_HR_temp_01[,1],
+                     'temp_c_01' = NHD_HR_temp_01[,3] / 100)
 
   NHD_HR_temp_02 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM02", quiet=TRUE) #additional 'value-added' attributes
-  NHD_HR_temp <- NHD_HR_temp_02[,3]
-  temp$temp_c_02 <- NHD_HR_temp / 100
+  if(nrow(NHD_HR_temp_02) > 0){
+    NHD_HR_temp <- NHD_HR_temp_02[,3]
+    temp$temp_c_02 <- NHD_HR_temp / 100
+  }
 
   NHD_HR_temp_03 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM03", quiet=TRUE) #additional 'value-added' attributes
-  NHD_HR_temp <- NHD_HR_temp_03[,3]
-  temp$temp_c_03 <- NHD_HR_temp / 100
+  if(nrow(NHD_HR_temp_03) > 0){
+    NHD_HR_temp <- NHD_HR_temp_03[,3]
+    temp$temp_c_03 <- NHD_HR_temp / 100
+  }
 
   NHD_HR_temp_04 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM04", quiet=TRUE) #additional 'value-added' attributes
-  NHD_HR_temp <- NHD_HR_temp_04[,3]
-  temp$temp_c_04 <- NHD_HR_temp / 100
+  if(nrow(NHD_HR_temp_04) > 4){
+    NHD_HR_temp <- NHD_HR_temp_04[,3]
+    temp$temp_c_04 <- NHD_HR_temp / 100
+  }
 
   NHD_HR_temp_05 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM05", quiet=TRUE) #additional 'value-added' attributes
-  NHD_HR_temp <- NHD_HR_temp_05[,3]
-  temp$temp_c_05 <- NHD_HR_temp / 100
+  if(nrow(NHD_HR_temp_05) > 0){
+    NHD_HR_temp <- NHD_HR_temp_05[,3]
+    temp$temp_c_05 <- NHD_HR_temp / 100
+  }
 
   NHD_HR_temp_06 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM06", quiet=TRUE) #additional 'value-added' attributes
-  NHD_HR_temp <- NHD_HR_temp_06[,3]
-  temp$temp_c_06 <- NHD_HR_temp / 100
+  if(nrow(NHD_HR_temp_06) > 0){
+    NHD_HR_temp <- NHD_HR_temp_06[,3]
+    temp$temp_c_06 <- NHD_HR_temp / 100
+  }
 
   NHD_HR_temp_07 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM07", quiet=TRUE) #additional 'value-added' attributes
-  NHD_HR_temp <- NHD_HR_temp_07[,3]
-  temp$temp_c_07 <- NHD_HR_temp / 100
+  if(nrow(NHD_HR_temp_07) > 0){
+    NHD_HR_temp <- NHD_HR_temp_07[,3]
+    temp$temp_c_07 <- NHD_HR_temp / 100
+  }
 
   NHD_HR_temp_08 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM08", quiet=TRUE) #additional 'value-added' attributes
-  NHD_HR_temp <- NHD_HR_temp_08[,3]
-  temp$temp_c_08 <- NHD_HR_temp / 100
+  if(nrow(NHD_HR_temp_08) > 0){
+    NHD_HR_temp <- NHD_HR_temp_08[,3]
+    temp$temp_c_08 <- NHD_HR_temp / 100
+  }
 
   NHD_HR_temp_09 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM09", quiet=TRUE) #additional 'value-added' attributes
-  NHD_HR_temp <- NHD_HR_temp_09[,3]
-  temp$temp_c_09 <- NHD_HR_temp / 100
+  if(nrow(NHD_HR_temp_09) > 0){
+    NHD_HR_temp <- NHD_HR_temp_09[,3]
+    temp$temp_c_09 <- NHD_HR_temp / 100
+  }
 
   NHD_HR_temp_10 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM10", quiet=TRUE) #additional 'value-added' attributes
+  if(nrow(NHD_HR_temp_10) > 0){
   NHD_HR_temp <- NHD_HR_temp_10[,3]
   temp$temp_c_10 <- NHD_HR_temp / 100
+  }
 
   NHD_HR_temp_11 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM11", quiet=TRUE) #additional 'value-added' attributes
-  NHD_HR_temp <- NHD_HR_temp_11[,3]
-  temp$temp_c_11 <- NHD_HR_temp / 100
+  if(nrow(NHD_HR_temp_11) > 0){
+    NHD_HR_temp <- NHD_HR_temp_11[,3]
+    temp$temp_c_11 <- NHD_HR_temp / 100
+  }
 
   NHD_HR_temp_12 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM12", quiet=TRUE) #additional 'value-added' attributes
-  NHD_HR_temp <- NHD_HR_temp_12[,3]
-  temp$temp_c_12 <- NHD_HR_temp / 100
+  if(nrow(NHD_HR_temp_12) > 0){
+    NHD_HR_temp <- NHD_HR_temp_12[,3]
+    temp$temp_c_12 <- NHD_HR_temp / 100
+  }
 
-  temp$airTemp_mean_c <- rowMeans(temp[,2:13], na.rm=T)
+  temp$airTemp_mean_c <- rowMeans(temp[,2:ncol(temp)], na.rm=T)
   temp <- dplyr::select(temp, c('NHDPlusID', 'airTemp_mean_c'))
 
   nhd <- left_join(nhd, lakes, by=c('WBArea_Permanent_Identifier'='Permanent_Identifier'))
@@ -211,7 +232,7 @@ setupHydrography <- function(path_to_data, huc4){
   colnames(nhd)[87] <- 'CatchmentAreaSqKm'
 
   nhd <- dplyr::select(nhd, c('NHDPlusID', 'NHDPlusID', 'WBArea_Permanent_Identifier', 'conus', 'FromNode', 'ToNode', 'HydroSeq', 'StartFlag', 'Divergence', 'waterbody', 'StreamOrde', 'LengthKM', 'Slope', 'Q_cms', 'frac_lakeSurfaceArea_m2',
-                            'frac_lakeVol_m3', 'CatchmentAreaSqKm', 'TotDASqKm', 'temp_c', 'HRT', 'henry', 'k_co2', 'k_bz', 'W', 'D', 'V'))
+                            'frac_lakeVol_m3', 'CatchmentAreaSqKm', 'temp_c', 'HRT', 'henry', 'k_co2', 'k_bz', 'W', 'D', 'V'))
 
   return(nhd)
 }
