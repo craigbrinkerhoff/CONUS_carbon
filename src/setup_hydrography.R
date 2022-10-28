@@ -165,6 +165,11 @@ setupHydrography <- function(path_to_data, huc4){
   #assign waterbody type for depth modeling
   nhd$waterbody <- ifelse(is.na(nhd$WBArea_Permanent_Identifier)==0 & is.na(nhd$LakeAreaSqKm) == 0 & nhd$LakeAreaSqKm > 0, 'Lake/Reservoir', 'River')
 
+  #FIX ROUTING ERRORS IN THE NHD THAT PRODUCE ERRONOUSLY HIGH CO2 IN MAINSTEMS
+  if(huc4 == '0514'){nhd[nhd$NHDPlusID == 24000100384878,]$StreamOrde <- 8}   #fix erronous 'divergent' reach in the Ohio mainstem (mathing Indiana file upstream)
+  if(huc4 == '0514'){nhd[nhd$NHDPlusID == 24000100569580,]$ToNode <- 22000100085737} #from/to node ID typo (from Ohio River to Missouri River) so I manually fix it
+  if(huc4 == '0706'){nhd[nhd$NHDPlusID == 22000400022387,]$StreamOrde <- 7} #error in stream order calcualtion because reach is miss-assigned as stream order 0 (on divergent path) which isn't true. Easiest to just skip over the reach because it's just a connector into the Misssissippi River (from Wisconsin river)
+
   #only keep non-divergent, physically possible reaches
   nhd <- dplyr::filter(nhd, StreamOrde > 0 & is.na(HydroSeq)==0 & FlowDir == 1)
   #setup data (all other hydrography setup is done in the munge/generateHydrography script)
@@ -177,16 +182,17 @@ setupHydrography <- function(path_to_data, huc4){
   #fix NA or 0 or missing slopes (when appropriate, use average slope of directly upstream reaches)
   slope_vec <- as.vector(nhd$Slope)
   toNode_vec <- as.vector(nhd$ToNode)
+  fromNode_vec <- as.vector(nhd$FromNode)
   badSlopes <- which(slope_vec <= 0)
   for(k in badSlopes){
-    nhd[k,]$Slope <- fixBadSlopes(nhd[k,]$Slope, nhd[k,]$FromNode, toNode_vec, slope_vec)
+    nhd[k,]$Slope <- fixBadSlopes(nhd[k,]$Slope, slope_vec, nhd[k,]$FromNode, fromNode_vec, nhd[k,]$ToNode, toNode_vec)
   }
 
   #fix missing air temps by grabbing the one upstream)
   temp_vec <- as.vector(nhd$airTemp_mean_c)
   badTemps <- which(is.na(temp_vec))
   for(k in badTemps){
-    nhd[k,]$airTemp_mean_c <- fixBadTemps(nhd[k,]$airTemp_mean_c, nhd[k,]$FromNode, toNode_vec, temp_vec)
+    nhd[k,]$airTemp_mean_c <- fixBadTemps(nhd[k,]$airTemp_mean_c, temp_vec, nhd[k,]$FromNode, fromNode_vec, nhd[k,]$ToNode, toNode_vec) #temp, temp_vec, fromNode, fromNode_vec, toNode, toNode_vec)
   }
 
   #no impossible reaches

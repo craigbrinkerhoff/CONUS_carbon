@@ -25,7 +25,7 @@ runModel <- function(hydrography, calibrationResults, Cgw, Catm, huc4, emergence
   #set to atmospheric for great lakes so that exported CO2 is atmosheric
   if(huc4 %in% c('0418', '0419', '0424', '0426', '0428')){
     hydrography$CO2_ppm <- Catm
-    
+
     hydrography$HRT_s <- hydrography$HRT #[s]
     hydrography$k_co2_m_s <- hydrography$k_co2 * hydrography$D #[m/s]
     hydrography$k600_m_s <- hydrography$k_co2_m_s * (600/(1911-118.11*hydrography$temp_c+3.453*hydrography$temp_c^2-0.0413*hydrography$temp_c^3))^-0.5 #[m/s] convert back to a k600 just to have
@@ -41,8 +41,6 @@ runModel <- function(hydrography, calibrationResults, Cgw, Catm, huc4, emergence
   }
 
   else{
-    HUC2 <- substr(huc4, 1,2)
-
     #sort rivers from upstream to downstream
     hydrography <- dplyr::filter(hydrography, HydroSeq != 0)
     hydrography <- hydrography[order(-hydrography$HydroSeq),] #sort descending

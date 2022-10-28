@@ -17,6 +17,8 @@ source('src/run_raymond.R')
 plan(batchtools_slurm, template = "slurm_future.tmpl") #for parallelization via futures transient workers
 tar_option_set(packages = c('tidyr', 'plyr', 'dplyr', 'readr', 'cowplot', 'colorspace', 'ggplot2', 'GA', 'lubridate', 'Metrics', 'roxygen2', 'doParallel', 'terra', 'sf')) #required packages
 tar_option_set(format = "qs") #qs compressed/serialized r objects. Much faster read/write than rds (uncompressed)
+tar_option_set(resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = 1))))) #default num_cores setting (is changed for calibration later)
+cores_req <- 25 #cores requested for calibration (overides the defualt set right above this)
 
 ######################
 #### PIPELINE PARAMETERS------------------------------------------------------------------
@@ -24,36 +26,39 @@ tar_option_set(format = "qs") #qs compressed/serialized r objects. Much faster r
 #meta parameters
 path_to_data <- '/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data' #path to data repo (separate from code repo)
 path_to_dataRaymond <- '/nas/cee-water/cjgleason/craig/CONUS_CO2_data' #path to raymond data (seperate from code repo)
-glorich_data <- readr::read_csv('data/HUC4_calibration.csv') #faster than rds file formats
+glorich_data <- readr::read_csv('data/HUC4_calibration.csv') #glorish CO2 values for each HUC4 basin (for calibration)
 raymond_coscat_lookup <- readr::read_csv('data/raymond_coscat.csv') #raymond coscat lookup table
 lookUpTable <- readr::read_csv('data/HUC4_lookup.csv') #basin routing lookup table
 
-#calibration parameters
+#constant parameters
 C_atmosphere <- 400 #[ppm]
 emergenceQ <- 0.000105 #[m3/s]: Allen etal 2018 width of 30cm plugged into our HG equation for width --> smallest headwater Q
 C_groundwater <- 16000  #[ppm]: held constant and not calibrated
 
-#these are all set to be 2 orders of magntiude wide
-lowerCBZ_riv <- 10 #[ppm]
-lowerCBZ_lake <- 1 #[ppm]
-lowerFWC_riv <- 1e-6 #[ppm/s]
-lowerFWC_lake <- 1e-8 #[ppm/s] #internally changed to negative for regions with below-atmospheric CO2
+#calibrated parameters (these are all set to be 2 orders of magntiude wide)
+lowerCBZ_riv <- 0 #[ppm]
+lowerCBZ_lake <- 0 #[ppm]
+lowerFWC_riv <- 0 #[ppm/s]
+lowerFWC_lake <- 0 #[ppm/s] #internally changed to negative for regions with below-atmospheric CO2 (HUC04 and HUC16)
 
 upperCBZ_riv <- 2000 #[ppm]
-upperCBZ_lake <- 100 #[ppm]
-upperFWC_riv <- 1e-3 #[ppm/s]
-upperFWC_lake <- 1e-6 #[ppm/s] #internally changed to zero for regions with below-atmospheric CO2
+upperCBZ_lake <- 2000 #[ppm]
+upperFWC_riv <- 1e-2 #[ppm/s]
+upperFWC_lake <- 1e-2 #[ppm/s] #internally changed to zero for regions with below-atmospheric CO2 (HUC04 and HUC16)
 
-myPopSize <- 60 #population size within each generation
+#GA meta-parameters
+myPopSize <- 25 #population size within each generation
 mymaxIter <- 1000 # maximum generations before termination
 myRun <- 300 #calibration will be terminated if no improvement over this many generations
-cores <- 30 #how many cores to run GA in parallel on (also need to set in the slurm.tmpl file FYI...)
+myRunHARD <- 100 #calibration will be terminated if no improvement over this many generations (RELAXED VERSION FOR SLOW BASINS...)
+mutationRate <- 0.25 #mutation probability to avoid getting trapped in local maxima
+cores <- 25 #how many cores to run GA in parallel on (also need to set in the slurm.tmpl file FYI...)
 
 #dummy parameter set to make sure all routing works before running calibration
-calibratedParameters <- list('Cbz_riv'=200,
-            'Cbz_lake'=2,
-            'Fwc_riv'=1e-4,
-            'Fwc_lake'=1e-7)
+#calibratedParameters <- list('Cbz_riv'=200,
+#            'Cbz_lake'=2,
+#            'Fwc_riv'=1e-4,
+#            'Fwc_lake'=1e-7)
 
 ######################
 #### SETUP STATIC BRANCHING OF BASINS PER PROCESSING LEVEL-----------------------------------------------------
@@ -63,17 +68,34 @@ mapped_lvlTerminal <- tar_map(
        unlist=FALSE,
        values = tibble(
          method_function = rlang::syms("setupHydrography"),
-         huc4 = lookUpTable[lookUpTable$level == 0 & is.na(lookUpTable$toBasin) == 1,]$HUC4),
+         huc4 = lookUpTable[lookUpTable$level == 0 & is.na(lookUpTable$toBasin) == 1 & !(lookUpTable$HUC4 %in% c('1710', '1801', '1802')),]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-    #   tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, NA,
-    #                                                          lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-    #                                                          upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-    #                                                          myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, NA, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
-       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,C_atmosphere)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+)
+
+mapped_lvlTerminalHARD <- tar_map( #three terminal basins that are need less conservative calibration because they're too slow... Max at out 100 iterations of identical performance
+  unlist=FALSE,
+  values = tibble(
+    method_function = rlang::syms("setupHydrography"),
+    huc4 = lookUpTable[lookUpTable$level == 0 & is.na(lookUpTable$toBasin) == 1 & lookUpTable$HUC4 %in% c('1710', '1801', '1802'),]$HUC4),
+  names = "huc4",
+  tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
+  tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, NA, #calibrate model to raymond CO2
+                                                         lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                         upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                         myPopSize, mymaxIter, myRunHARD, mutationRate, cores),
+             resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
+  tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
+  tar_target(written, writeToFile(final, huc4)), #write final model to file
+  tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
 
 #Headwater basins that export into the next level of basins
@@ -81,17 +103,37 @@ mapped_lvl0 <- tar_map(
        unlist=FALSE,
        values = tibble(
          method_function = rlang::syms("setupHydrography"),
-         huc4 = lookUpTable[lookUpTable$level == 0 & is.na(lookUpTable$toBasin) == 0,]$HUC4),
+         huc4 = lookUpTable[lookUpTable$level == 0 & is.na(lookUpTable$toBasin) == 0 & lookUpTable$HUC4 != '1102',]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-    #   tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, NA,
-    #                                                          lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-    #                                                          upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-    #                                                          myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, NA, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,C_atmosphere)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+)
+
+#Headwater basins that export into the next level of basins
+mapped_lvl0HARD <- tar_map( #basins that are need less conservative calibration because they're too slow... Max at out 100 iterations of identical performance
+  unlist=FALSE,
+  values = tibble(
+    method_function = rlang::syms("setupHydrography"),
+    huc4 = lookUpTable[lookUpTable$level == 0 & is.na(lookUpTable$toBasin) == 0 & lookUpTable$HUC4 == '1102',]$HUC4),
+  names = "huc4",
+  tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
+  tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, NA, #calibrate model to raymond CO2
+                                                         lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                         upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                         myPopSize, mymaxIter, myRunHARD, mutationRate, cores),
+             resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
+  tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
+  tar_target(written, writeToFile(final, huc4)), #write final model to file
+  tar_target(exportedCO2, getExported(final, huc4, lookUpTable,C_atmosphere)), #get exported CO2 and reach end node for routing to next downstream basins
+  tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
 )
 
 #level 1 downstream basins
@@ -102,10 +144,11 @@ mapped_lvl1 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 1,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl0)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -120,10 +163,11 @@ mapped_lvl2 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 2,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl1, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl1)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -138,10 +182,11 @@ mapped_lvl3 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 3,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl2, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl2)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -156,10 +201,11 @@ mapped_lvl4 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 4,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl3, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl3)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -174,10 +220,11 @@ mapped_lvl5 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 5,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl4, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl4)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -192,10 +239,11 @@ mapped_lvl6 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 6,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl5, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl5)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -210,10 +258,11 @@ mapped_lvl7 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 7,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl6, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl6)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -228,10 +277,11 @@ mapped_lvl8 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 8,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl7, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl7)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -247,10 +297,11 @@ mapped_lvl9 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 9,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl8, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl8)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -266,10 +317,11 @@ mapped_lvl10 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 10,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl9, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl9)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -285,10 +337,11 @@ mapped_lvl11 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 11,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl10, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl10)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -304,10 +357,11 @@ mapped_lvl12 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 12,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl11, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl11)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -323,10 +377,11 @@ mapped_lvl13 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 13,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl12, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl12)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -342,10 +397,11 @@ mapped_lvl14 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 14,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl13, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl13)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -361,10 +417,11 @@ mapped_lvl15 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 15,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl14, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl14)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -379,10 +436,11 @@ mapped_lvl16 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 16,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl15, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl15)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -398,10 +456,11 @@ mapped_lvl17 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 17,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl16, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl16)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -417,10 +476,11 @@ mapped_lvl18 <- tar_map(
          huc4 = lookUpTable[lookUpTable$level == 18,]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4)), #prep hydrography for routing
-      # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl0,
-      #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-      #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-      #                                                        myPopSize, mymaxIter, myRun, cores)), #calibrate model to raymond CO2
+       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl17, #calibrate model to raymond CO2
+                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+                                                              myPopSize, mymaxIter, myRun, mutationRate, cores),
+                                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl17)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
@@ -435,97 +495,255 @@ mapped_lvl18 <- tar_map(
 list(
   ### level 0 but terminal (can be run independently)
   mapped_lvlTerminal,
-  tar_combine(combined_emissions_lvlTerminal, mapped_lvlTerminal$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  mapped_lvlTerminalHARD, #HARD BASINS THAT NEED LESS RIGOROUS CALIBRATION without rerunning anything else
+  tar_combine(combined_emissions_lvlTerminal, c(mapped_lvlTerminal$emissions,
+                                                mapped_lvlTerminalHARD$emissions), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### level 0
   mapped_lvl0,
-  tar_combine(combined_emissions_lvl0, mapped_lvl0$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl0, mapped_lvl0$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  mapped_lvl0HARD,  #HARD BASINS THAT NEED LESS RIGOROUS CALIBRATION without rerunning anything else
+  tar_combine(combined_emissions_lvl0, list(mapped_lvl0$emissions,
+                                            mapped_lvl0HARD$emissions), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl0, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl0HARD$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### level 1
   mapped_lvl1,
   tar_combine(combined_emissions_lvl1, mapped_lvl1$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl1, mapped_lvl1$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl1, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### level 2
   mapped_lvl2,
   tar_combine(combined_emissions_lvl2, mapped_lvl2$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl2, mapped_lvl2$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl2, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 3
   mapped_lvl3,
   tar_combine(combined_emissions_lvl3, mapped_lvl3$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl3, mapped_lvl3$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl3, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 4
   mapped_lvl4,
   tar_combine(combined_emissions_lvl4, mapped_lvl4$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl4, mapped_lvl4$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl4, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 5
   mapped_lvl5,
   tar_combine(combined_emissions_lvl5, mapped_lvl5$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl5, mapped_lvl5$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl5, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 6
   mapped_lvl6,
   tar_combine(combined_emissions_lvl6, mapped_lvl6$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl6, mapped_lvl6$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl6, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl6$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 7
   mapped_lvl7,
   tar_combine(combined_emissions_lvl7, mapped_lvl7$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl7, mapped_lvl7$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl7, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl6$exportedCO2,
+                                     mapped_lvl7$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 8
   mapped_lvl8,
   tar_combine(combined_emissions_lvl8, mapped_lvl8$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl8, mapped_lvl8$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl8, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl6$exportedCO2,
+                                     mapped_lvl7$exportedCO2,
+                                     mapped_lvl8$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 9
   mapped_lvl9,
   tar_combine(combined_emissions_lvl9, mapped_lvl9$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl9, mapped_lvl9$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl9, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl6$exportedCO2,
+                                     mapped_lvl7$exportedCO2,
+                                     mapped_lvl8$exportedCO2,
+                                     mapped_lvl9$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 10
   mapped_lvl10,
   tar_combine(combined_emissions_lvl10, mapped_lvl10$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl10, mapped_lvl10$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl10, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl6$exportedCO2,
+                                     mapped_lvl7$exportedCO2,
+                                     mapped_lvl8$exportedCO2,
+                                     mapped_lvl9$exportedCO2,
+                                     mapped_lvl10$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 11
   mapped_lvl11,
   tar_combine(combined_emissions_lvl11, mapped_lvl11$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl11, mapped_lvl11$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl11, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl6$exportedCO2,
+                                     mapped_lvl7$exportedCO2,
+                                     mapped_lvl8$exportedCO2,
+                                     mapped_lvl9$exportedCO2,
+                                     mapped_lvl10$exportedCO2,
+                                     mapped_lvl11$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 12
   mapped_lvl12,
   tar_combine(combined_emissions_lvl12, mapped_lvl12$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl12, mapped_lvl12$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl12, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl6$exportedCO2,
+                                     mapped_lvl7$exportedCO2,
+                                     mapped_lvl8$exportedCO2,
+                                     mapped_lvl9$exportedCO2,
+                                     mapped_lvl10$exportedCO2,
+                                     mapped_lvl11$exportedCO2,
+                                     mapped_lvl12$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 13
   mapped_lvl13,
   tar_combine(combined_emissions_lvl13, mapped_lvl13$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl13, mapped_lvl13$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl13, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl6$exportedCO2,
+                                     mapped_lvl7$exportedCO2,
+                                     mapped_lvl8$exportedCO2,
+                                     mapped_lvl9$exportedCO2,
+                                     mapped_lvl10$exportedCO2,
+                                     mapped_lvl11$exportedCO2,
+                                     mapped_lvl12$exportedCO2,
+                                     mapped_lvl13$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 14
   mapped_lvl14,
   tar_combine(combined_emissions_lvl14, mapped_lvl14$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl14, mapped_lvl14$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl14, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl6$exportedCO2,
+                                     mapped_lvl7$exportedCO2,
+                                     mapped_lvl8$exportedCO2,
+                                     mapped_lvl9$exportedCO2,
+                                     mapped_lvl10$exportedCO2,
+                                     mapped_lvl11$exportedCO2,
+                                     mapped_lvl12$exportedCO2,
+                                     mapped_lvl13$exportedCO2,
+                                     mapped_lvl14$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 15
   mapped_lvl15,
   tar_combine(combined_emissions_lvl15, mapped_lvl15$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl15, mapped_lvl15$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl15, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl6$exportedCO2,
+                                     mapped_lvl7$exportedCO2,
+                                     mapped_lvl8$exportedCO2,
+                                     mapped_lvl9$exportedCO2,
+                                     mapped_lvl10$exportedCO2,
+                                     mapped_lvl11$exportedCO2,
+                                     mapped_lvl12$exportedCO2,
+                                     mapped_lvl13$exportedCO2,
+                                     mapped_lvl14$exportedCO2,
+                                     mapped_lvl15$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 16
   mapped_lvl16,
   tar_combine(combined_emissions_lvl16, mapped_lvl16$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl16, mapped_lvl16$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl16, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl6$exportedCO2,
+                                     mapped_lvl7$exportedCO2,
+                                     mapped_lvl8$exportedCO2,
+                                     mapped_lvl9$exportedCO2,
+                                     mapped_lvl10$exportedCO2,
+                                     mapped_lvl11$exportedCO2,
+                                     mapped_lvl12$exportedCO2,
+                                     mapped_lvl13$exportedCO2,
+                                     mapped_lvl14$exportedCO2,
+                                     mapped_lvl15$exportedCO2,
+                                     mapped_lvl16$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 17
   mapped_lvl17,
   tar_combine(combined_emissions_lvl17, mapped_lvl17$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-  tar_combine(exportedCO2_lvl17, mapped_lvl17$exportedCO2, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+  tar_combine(exportedCO2_lvl17, list(mapped_lvl0$exportedCO2,
+                                     mapped_lvl1$exportedCO2,
+                                     mapped_lvl2$exportedCO2,
+                                     mapped_lvl3$exportedCO2,
+                                     mapped_lvl4$exportedCO2,
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl6$exportedCO2,
+                                     mapped_lvl7$exportedCO2,
+                                     mapped_lvl8$exportedCO2,
+                                     mapped_lvl9$exportedCO2,
+                                     mapped_lvl10$exportedCO2,
+                                     mapped_lvl11$exportedCO2,
+                                     mapped_lvl12$exportedCO2,
+                                     mapped_lvl13$exportedCO2,
+                                     mapped_lvl14$exportedCO2,
+                                     mapped_lvl15$exportedCO2,
+                                     mapped_lvl16$exportedCO2,
+                                     mapped_lvl17$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 18
   mapped_lvl18,

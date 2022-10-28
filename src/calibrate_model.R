@@ -31,7 +31,7 @@
 #' @import ggplot2
 #'
 #' @return list of calibrated parameters, calibration figure, and calibration performance
-calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, emergenceQ, upstreamDF, lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake, upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake, myPopSize, mymaxIter, myRun, cores) {
+calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, emergenceQ, upstreamDF, lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake, upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake, myPopSize, mymaxIter, myRun, mutationRate, cores) {
   theme_set(theme_classic())
 
   #skip great lakes
@@ -47,7 +47,7 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
   #normal basins
   else{
     #handle negative respiration in Great Lakes and Great basin
-    lowerFWC_lake <- ifelse(substr(huc4,1,2) %in% c('04','16'), -0.000001, lowerFWC_lake)#NEGATIVE IS FOR GREAT BASIN/GREAT LAKES, WHERE WE LET PHOTOSYNTHESIS OCCUR)
+    lowerFWC_lake <- ifelse(substr(huc4,1,2) %in% c('04','16'), -0.00001, lowerFWC_lake)#NEGATIVE IS FOR GREAT BASIN/GREAT LAKES, WHERE WE LET PHOTOSYNTHESIS OCCUR)
     upperFWC_lake <- ifelse(substr(huc4,1,2) %in% c('04','16'), 0, upperFWC_lake)#NEGATIVE IS FOR GREAT BASIN/GREAT LAKES, WHERE WE LET PHOTOSYNTHESIS OCCUR)
 
     #run genetic algorithm
@@ -59,10 +59,10 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
                             maxiter = mymaxIter,
                             run=myRun,
                             parallel=cores,
-                            optim=TRUE, #L-BFGS-B opimization to for improved/faster solution convergence
+                            pmutation = mutationRate,
+                            optim=TRUE, #L-BFGS-B opimization for local searches
                         #    keepBest = TRUE,
                         #    postFitness = saveIntermediateResults,
-                            #   suggestions = c(38.9615, 1.892796, 0.0007561829, 5.356582e-07), #best solution in GA that wasn't completed due to terminations (if necessary: 10c and 17b and 5)
                             seed = 12) #reproducibility
 
     #plot and save to file
@@ -114,7 +114,6 @@ calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emer
   source('src/model.R')
 
   #HUC2 <- substr(network_name, 5,nchar(network_name)) #grab HUC2 code onlY
-  #hydrography <- read_rds(paste0('/nas/cee-water/cjgleason/craig/CONUS_CO2_data/', network_name, '.rds'))
   riverCO2 <- glorich_data[glorich_data$HUC4 == huc4,]$River #[ppm]
   lakeCO2 <- glorich_data[glorich_data$HUC4 == huc4,]$Lake #[ppm]
 

@@ -2,10 +2,14 @@
 #SBATCH --job-name=<%= job.name %>
 #SBATCH --output=<%= log.file %>
 #SBATCH --error=<%= log.file %>
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=cbrinkerhoff@umass.edu
 #SBATCH --ntasks=1
-#SBATCH --mem-per-cpu=20000
-#SBATCH -t 24:00:00 #hours
-#SBATCH -p cpu
+#SBATCH --cpus-per-task=<%= resources[["num_cores"]] %>
+#SBATCH --mem=50000
+#SBATCH -t 1080:00:00 #45 days (in hours)
+#SBATCH -p ceewater_cjgleason-cpu
+#SBATCH --exclude=ceewater-cpu[001-005]
 
 module load netcdf-c
 

@@ -216,15 +216,6 @@ kbz_func <- function(slope, depth, waterbody, temp){
 #'
 #' @return river network data frame with CO2 fluxes added [gC/m2/yr]
 calcEmissions <- function(model, huc4){
-  #match format so the tar_combine works
-#  if(huc4 %in% c('0418', '0419', '0424', '0426', '0428')){
-#    out <- data.frame('waterbody'=c('River', 'Lake/Reservoir'),
-#                      'sumFCO2_TgC_yr' = c(0,0),
-#                      'sumFCO2_conus_TgC_yr' = c(0,0),
-#                      'n' = c(0,0))
-#    return(out)
-#  }
-
   #calculate fluxes per reach
   model$FCO2_gC_yr <- ifelse(model$waterbody == 'River',
                                    model$FCO2_gC_m2_yr * model$W_m * model$LengthKM * 1000, #river g-C/yr
@@ -268,11 +259,6 @@ getExported <- function(model, huc4, lookUpTable,Catm) {
 
   out <- data.frame()
   for(downstreamBasin in downstreamBasins){
-      #two basins where export/import reaches are removed fromm model and one with a USGS routing typo... Must be hardcoded
-      if(huc4 == '0707' & downstreamBasin == '0706'){model[model$NHDPlusID == 22001100000027,]$ToNode <- 22000400010646}
-      if(huc4 == '0804' & downstreamBasin == '0807'){model[model$NHDPlusID == 20000800014282,]$ToNode <- 20000300026950}
-      if(huc4 == '0514' & downstreamBasin == '0801'){model[model$NHDPlusID == 24000100569580,]$ToNode <- 22000100085737}
-
       #grab and prep downstream river network (to then grab the right routing ID)
       huc2 <- substr(downstreamBasin, 1, 2)
       dsnPath <- paste0(path_to_data, '/HUC2_', huc2, '/NHDPLUS_H_', downstreamBasin, '_HU4_GDB/NHDPLUS_H_', downstreamBasin, '_HU4_GDB.gdb')
@@ -348,7 +334,7 @@ fixGeometries <- function(rivnet){
 
 
 
-#' Fixes flat/missing/erronous slopes by using the average slope of the upstream inflowing reaches
+#' Fixes flat/missing/erronous slopes by using the average slope of the immedately upstream/downstream reaches
 #'
 #' @name fixBadSlopes
 #'
@@ -359,30 +345,30 @@ fixGeometries <- function(rivnet){
 #'
 #'
 #' @return updated (if necessary) river network slopes
-fixBadSlopes <- function(slope, fromNode, toNode_vec, slope_vec) {
+fixBadSlopes <- function(slope, slope_vec, fromNode, fromNode_vec, toNode, toNode_vec) {
   upstreamIndexes <- which(toNode_vec == fromNode) #get directly upstream reaches
+  downstreamIndexes <- which(fromNode_vec == toNode)
 
-  if(all(is.na(upstreamIndexes))==1){ #if headwater, just leave as NA
-    return(NA)
+  upstream_slopes <- slope_vec[upstreamIndexes]
+  upstream_slopes <- upstream_slopes[upstream_slopes > 0] #don't accidently include other erronous slopes in here...
+
+  downstream_slopes <- slope_vec[downstreamIndexes]
+  downstream_slopes <- downstream_slopes[downstream_slopes > 0] #don't accidently include other erronous slopes in here...
+
+  all_slopes <- c(upstream_slopes, downstream_slopes)
+
+  if(all(is.na(all_slopes))==1){ #if everything upstream is a problem, then just set it to the minimum value 1e-5 (i.e.e 1005 basin)
+    out <- 1e-5
   }
-
-  else{ #normal scenario
-    upstream_slopes <- slope_vec[upstreamIndexes]
-    upstream_slopes <- upstream_slopes[upstream_slopes > 0] #don't accidently include other erronous slopes in here...
-
-    if(all(is.na(upstream_slopes))==1){ #if everything upstream is a problem, then just set it to the minimum value 1e-5 (i.e.e 1005 basin)
-      upstream_slope <- 1e-5
-    }
-    else{ #otherwise, take mean of all good upstream values
-      upstream_slope <- mean(upstream_slopes, na.rm=T)
-    }
-    return(upstream_slope)
+  else{ #otherwise, take mean of all good upstream values
+    out <- mean(all_slopes, na.rm=T)
   }
+  return(out)
 }
 
 
 
-#' Fixes missing temperatures by using the average temperture of the upstream inflowing reaches
+#' Fixes missing temperatures by using the average temperture of the immedately upstream/downstream reaches
 #'
 #' @name fixBadTemps
 #'
@@ -393,20 +379,17 @@ fixBadSlopes <- function(slope, fromNode, toNode_vec, slope_vec) {
 #'
 #'
 #' @return updated (if necessary) river network temperatures (could be air or water)
-fixBadTemps <- function(temp, fromNode, toNode_vec, temp_vec) {
+fixBadTemps <- function(temp, temp_vec, fromNode, fromNode_vec, toNode, toNode_vec) {
   upstreamIndexes <- which(toNode_vec == fromNode) #get directly upstream reaches
+  downstreamIndexes <- which(fromNode_vec == toNode)
 
-  if(all(is.na(upstreamIndexes))==1){ #if headwater, just leave as NA
-    return(NA)
-  }
+  upstream_temps <- temp_vec[upstreamIndexes]
+  downstream_temps <- temp_vec[downstreamIndexes]
 
-  else{ #normal scenario
-    upstream_temps <- temp_vec[upstreamIndexes]
-    upstream_temps <- mean(upstream_temps, na.rm=T)
-    return(upstream_temps)
-  }
+  all_temps <- c(upstream_temps, downstream_temps)
+  out <- mean(all_temps, na.rm=T)
+  return(out)
 }
-
 
 
 #' Aggregates combined targets at each processing level into a single dataset of basin flux results
@@ -453,7 +436,6 @@ abstractAllResults <- function(allResults, raymondList){
 
   huc2Raymond <- dplyr::group_by(raymond, huc2) %>%
         dplyr::summarise(sumFCO2_raymond_TgC_yr = sum(sumFCO2_RG_TgC_yr))
-  #huc2Raymond$huc2 <- '01'
 
   out <- left_join(huc2Results, huc2Raymond, by='huc2')
   return(out)
