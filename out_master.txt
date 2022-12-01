@@ -797,3 +797,353 @@ v skip target written_1208
 * built target exportedCO2_0304 [3.461 seconds]
 * built target emissions_0304 [3.809 seconds]
 * built target written_0304 [4.056 seconds]
+* built target calibratedParameters_0317 [1.163 days]
+* start target final_0317
+* built target final_0317 [1.781 minutes]
+* start target emissions_0317
+* start target written_0317
+* start target exportedCO2_0317
+* built target emissions_0317 [3.765 seconds]
+* built target written_0317 [3.996 seconds]
+* built target exportedCO2_0317 [3.58 seconds]
+* built target calibratedParameters_1606 [1.699 days]
+* start target final_1606
+* built target final_1606 [3.441 minutes]
+* start target emissions_1606
+* start target exportedCO2_1606
+* start target written_1606
+* built target emissions_1606 [3.715 seconds]
+* built target exportedCO2_1606 [3.448 seconds]
+* built target written_1606 [4.157 seconds]
+* built target calibratedParameters_0305 [2.938 days]
+* start target final_0305
+* built target final_0305 [5.813 minutes]
+* start target emissions_0305
+* start target written_0305
+* start target exportedCO2_0305
+* built target emissions_0305 [3.895 seconds]
+* start target combined_emissions_lvl0
+* built target combined_emissions_lvl0 [0.003 seconds]
+* built target written_0305 [4.813 seconds]
+* built target exportedCO2_0305 [3.65 seconds]
+* start target exportedCO2_lvl0
+* built target exportedCO2_lvl0 [0.002 seconds]
+* start target calibratedParameters_0602
+* start target calibratedParameters_0316
+* start target calibratedParameters_0701
+* start target calibratedParameters_1505
+* start target calibratedParameters_0713
+* start target calibratedParameters_0105
+* start target calibratedParameters_1010
+* start target calibratedParameters_1020
+* start target calibratedParameters_1027
+* start target calibratedParameters_1204
+* start target calibratedParameters_1206
+* start target calibratedParameters_1209
+* start target calibratedParameters_1003
+* start target calibratedParameters_1602
+* start target calibratedParameters_1605
+* start target calibratedParameters_0203
+* start target calibratedParameters_0206
+* start target calibratedParameters_1113
+* start target calibratedParameters_1103
+* start target calibratedParameters_1105
+* start target calibratedParameters_1109
+* start target calibratedParameters_1705
+* start target calibratedParameters_1401
+* start target calibratedParameters_1406
+* start target calibratedParameters_0418
+* start target calibratedParameters_0419
+* start target calibratedParameters_1804
+* start target calibratedParameters_0503
+* start target calibratedParameters_1302
+* start target calibratedParameters_1307
+* built target calibratedParameters_0418 [5.375 seconds]
+* start target final_0418
+* built target calibratedParameters_0419 [3.999 seconds]
+* start target final_0419
+* built target final_0419 [7.574 seconds]
+v skip target exportedCO2_0419
+v skip target emissions_0419
+v skip target written_0419
+* built target final_0418 [8.109 seconds]
+v skip target exportedCO2_0418
+v skip target emissions_0418
+v skip target written_0418
+* built target calibratedParameters_1020 [46.304 minutes]
+* start target final_1020
+* built target final_1020 [10.729 seconds]
+* start target exportedCO2_1020
+* start target written_1020
+* start target emissions_1020
+* built target written_1020 [5.799 seconds]
+* built target emissions_1020 [5.453 seconds]
+* built target exportedCO2_1020 [25.951 seconds]
+* built target calibratedParameters_0206 [58.476 minutes]
+* start target final_0206
+* built target final_0206 [12.83 seconds]
+* start target exportedCO2_0206
+* start target emissions_0206
+* start target written_0206
+* built target emissions_0206 [4.023 seconds]
+* built target written_0206 [3.808 seconds]
+* built target exportedCO2_0206 [42.992 seconds]
+* built target calibratedParameters_0105 [1.008 hours]
+* start target final_0105
+* built target final_0105 [11.445 seconds]
+* start target exportedCO2_0105
+* start target raymond_01
+* start target emissions_0105
+* start target written_0105
+* built target exportedCO2_0105 [3.924 seconds]
+* built target emissions_0105 [4.032 seconds]
+* built target written_0105 [4.072 seconds]
+* built target raymond_01 [47.611 seconds]
+* built target calibratedParameters_1204 [1.326 hours]
+* start target final_1204
+* built target final_1204 [9.694 seconds]
+* start target exportedCO2_1204
+* start target emissions_1204
+* start target written_1204
+* built target exportedCO2_1204 [4.235 seconds]
+* built target emissions_1204 [3.792 seconds]
+* built target written_1204 [5.075 seconds]
+* built target calibratedParameters_0701 [2.775 hours]
+* start target final_0701
+* built target final_0701 [13.855 seconds]
+* start target exportedCO2_0701
+* start target written_0701
+* start target emissions_0701
+* built target written_0701 [3.766 seconds]
+* built target exportedCO2_0701 [12.55 seconds]
+* built target emissions_0701 [5.559 seconds]
+* built target calibratedParameters_0602 [3.011 hours]
+* start target final_0602
+* built target final_0602 [11.278 seconds]
+* start target exportedCO2_0602
+* start target written_0602
+* start target emissions_0602
+* built target written_0602 [4.14 seconds]
+* built target emissions_0602 [3.569 seconds]
+* built target exportedCO2_0602 [15.838 seconds]
+* built target calibratedParameters_0203 [4.179 hours]
+* start target final_0203
+* built target final_0203 [36.164 seconds]
+* start target exportedCO2_0203
+* start target raymond_02
+* start target written_0203
+* start target emissions_0203
+* built target exportedCO2_0203 [3.567 seconds]
+* built target written_0203 [4.004 seconds]
+* built target emissions_0203 [3.47 seconds]
+2: (function (e) 
+   traceback(2L))()
+1: (function (x) 
+   x$.self$finalize())(<environment>)
+2: (function (e) 
+   traceback(2L))()
+1: (function (x) 
+   x$.self$finalize())(<environment>)
+2: (function (e) 
+   traceback(2L))()
+1: (function (x) 
+   x$.self$finalize())(<environment>)
+2: (function (e) 
+   traceback(2L))()
+1: (function (x) 
+   x$.self$finalize())(<environment>)
+* built target raymond_02 [1.018 minutes]
+* built target calibratedParameters_0503 [4.664 hours]
+* start target final_0503
+* built target final_0503 [31.604 seconds]
+* start target exportedCO2_0503
+* start target emissions_0503
+* start target written_0503
+* built target emissions_0503 [3.653 seconds]
+* built target written_0503 [3.97 seconds]
+Reading layer `indiana_fixed_0509' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/indiana/indiana_fixed_0509.shp' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 68667 features and 22 fields
+Geometry type: LINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -85.35825 ymin: 37.84697 xmax: -82.027 ymax: 39.91855
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+* built target exportedCO2_0503 [15.567 seconds]
+* built target calibratedParameters_1605 [4.716 hours]
+* start target final_1605
+* built target final_1605 [21.47 seconds]
+* start target exportedCO2_1605
+* start target emissions_1605
+* start target written_1605
+* built target exportedCO2_1605 [3.466 seconds]
+* built target emissions_1605 [3.628 seconds]
+* built target written_1605 [3.783 seconds]
+* built target calibratedParameters_1027 [5.937 hours]
+* start target final_1027
+* built target final_1027 [41.475 seconds]
+* start target exportedCO2_1027
+* start target written_1027
+* start target emissions_1027
+* built target written_1027 [3.787 seconds]
+* built target emissions_1027 [3.701 seconds]
+* built target exportedCO2_1027 [14.791 seconds]
+* built target calibratedParameters_1602 [6.28 hours]
+* start target final_1602
+* built target final_1602 [25.657 seconds]
+* start target exportedCO2_1602
+* start target raymond_16
+* start target emissions_1602
+* start target written_1602
+* built target exportedCO2_1602 [3.424 seconds]
+* built target emissions_1602 [3.5 seconds]
+* built target written_1602 [4.686 seconds]
+* built target raymond_16 [1.051 minutes]
+* built target calibratedParameters_0713 [8.001 hours]
+* start target final_0713
+* built target final_0713 [59.894 seconds]
+* start target exportedCO2_0713
+* start target emissions_0713
+* start target written_0713
+* built target emissions_0713 [3.57 seconds]
+* built target written_0713 [4.108 seconds]
+* built target exportedCO2_0713 [13.627 seconds]
+* built target calibratedParameters_1307 [7.321 hours]
+* start target final_1307
+* built target final_1307 [11.999 seconds]
+* start target exportedCO2_1307
+* start target emissions_1307
+* start target written_1307
+* built target emissions_1307 [3.485 seconds]
+* built target written_1307 [3.776 seconds]
+* built target calibratedParameters_1406 [8.092 hours]
+* start target final_1406
+* built target final_1406 [20.828 seconds]
+* start target exportedCO2_1406
+* start target emissions_1406
+* start target written_1406
+* built target emissions_1406 [3.768 seconds]
+* built target written_1406 [3.612 seconds]
+* built target exportedCO2_1307 [1.03 minutes]
+* built target exportedCO2_1406 [13.432 seconds]
+* built target calibratedParameters_1105 [10.626 hours]
+* start target final_1105
+* built target final_1105 [15.364 seconds]
+* start target exportedCO2_1105
+* start target written_1105
+* start target emissions_1105
+* built target written_1105 [3.619 seconds]
+* built target emissions_1105 [3.528 seconds]
+* built target exportedCO2_1105 [14.977 seconds]
+* built target calibratedParameters_1103 [12.851 hours]
+* start target final_1103
+* built target final_1103 [19.285 seconds]
+* start target exportedCO2_1103
+* start target written_1103
+* start target emissions_1103
+* built target written_1103 [3.724 seconds]
+* built target emissions_1103 [3.693 seconds]
+* built target exportedCO2_1103 [14.545 seconds]
+* built target calibratedParameters_1401 [13.804 hours]
+* start target final_1401
+* built target final_1401 [1.285 minutes]
+* start target exportedCO2_1401
+* start target emissions_1401
+* start target written_1401
+* built target emissions_1401 [3.523 seconds]
+* built target written_1401 [4.012 seconds]
+* built target exportedCO2_1401 [14.358 seconds]
+* built target calibratedParameters_0316 [20.117 hours]
+* start target final_0316
+* built target final_0316 [1.941 minutes]
+* start target exportedCO2_0316
+* start target emissions_0316
+* start target written_0316
+* start target raymond_03
+* built target exportedCO2_0316 [4.961 seconds]
+* built target emissions_0316 [4.886 seconds]
+* built target written_0316 [5.082 seconds]
+* built target raymond_03 [2.126 minutes]
+* built target calibratedParameters_1109 [21.391 hours]
+* start target final_1109
+* built target final_1109 [40.769 seconds]
+* start target exportedCO2_1109
+* start target written_1109
+* start target emissions_1109
+* built target written_1109 [3.708 seconds]
+* built target emissions_1109 [3.486 seconds]
+* built target exportedCO2_1109 [21.924 seconds]
+* built target calibratedParameters_1010 [21.493 hours]
+* start target final_1010
+* built target final_1010 [38.967 seconds]
+* start target exportedCO2_1010
+* start target written_1010
+* start target emissions_1010
+* built target written_1010 [3.69 seconds]
+* built target emissions_1010 [3.422 seconds]
+* built target exportedCO2_1010 [18.456 seconds]
+* built target calibratedParameters_1003 [1.298 days]
+* start target final_1003
+* built target final_1003 [46.312 seconds]
+* start target exportedCO2_1003
+* start target emissions_1003
+* start target written_1003
+* built target emissions_1003 [4.807 seconds]
+* built target written_1003 [5.474 seconds]
+* built target exportedCO2_1003 [52.355 seconds]
+* built target calibratedParameters_1505 [2.126 days]
+* start target final_1505
+* built target final_1505 [1.14 minutes]
+* start target exportedCO2_1505
+* start target written_1505
+* start target emissions_1505
+* built target written_1505 [4.801 seconds]
+* built target emissions_1505 [4.329 seconds]
+* built target exportedCO2_1505 [26.779 seconds]
+* built target calibratedParameters_1206 [3.354 days]
+* start target final_1206
+* built target final_1206 [1.946 minutes]
+* start target exportedCO2_1206
+* start target emissions_1206
+* start target written_1206
+* built target emissions_1206 [4.753 seconds]
+* built target written_1206 [5.284 seconds]
+* built target exportedCO2_1206 [38.921 seconds]
+* built target calibratedParameters_1705 [4.541 days]
+* start target final_1705
+* built target final_1705 [2.015 minutes]
+* start target exportedCO2_1705
+* start target emissions_1705
+* start target written_1705
+* built target emissions_1705 [3.501 seconds]
+* built target written_1705 [4.004 seconds]
+* built target exportedCO2_1705 [50.981 seconds]
+* built target calibratedParameters_1302 [5.759 days]
+* start target final_1302
+* built target final_1302 [1.331 minutes]
+* start target exportedCO2_1302
+* start target emissions_1302
+* start target written_1302
+* built target emissions_1302 [3.535 seconds]
+* built target written_1302 [3.876 seconds]
+* built target exportedCO2_1302 [20.489 seconds]
+* built target calibratedParameters_1113 [5.95 days]
+* start target final_1113
+* built target final_1113 [3.09 minutes]
+* start target exportedCO2_1113
+* start target written_1113
+* start target emissions_1113
+* built target written_1113 [4.144 seconds]
+* built target emissions_1113 [3.541 seconds]
+* built target exportedCO2_1113 [46.615 seconds]
+* built target calibratedParameters_1209 [6.809 days]
+* start target final_1209
+* built target final_1209 [2.402 minutes]
+* start target exportedCO2_1209
+* start target emissions_1209
+* start target written_1209
+* built target exportedCO2_1209 [3.76 seconds]
+* built target emissions_1209 [3.512 seconds]
+* built target written_1209 [4.004 seconds]

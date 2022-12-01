@@ -1377,3 +1377,163 @@ final_0304|stem|da8f07126c857e5c|ed2b557e3bfb5190|0b9f59ea11d9587e|459300713||t1
 exportedCO2_0304|stem|ca42aa2829a67901|b9be6c028473a9a7|e6dcb036207e97ed|-2129924872||t19313.895835472s|b38e013835ac5385|144|qs|local|vector|||3.461||
 emissions_0304|stem|4c41749da5b0b367|ad66d39aa745cf0e|dbb64e6f315de5a7|-317613022||t19313.8958462123s|894bd69becbefb0d|196|qs|local|vector|||3.809||
 written_0304|stem|6a157bd3e3b9fea9|b8ffc2a0f02172f9|e3617404da94061a|870878331||t19313.895854175s|33ed9133631ed976|54|qs|local|vector|||4.056||
+calibratedParameters_0317|stem|9fef87ef7c71fcee|89fff8715a0d521e|8b5205f9b2999adf|398084881||t19314.1093774963s|f8db63dc45d95915|14320132|qs|local|vector|||100514.445||
+final_0317|stem|88ecde62b0d18acd|e5de6fcc15dc5685|d2c2a7e297db3481|-703344271||t19314.1107834222s|0ac94532cd2fb2b7|12594911|qs|local|vector|||106.834||
+emissions_0317|stem|333a042251f91d52|67fd8960659d40e8|03392850ed3e9b99|-1592524092||t19314.1109118439s|c73b9cdaf7c07f90|198|qs|local|vector|||3.765||
+written_0317|stem|6a157bd3e3b9fea9|e6732447e480339f|7698b684dcaf886a|714997110||t19314.1109495278s|33ed9133631ed976|54|qs|local|vector|||3.996||
+exportedCO2_0317|stem|ca42aa2829a67901|48d8e58a43921b5f|5d623ae8ef441881|749454677||t19314.1109830453s|b38e013835ac5385|144|qs|local|vector|||3.58||
+calibratedParameters_1606|stem|7639d08498104593|3143fbc7046e8dda|a72cf147466a89a9|-814801340||t19314.6450550966s|80c428fc265f64fd|20587416|qs|local|vector|||146772.677||
+final_1606|stem|7aaa12b45287b15d|99f1e1d76f16c814|1f0ecd18d86e3a0f|731063961||t19314.6476691303s|a159a1831cd63599|18441549|qs|local|vector|||206.466||
+emissions_1606|stem|7b28209895cd524e|b3bab3c6d7d91a9c|51ae3157d6820ede|-1349145906||t19314.6478233844s|95bd38f26dcebf06|185|qs|local|vector|||3.715||
+exportedCO2_1606|stem|ca42aa2829a67901|810e3cf4e7ff2c00|8c212a8b331c6e4a|-1693040709||t19314.6478659293s|b38e013835ac5385|144|qs|local|vector|||3.448||
+written_1606|stem|6a157bd3e3b9fea9|ad5371798b976cce|788be0d89b4edd56|2003326570||t19314.6479101871s|33ed9133631ed976|54|qs|local|vector|||4.157||
+calibratedParameters_0305|stem|4268a0f8c7509792|557051b148d30806|99889414a9bfde6c|1846245646||t19315.8844464855s|f4fc2bfd365b2aec|25448960|qs|local|vector|||253886.225||
+final_0305|stem|61d560b79304a653|d28dc2200e1ae200|e78a34bd1a604095|621245111||t19315.8887475927s|321c2001b8cdccd2|22481732|qs|local|vector|||348.758||
+emissions_0305|stem|fb56dee6cda664d6|f9ad9976a0895237|400c71f2f4182c4d|-77580097||t19315.8889151335s|8370bb33436b7886|199|qs|local|vector|||3.895||
+combined_emissions_lvl0|stem|0adfbb433cedad55|e034db212f55b29b|156b4ee219abd0e0|-1442539624||t19315.888917726s|cbb1a652a4efa14d|2403|qs|local|vector|||0.003||
+written_0305|stem|6a157bd3e3b9fea9|4e3cd3cc20efc800|2920dd4a1025aefe|-51732864||t19315.8889686502s|33ed9133631ed976|54|qs|local|vector|||4.813||
+exportedCO2_0305|stem|ca42aa2829a67901|872bec4193738079|300d52b3079737a1|1664397642||t19315.8890040657s|b38e013835ac5385|144|qs|local|vector|||3.65||
+exportedCO2_lvl0|stem|33ea8dbd2f33b789|f246b63912c670aa|263d5b690f3694cd|-175525350||t19315.8890058249s|61e5a1e89065f508|3358|qs|local|vector|||0.002||
+calibratedParameters_0418|stem|1b969a20a3a8b9c0|fa4cd78d82636fde|56093a8492b5c1ac|-1027419340||t19315.8901350004s|53ae91d8b28de746|95|qs|local|vector|||5.375||
+calibratedParameters_0419|stem|1b969a20a3a8b9c0|a24532b9593ce850|4225b01886c260f2|-130662898||t19315.8901694437s|53ae91d8b28de746|95|qs|local|vector|||3.999||
+final_0419|stem|46f8a584af9880dd|5e56b637dc8a5437|7d280cab2427d3c8|145376645||t19315.8904332775s|3094ce2775ccde20|1744|qs|local|vector|||7.574||
+final_0418|stem|1283526bcaaea53f|d5c3cdafc11a423d|02e9f9e8fb27b990|-748233985||t19315.8904676745s|615503709628277c|2267|qs|local|vector|||8.109||
+calibratedParameters_1020|stem|47451f64f661c69c|824a5b3f3207c632|0b80fe65dec9bccc|-1361082347||t19315.9214967112s|0675528c49152d96|2685102|qs|local|vector|||2778.248||
+final_1020|stem|ec3faf2a57f2533f|864e6b5565e63ef7|fac980b2a4580da5|1851157429||t19315.9217480913s|afed475ecbd2cd06|2259676|qs|local|vector|||10.729|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+written_1020|stem|6a157bd3e3b9fea9|2945f4907c33e98d|6039d5ea12f52be0|1220647280||t19315.9219327608s|33ed9133631ed976|54|qs|local|vector|||5.799||
+emissions_1020|stem|8ef96f161507725c|8306400ac0f162b9|87ab2332ad470145|-1417153257||t19315.9220353035s|95bd38f26dcebf06|185|qs|local|vector|||5.453||
+exportedCO2_1020|stem|8066f3401283b5df|85ccb3a4c9cef633|28fe9a93c69df853|858978619||t19315.9221347908s|e8b5e68fd42ecc49|168|qs|local|vector|||25.951||
+calibratedParameters_0206|stem|3dce6d8bcc320844|a7743da688bce5be|58b5b8f3abc6e3d9|-183548081||t19315.9302495641s|50af0f84464e9ef7|3310143|qs|local|vector|||3508.537||
+final_0206|stem|f17b33ad2d112baa|d4b665a8f24dbcd2|840b9a8bed57e1b8|785700698||t19315.93048826s|04710acafd67c409|2912635|qs|local|vector|||12.83|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+emissions_0206|stem|930383a7e8345e2a|67b97c39091a6aa1|4d6b8e1b49e90496|-919165138||t19315.9306198297s|8370bb33436b7886|199|qs|local|vector|||4.023||
+written_0206|stem|6a157bd3e3b9fea9|d73812fac8296650|98379c32a9998189|-886476017||t19315.9306708928s|33ed9133631ed976|54|qs|local|vector|||3.808||
+exportedCO2_0206|stem|7df8102410ca5f41|4f1f181ad81d6405|f8da6e3e3363aa89|-157568798||t19315.9310526858s|894bd69becbefb0d|196|qs|local|vector|||42.992||
+calibratedParameters_0105|stem|3bd1eceebf86b268|3faf1c6b1ed5a209|da3a68b245ecc822|-862234258||t19315.9312563828s|28d449f09bc7fba6|3175500|qs|local|vector|||3627.6||
+final_0105|stem|90f10890045e6825|7688dce4101b5754|7825c04e9a4d92a0|1075282759||t19315.9314790144s|97fcaa519d7401a8|2709347|qs|local|vector|||11.445|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+exportedCO2_0105|stem|ca42aa2829a67901|1283e85b4c4f09a6|2e0cb65a32caf1b8|131333448||t19315.9316636842s|b38e013835ac5385|144|qs|local|vector|||3.924||
+emissions_0105|stem|0dc0ffe15b8d1fc8|bb639a148c73f951|2d54c847dd286238|1838137726||t19315.9317314598s|8370bb33436b7886|199|qs|local|vector|||4.032||
+written_0105|stem|6a157bd3e3b9fea9|92b1eadea0047809|52faa78d11c3d9b8|-1996646901||t19315.9317605792s|33ed9133631ed976|54|qs|local|vector|||4.072||
+raymond_01|stem|1f0ac4ebc2b5498a|504be089dd3ba6ff|4a20b84f37f794a4|-1550294894||t19315.9322316748s|f72fccdd9079df1d|162|qs|local|vector|||47.611|NAs introduced by coercion to integer range|
+calibratedParameters_1204|stem|269e48955e84c8aa|afea7bc6b27eefe3|3e21e040667e393b|1839778098||t19315.9446928429s|88fa39d687e81a35|2771603|qs|local|vector|||4775.041||
+final_1204|stem|7a6245cde3094e3d|797bfb956c668365|da6cc112e46285e7|819460739||t19315.94490816s|6fd60973ae5141ac|2355727|qs|local|vector|||9.694|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+exportedCO2_1204|stem|ca42aa2829a67901|72cd6b64332e3a0d|6ea489088dfa4444|1059352115||t19315.9450375539s|b38e013835ac5385|144|qs|local|vector|||4.235||
+emissions_1204|stem|b69bb3721b2c8286|0500aa5002490d89|ffdadf226b508736|1759924015||t19315.9450447759s|894bd69becbefb0d|196|qs|local|vector|||3.792||
+written_1204|stem|6a157bd3e3b9fea9|57f2f90e032679a3|edcdc000c0f4a2cd|1516043229||t19315.9450935706s|33ed9133631ed976|54|qs|local|vector|||5.075||
+calibratedParameters_0701|stem|2a91768bbc688df2|2ce5216095336cb2|0a735ba1033654d7|1920602426||t19316.0047978466s|e35a2b6b3ed7ec58|3959060|qs|local|vector|||9989.282||
+final_0701|stem|9fa761ea2ef09639|460c6c545d04e973|7834f0bc67b6c87c|-1667681291||t19316.0050742267s|ce0bcb8366fb8235|3367231|qs|local|vector|||13.855|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+written_0701|stem|6a157bd3e3b9fea9|90fd6c25fdbef167|57e4083e443a1236|216153291||t19316.005228157s|33ed9133631ed976|54|qs|local|vector|||3.766||
+exportedCO2_0701|stem|1dae0058df00cb8a|6cc25b604ce5e3f7|ba48e59507d31df9|-910661426||t19316.0052949141s|894bd69becbefb0d|196|qs|local|vector|||12.55||
+emissions_0701|stem|06646026286d501b|69e67807c1bae4b2|2c1800c8c5204661|-1359352901||t19316.0053024601s|95bd38f26dcebf06|185|qs|local|vector|||5.559||
+calibratedParameters_0602|stem|5692e2588e60b0c2|a0967b659da4408a|89450cb2284d89b5|703404141||t19316.0145697994s|0c61b386c845bd8e|3523418|qs|local|vector|||10841.381||
+final_0602|stem|6dab60fe645768d1|1431cadf0bc10c68|5eb72932ab520293|1681956213||t19316.0147956253s|8766cb58eb15c3fd|3043706|qs|local|vector|||11.278|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+written_0602|stem|6a157bd3e3b9fea9|ec3bd6901b4d056f|e80fb92d8ff0cf21|1360356216||t19316.0149633051s|33ed9133631ed976|54|qs|local|vector|||4.14||
+emissions_0602|stem|0109b2fe92682063|9d71b41b76c043f4|ffbd9d1079576ef0|118910521||t19316.0149707585s|95bd38f26dcebf06|185|qs|local|vector|||3.569||
+exportedCO2_0602|stem|bca733086c09436f|324f0816b61651ff|c92bfbf71adc1045|-712078565||t19316.0150513578s|894bd69becbefb0d|196|qs|local|vector|||15.838||
+calibratedParameters_0203|stem|d55f7febb691a440|32564f81c5838dbf|10127942f3926591|587932494||t19316.0637371182s|c4c9d72d8fed16aa|6867467|qs|local|vector|||15043.646||
+final_0203|stem|7d397855eeb4810b|815026af67ca6910|63004eafc0b0ae07|-1310270116||t19316.0642804795s|d2e18297d4a39da0|6040427|qs|local|vector|||36.164|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+exportedCO2_0203|stem|ca42aa2829a67901|42dcf9cdb8d9daea|4a628c62179c1587|548898073||t19316.0644829264s|b38e013835ac5385|144|qs|local|vector|||3.567||
+written_0203|stem|6a157bd3e3b9fea9|470c0087eaa24bb4|7c4f07285e8a9d7c|1481346365||t19316.064527786s|33ed9133631ed976|54|qs|local|vector|||4.004||
+emissions_0203|stem|088c27328d351058|d5dee724db998d8c|bec0416f8a9c08e5|-1882409893||t19316.0645537574s|8370bb33436b7886|199|qs|local|vector|||3.47||
+raymond_02|stem|0e37119bd943aa4c|9b86f22bbcf2b062|36e5eb6d751e2572|-2101797164||t19316.0651976247s|f72fccdd9079df1d|162|qs|local|vector|||61.051|NAs introduced by coercion to integer range|
+calibratedParameters_0503|stem|889a90bf66725733|de085bbfbd979ce1|57d0ad25af670404|-1600343254||t19316.084438101s|d96a468a890a0bad|6897959|qs|local|vector|||16790.457||
+final_0503|stem|e9a2dfd4aeaf577f|76532cac2b7dfdd2|8883b7a244fb6e80|-1864064876||t19316.0849159094s|38899b39ba4ac6a2|6082739|qs|local|vector|||31.604|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+emissions_0503|stem|0d1f1e91065c93a1|cdf4c24affaba6af|57179207f6331631|-421628178||t19316.0850715524s|95bd38f26dcebf06|185|qs|local|vector|||3.653||
+written_0503|stem|6a157bd3e3b9fea9|3a3a6922ae7c493a|1316fcfbc5ea9b49|1057562554||t19316.0851143751s|33ed9133631ed976|54|qs|local|vector|||3.97||
+exportedCO2_0503|stem|d6330df969108626|b56fb54da7527da1|be49ddddc610b201|1180309938||t19316.0851695121s|e8b5e68fd42ecc49|168|qs|local|vector|||15.567||
+calibratedParameters_1605|stem|a41a27f0402efed3|0ad1affe5c0b9987|5edaccb43b32c626|1419159701||t19316.0861074906s|775fb95d79ee35c0|5922772|qs|local|vector|||16978.616||
+final_1605|stem|4142ef4362ae06b2|afc966197e2e46f4|deac44a91efb26ab|1156405581||t19316.0864594698s|52851e51bc058a54|5235511|qs|local|vector|||21.47|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+exportedCO2_1605|stem|ca42aa2829a67901|d1516d6bd7ceccb9|da03cd4db826d091|-1529851089||t19316.086570531s|b38e013835ac5385|144|qs|local|vector|||3.466||
+emissions_1605|stem|5310b0381f28d6f0|dd9a4040b7eae1bb|840a34ec95da456c|78796042||t19316.0866099741s|95bd38f26dcebf06|185|qs|local|vector|||3.628||
+written_1605|stem|6a157bd3e3b9fea9|aaf962da56d21d8d|8c9cab134b5178c9|1646930926||t19316.0866343252s|33ed9133631ed976|54|qs|local|vector|||3.783||
+calibratedParameters_1027|stem|381b0fb09b04e401|f83c76a2e59e57f7|8ad167aac238e4d4|914429806||t19316.1367570718s|af7ec1428fb4a1e5|8041892|qs|local|vector|||21372.049||
+final_1027|stem|07a3126bb04addbc|3592a2f33e19685a|ce5f857433658ca0|-321066812||t19316.1373677928s|6de003374edaf4f1|6815917|qs|local|vector|||41.475|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+written_1027|stem|6a157bd3e3b9fea9|ad110f651d9202be|c01ed849d289b3e1|804808686||t19316.1375189916s|33ed9133631ed976|54|qs|local|vector|||3.787||
+emissions_1027|stem|1aa54f242f9eb279|25f7241dc6fc0571|1c6b6efd94bb8cd2|-755907554||t19316.1375587589s|95bd38f26dcebf06|185|qs|local|vector|||3.701||
+exportedCO2_1027|stem|f864e7ff61c25acb|f22f31abecd8733b|d7db75b8d21142ca|1680071400||t19316.1376100535s|e8b5e68fd42ecc49|168|qs|local|vector|||14.791||
+calibratedParameters_1602|stem|f6ef9c2e15d35bb0|0c5e3ebc4e9f334d|83f8998e4668bf43|-2097543845||t19316.1512418788s|1573b748a5ed682d|6402491|qs|local|vector|||22607.529||
+final_1602|stem|17a62c634b8b72b5|505eb1eec25d188a|f10bb6ec9961231b|-468740205||t19316.1516647816s|5bbe52a9ec8e29ad|5666581|qs|local|vector|||25.657|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+exportedCO2_1602|stem|ca42aa2829a67901|d87929c8836d61c4|f493d5735c75a82d|1367518357||t19316.1518611641s|b38e013835ac5385|144|qs|local|vector|||3.424||
+emissions_1602|stem|ced0445e27fcfd2d|b677e89576f99110|16fc2ba93a1f9bab|1009861639||t19316.1518982925s|95bd38f26dcebf06|185|qs|local|vector|||3.5||
+written_1602|stem|6a157bd3e3b9fea9|97d319b61af8719d|67afd5604d0a5d72|-887128621||t19316.151963383s|33ed9133631ed976|54|qs|local|vector|||4.686||
+raymond_16|stem|76513072917be4d9|c033e45057f515b1|211de8431784fa4a|406211936||t19316.1526122507s|f72fccdd9079df1d|162|qs|local|vector|||63.073|NAs introduced by coercion to integer range|
+calibratedParameters_0713|stem|2c05c96dfeee5858|16f484e506b3ee5a|aa916fb04b39448f|712278752||t19316.2226296699s|3ddcad06c05871e8|10753457|qs|local|vector|||28802.169||
+final_0713|stem|7a877c0f798241eb|d1d60222011f7806|832aaa233efd8b2c|-1882187445||t19316.2234784384s|1f6197b83f59b666|9246701|qs|local|vector|||59.894|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+emissions_0713|stem|5ca9851f7990a213|61df439efc796dff|ad0ee6f22373197a|796619968||t19316.2236380628s|95bd38f26dcebf06|185|qs|local|vector|||3.57||
+written_0713|stem|6a157bd3e3b9fea9|dcd9d9c2b5599244|b1bd51bc3fc3d67d|276219804||t19316.2236864409s|33ed9133631ed976|54|qs|local|vector|||4.108||
+exportedCO2_0713|stem|73f626ac5e582eeb|351c2521d6a322fd|0a545e4728c61423|1646433916||t19316.2237204212s|894bd69becbefb0d|196|qs|local|vector|||13.627||
+calibratedParameters_1307|stem|e3c0af3c0b0f8f93|33189eae1d5194fa|093b9186780919ac|-37432805||t19316.2266398165s|82c2e3d94cc8f109|3962622|qs|local|vector|||26354.594||
+final_1307|stem|844861e06123d827|28a19a9a08f16ce5|f7fe42756d3b9780|1406554235||t19316.2268694849s|da32ed4bdd93faef|3449830|qs|local|vector|||11.999|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+emissions_1307|stem|347780718548ede0|c6b2c43377b0d03e|1bb1f7e95a2d53bc|-1174415847||t19316.227008184s|95bd38f26dcebf06|185|qs|local|vector|||3.485||
+written_1307|stem|6a157bd3e3b9fea9|0c578d698b8ee6c1|2726662cb25368a0|1971537001||t19316.2270431829s|33ed9133631ed976|54|qs|local|vector|||3.776||
+calibratedParameters_1406|stem|92ef5fe65d5ba4a5|98a6d1a18986495a|522e7792b94c3d81|1413295189||t19316.2270766077s|8998a24c6b01af90|5328979|qs|local|vector|||29130.862||
+final_1406|stem|cc1266957983cf78|7f9b47cb12902f44|73794c1a1c4d50d9|-495247801||t19316.2274209483s|b715ebd5e0d99b5d|4718788|qs|local|vector|||20.828|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+emissions_1406|stem|d7b17b569be41f70|5c02f6b1cd75e54f|5c5c429a00bec80e|1278937884||t19316.2275677028s|95bd38f26dcebf06|185|qs|local|vector|||3.768||
+written_1406|stem|6a157bd3e3b9fea9|1ed44831e7977820|a0fa87079ad2a132|-1004711183||t19316.227602285s|33ed9133631ed976|54|qs|local|vector|||3.612||
+exportedCO2_1307|stem|9852b711abbae1d8|1347922d9b79927a|e5fca009c7092be9|-2018686928||t19316.2276459409s|e8b5e68fd42ecc49|168|qs|local|vector|||61.818||
+exportedCO2_1406|stem|1365e4358d5efa39|ab9b834ddd439929|ba4c1396b462c0f4|-1490610228||t19316.2276531629s|e8b5e68fd42ecc49|168|qs|local|vector|||13.432||
+calibratedParameters_1105|stem|bb5ee668bdbf33f6|21b0af5293af4a5a|ec394bffbc54b37b|1062756151||t19316.3325021271s|7ee209fa6d840aab|4111125|qs|local|vector|||38251.944||
+final_1105|stem|800f476df4b924d6|ecd78c8b43f68ea7|b0b35239cec5bbe4|-504236477||t19316.3327805438s|2dddc35f1b702e2a|3498099|qs|local|vector|||15.364|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+written_1105|stem|6a157bd3e3b9fea9|65ed2c1d8571b442|4b6f4be264bda9b0|-1236311984||t19316.3329181319s|33ed9133631ed976|54|qs|local|vector|||3.619||
+emissions_1105|stem|301c4671196410a6|3c6372945a8c6438|3b6c91617cf8ea22|617120031||t19316.3329489179s|95bd38f26dcebf06|185|qs|local|vector|||3.528||
+exportedCO2_1105|stem|f5392c07baf8048d|92335e291c52dea0|9415ea8370da5c0a|-1521471800||t19316.3330098881s|e8b5e68fd42ecc49|168|qs|local|vector|||14.977||
+calibratedParameters_1103|stem|480aed4664c223ef|401ae604e2f2a325|27322238ff733b7e|1473974332||t19316.4251991731s|54a667b59e64a1a8|5070070|qs|local|vector|||46264.244||
+final_1103|stem|4b626ccc8bd1a87f|752e96a4742e2e12|4fc8c4a08e681772|1328402617||t19316.425520922s|d68d66201cc8fbbe|4356367|qs|local|vector|||19.285|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+written_1103|stem|6a157bd3e3b9fea9|07c1537dfcaea6cb|24ab133a7af965ff|-1688032649||t19316.4256798057s|33ed9133631ed976|54|qs|local|vector|||3.724||
+emissions_1103|stem|5ed01ed25bf8b19e|5ce3fa896e4f46a8|650ecd5c3d040aed|-2093171194||t19316.4256995273s|95bd38f26dcebf06|185|qs|local|vector|||3.693||
+exportedCO2_1103|stem|d32edd38cd4bc5bb|f7bf97bcf301257e|6aac7263d103ebe2|-1041897485||t19316.4257768859s|894bd69becbefb0d|196|qs|local|vector|||14.545||
+calibratedParameters_1401|stem|a9233cc2f52a71fe|aaa926ceb6aeb0a7|ce1d688062630011|1127189058||t19316.4650770728s|60775d6b665148e6|12147508|qs|local|vector|||49695.162||
+final_1401|stem|b1e7d89c093ef6ec|bf1f4abdc2822b6b|6324d0bd68d0c77b|1081662005||t19316.4661330566s|c20224849e79d105|10760019|qs|local|vector|||77.09|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+emissions_1401|stem|806bffea647712c0|5519c361d6087f46|bc2e492f25cae59a|1309511369||t19316.4662973104s|95bd38f26dcebf06|185|qs|local|vector|||3.523||
+written_1401|stem|6a157bd3e3b9fea9|28cedc82295dbc53|9301e601a5e4c585|460947880||t19316.4663453181s|33ed9133631ed976|54|qs|local|vector|||4.012||
+exportedCO2_1401|stem|f76d291c3acd545b|ff9bf7b64754cbc5|0f5265c6383221bd|-572521155||t19316.4663896222s|e8b5e68fd42ecc49|168|qs|local|vector|||14.358||
+calibratedParameters_0316|stem|d53e7678b273744a|a800e14a15e07da8|9cd473818d904101|-931451756||t19316.7273747523s|1d858701cae05581|13209812|qs|local|vector|||72419.943||
+final_0316|stem|199740ecaec1690b|1683e2b123bf63c5|313d72f832ed818d|-1999849756||t19316.7288987747s|3cab23a898ba58d5|11491613|qs|local|vector|||116.442|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+exportedCO2_0316|stem|ca42aa2829a67901|62c259515109a884|915db5ae3019ca93|-618159598||t19316.7292721417s|b38e013835ac5385|144|qs|local|vector|||4.961||
+emissions_0316|stem|eab537ca40208026|4d3973cf14f9b920|97ee698ce38806d8|-1757352162||t19316.7292800118s|c73b9cdaf7c07f90|198|qs|local|vector|||4.886||
+written_0316|stem|6a157bd3e3b9fea9|1f342f259a4f0a04|3f3de8a6989b414c|-547789074||t19316.7292964001s|33ed9133631ed976|54|qs|local|vector|||5.082||
+raymond_03|stem|616aeb075d00383d|a3f25a9dd7fcd390|305856fdd49403d0|-1859863637||t19316.7310191663s|f72fccdd9079df1d|162|qs|local|vector|||127.578|NAs introduced by coercion to integer range|
+calibratedParameters_1109|stem|2e306899eb22cb91|520fafbbea90fe0e|54594560f08803bd|-195245759||t19316.7810972156s|c12473f981098614|7871701|qs|local|vector|||77007.032||
+final_1109|stem|915d882338081f0f|f47aed6edad2b7e2|39652ebb8d866fc4|155796721||t19316.781701778s|bd7db246cb93d426|6821621|qs|local|vector|||40.769|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+written_1109|stem|6a157bd3e3b9fea9|9e6cd147c1e42d66|d92a0a5f290b37ca|454207965||t19316.7818533468s|33ed9133631ed976|54|qs|local|vector|||3.708||
+emissions_1109|stem|cf44986f5820f2ab|a5975fcbc72e8600|ecfc3ee9b710bafb|-398489590||t19316.7818929287s|95bd38f26dcebf06|185|qs|local|vector|||3.486||
+exportedCO2_1109|stem|a09ff1aaf3e598b8|eae1cd81741cb4ae|bdb03ba8d415e7cd|-331367258||t19316.7820257945s|88e7e35f70380d63|220|qs|local|vector|||21.924||
+calibratedParameters_1010|stem|b8aac4329bce5a82|0f1acd8fbae90d9c|b336e2a24ba9bd43|-223637292||t19316.7848865758s|392f0d56f7f8dfac|8227739|qs|local|vector|||77376.119||
+final_1010|stem|0023d7daf042cd56|cd7db63055e3a498|9097255020384d46|-768198961||t19316.7854642876s|89aa5bb82e367a6e|7144025|qs|local|vector|||38.967|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+written_1010|stem|6a157bd3e3b9fea9|2d2f7d190525da00|668d8a110f8182f0|-581876807||t19316.7856100697s|33ed9133631ed976|54|qs|local|vector|||3.69||
+emissions_1010|stem|71b309658736b544|e211b39c0113d527|2a9d7ccc050495d5|-1894892796||t19316.7856569662s|95bd38f26dcebf06|185|qs|local|vector|||3.422||
+exportedCO2_1010|stem|9fa202dc0fb0deb8|5e41ec88887b7b70|e0705bf0df358171|-1737473956||t19316.7857393708s|e8b5e68fd42ecc49|168|qs|local|vector|||18.456||
+calibratedParameters_1003|stem|b31786e6e66ab547|93ac26a263722094|a5d38ced53f3c4e5|-146826456||t19317.1872379936s|9f101a70386fbfee|8178713|qs|local|vector|||112120.119||
+final_1003|stem|c8c8c41694df916a|dca3ac4419188c3f|7cec1ad13faa595b|-1841351174||t19317.1878950568s|42354243ff4fbdb9|7119178|qs|local|vector|||46.312|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+emissions_1003|stem|a87aa565a741a6be|3129a6d6d094a203|465f67648dbf0aa9|89449900||t19317.1880589407s|95bd38f26dcebf06|185|qs|local|vector|||4.807||
+written_1003|stem|6a157bd3e3b9fea9|0985180672e571ba|fe67bc3c3c943c1c|-949381914||t19317.1881082447s|33ed9133631ed976|54|qs|local|vector|||5.474||
+exportedCO2_1003|stem|77ac537b35c6e2b6|f2c7c02441d086aa|c248875cb48fa790|-702661453||t19317.1885780451s|e8b5e68fd42ecc49|168|qs|local|vector|||52.355||
+calibratedParameters_1505|stem|0bfdd9f6f31f0af5|55dd47b856503211|f97f66868d2251f0|1490736611||t19318.015491246s|3cb2947c7b23927f|9795792|qs|local|vector|||183708.97||
+final_1505|stem|00b63eea992818d1|4a335e3c24193808|1de5d1cd3de43e1c|1519579731||t19318.0164410755s|449ffe44c7351469|8719427|qs|local|vector|||68.416|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+written_1505|stem|6a157bd3e3b9fea9|4b4f5d0be1fa2129|06b0c4cf0adfd0c1|-1449513400||t19318.0166162549s|33ed9133631ed976|54|qs|local|vector|||4.801||
+emissions_1505|stem|a86a847297c091b2|56dc0ab4c95fc5a9|958a7a1d8a396a13|-984298407||t19318.0166422725s|8370bb33436b7886|199|qs|local|vector|||4.329||
+exportedCO2_1505|stem|d8bb394fac2c9795|f22f6fc3a0e4ed4f|cb94ce65eebac057|-1085069705||t19318.0168319421s|88e7e35f70380d63|220|qs|local|vector|||26.779||
+calibratedParameters_1206|stem|6b7bc27c00cdc8d8|cd83d530582474a1|6d5e45a7a8c83980|-115384287||t19319.2436245738s|d7de6ab2e2a88fdf|12005412|qs|local|vector|||289794.279||
+final_1206|stem|6bf963441da3d9b9|57f24b9d70182cd0|2e82886029b3dcb0|69411098||t19319.245139107s|052c38726cc5c6df|10432689|qs|local|vector|||116.766|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+emissions_1206|stem|e9b650d926659745|20d6c3b51808a6aa|504b5d0af82d3291|-1908237849||t19319.2453185918s|95bd38f26dcebf06|185|qs|local|vector|||4.753||
+written_1206|stem|6a157bd3e3b9fea9|0e9ce8d8f7789892|1b4563539c19f92b|-895296405||t19319.2453636366s|33ed9133631ed976|54|qs|local|vector|||5.284||
+exportedCO2_1206|stem|89df637b346c5439|b1c5bc02acd23807|632d6aa7b8d1c6b0|1677342682||t19319.2456662191s|e8b5e68fd42ecc49|168|qs|local|vector|||38.921||
+calibratedParameters_1705|stem|05a4ffa42a1e84ce|e90159bad233360c|fad246fb23125e6c|95144113||t19320.4307599731s|132ae524b1745d7c|15276573|qs|local|vector|||392332.709||
+final_1705|stem|0ed01263d7576c75|27fc587bf719c123|25f236d690348931|-1157131327||t19320.4323348719s|d4f990acd7589c01|13513497|qs|local|vector|||120.884|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+emissions_1705|stem|965d067ee458596a|f08cdabdab917eca|8e896852c349a4f7|-1336522718||t19320.4325022272s|95bd38f26dcebf06|185|qs|local|vector|||3.501||
+written_1705|stem|6a157bd3e3b9fea9|dfa0e2d4b6d25a1a|4585256cf461e995|-479497245||t19320.4325448183s|33ed9133631ed976|54|qs|local|vector|||4.004||
+exportedCO2_1705|stem|3fad37ecaf2bd99a|4340055580ad948a|c700b57a68f3c519|301739831||t19320.4330152187s|e8b5e68fd42ecc49|168|qs|local|vector|||50.981||
+calibratedParameters_1302|stem|1b1d9e99f662499a|7875d68ef2f18bff|7407ed8e723543f9|-986652424||t19321.6486444692s|a6dd49146a7f0432|12383519|qs|local|vector|||497534.609||
+final_1302|stem|6cc704a29ada2153|c091d5522daf9a3a|94fc962ead8cc058|290507629||t19321.6497261478s|ea97b4ec818e99b9|10935153|qs|local|vector|||79.884|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+emissions_1302|stem|233311da4379b997|0e5874a0d18c8a05|c9ebc17fb5f0a3a5|989616148||t19321.6498746615s|95bd38f26dcebf06|185|qs|local|vector|||3.535||
+written_1302|stem|6a157bd3e3b9fea9|173b852f040bc335|b8ed6664f3a0f852|-1708028475||t19321.6499186416s|33ed9133631ed976|54|qs|local|vector|||3.876||
+exportedCO2_1302|stem|1663e61d376b2746|17a7dc8fd9cb4cab|70ff98b510b53a2a|874225934||t19321.6500413692s|e8b5e68fd42ecc49|168|qs|local|vector|||20.489||
+calibratedParameters_1113|stem|b0eca7f4d75ff0e2|d63f314b2e4d8376|09fcf157a698ac68|-1469581031||t19321.8400924991s|2b3b6dcf69d9592f|17296275|qs|local|vector|||514111.255||
+final_1113|stem|70711b3ecead090b|40bca5e5cc77b6ad|7e4e120b3fcfc31b|952966184||t19321.842428627s|2c73efa124f44eed|14883322|qs|local|vector|||185.419|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+written_1113|stem|6a157bd3e3b9fea9|e089291b30d3ae34|776b2a4abfb06f44|1445372792||t19321.8426142691s|33ed9133631ed976|54|qs|local|vector|||4.144||
+emissions_1113|stem|a8ce59164d9896e6|e0ead21d99d2b15a|d54415d35fe4e35e|78616430||t19321.842657601s|95bd38f26dcebf06|185|qs|local|vector|||3.541||
+exportedCO2_1113|stem|892081d6b4749e33|a54d467b30c4a511|38e2df01148f130f|2064341839||t19321.8430595787s|e8b5e68fd42ecc49|168|qs|local|vector|||46.615||
+calibratedParameters_1209|stem|a4e1a226cffe6326|14309b58a898832f|f9018bd90d6f76fb|371497515||t19322.6980990142s|19cabfbc928829b1|14950721|qs|local|vector|||588260.167||
+final_1209|stem|83f35c062ccea7a7|a4b2eeb97b956020|df6e393da10df846|1518587354||t19322.6999445089s|507554ddce083cf2|13028894|qs|local|vector|||144.133|the condition has length  1 and only the first element will be used. the condition has length  1 and only the first element will be used|
+exportedCO2_1209|stem|ca42aa2829a67901|e0b784e147936007|529657efef59f3f3|-754412055||t19322.7000770971s|b38e013835ac5385|144|qs|local|vector|||3.76||
+emissions_1209|stem|026e79f38819fb9b|87b772ed05fab039|ead5af5c385f1307|268639594||t19322.7001071887s|f9bdba35f90ce03b|194|qs|local|vector|||3.512||
+written_1209|stem|6a157bd3e3b9fea9|1b230831dc8fbbeb|14a206f560b09e33|283502832||t19322.7001595481s|33ed9133631ed976|54|qs|local|vector|||4.004||
