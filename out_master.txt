@@ -1147,3 +1147,20 @@ Geodetic CRS:  NAD83
 * built target exportedCO2_1209 [3.76 seconds]
 * built target emissions_1209 [3.512 seconds]
 * built target written_1209 [4.004 seconds]
+* built target calibratedParameters_1804 [17.042 days]
+* start target final_1804
+* built target final_1804 [7.919 minutes]
+* start target exportedCO2_1804
+* start target raymond_18
+* built target exportedCO2_1804 [3.738 seconds]
+* start target exportedCO2_lvl1
+* built target exportedCO2_lvl1 [0.002 seconds]
+* start target calibratedParameters_0603
+* start target calibratedParameters_0704
+* start target calibratedParameters_1507
+* start target emissions_1804
+* start target calibratedParameters_1207
+* start target calibratedParameters_1004
+x error target raymond_18
+* end pipeline [19.993 days]
+There were 50 or more warnings (use warnings() to see the first 50)
