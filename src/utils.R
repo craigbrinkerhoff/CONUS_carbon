@@ -1,8 +1,6 @@
-########################
 #Utility Functions for CO2 transport model
 #Craig Brinkerhoff
 #Summer 2022
-#########################
 
 
 #' temperature dependent Henry's law constant
@@ -458,17 +456,14 @@ writeToFile <- function(rivnet, huc4){
 
 
 
-#' Explots the postFitness option to amend the GA object at each iteration. Allows us to write the best solution from each population to file, and just return the untouched GA object
+#' Exploits the postFitness option to amend the GA object at each iteration. Allows us to write the best solution from each population to file, and just return the untouched GA object
 #'
 #' @name saveIntermediateResults
 #'
 #' @param object: GA object from current iteration
 #'
-#' @return untouched GA object. ALso writes every 25th population best parameter set to file
+#' @return untouched GA object. Also writes every 10th population best parameter set to file
 saveIntermediateResults <- function(object, ...){
-  #make sure these load as it might be running in parallel...
-  library(tidyr, lib.loc = "/nas/cee-water/cjgleason/r-lib/")
-  library(ggplot2, lib.loc = "/nas/cee-water/cjgleason/r-lib/")
   library(readr, lib.loc = "/nas/cee-water/cjgleason/r-lib/")
 
   #only save every 5th population's best parameter set
@@ -478,22 +473,28 @@ saveIntermediateResults <- function(object, ...){
                     'Fwc_riv'=object@bestSol[[object@iter]][3],
                     'Fwc_lake'=object@bestSol[[object@iter]][4])
 
-    #Make plot for current status of calibration
+    #plot and save to file
     forPlot <- data.frame(object@summary)
     forPlot$generation <- 1:nrow(forPlot)
-    forPlot <- gather(forPlot, key=key, value=value, 'mean', 'max')
-    calibrationPlot <- ggplot(forPlot, aes(x=generation, y=value, color=key)) +
-          geom_point(size=4) +
-          geom_line(size=1) +
-          scale_color_brewer(palette='Dark2', name='Current generations \n fitness') +
-          ylab('1 / Cost Function') +
-          xlab('Species generation')
+    forPlot <- tidyr::gather(forPlot, key=key, value=value, 'mean', 'max')
+
+    calibrationPlot <- ggplot(forPlot, aes(x=generation, y=1/value, color=key, group=key)) +
+      geom_point(size=4) +
+      geom_line(size=1) +
+      scale_y_log10()+
+      scale_color_brewer(palette='Dark2', name='Current generations \n fitness') +
+      ylab('Cost Function [ppm]') +
+      xlab('Species generation')
 
     out <- list('parameters'=parameters,
-                'fitness'=max(object@fitness, na.rm=T),
+                'fitness'=1/max(object@fitness, na.rm=T), #multiply by -1 to convert back to real ppm error
+                'iter'=object@iter,
                 'plot'=calibrationPlot)
-
-    write_rds(out, paste0('cache/calibration_upscaling/', HUC2, '/intermediateResult_196p', object@iter, '.rds'))
+    
+    #keep overwriting intermediate results in case a crash or something happens
+    write_rds(out, paste0('cache/intermediateResults/', object@names[[1]],'.rds')) 
   }
+  
+  #return object as is, DO NOT UPDATE don't want to mess up the calibration!!
   return(object)
 }

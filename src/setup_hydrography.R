@@ -153,7 +153,7 @@ setupHydrography <- function(path_to_data, huc4){
   nhd$conus <- ifelse(nhd$NHDPlusID %in% nhd_conus$NHDPlusID, 1,0)
 
   nhd$StreamOrde <- nhd$StreamCalc #stream calc handles divergent streams correctly: https://pubs.usgs.gov/of/2019/1096/ofr20191096.pdf
-  nhd$Q_cms <- nhd$QEMA * 0.0283 #cfs to cms
+  nhd$Q_cms <- nhd$QBMA * 0.0283 #cfs to cms
 
   #handle indiana-effect basin stream orders
   if(huc4 %in% indiana_hucs){

@@ -1,8 +1,6 @@
-##############
 ##Calibration functions for CO2 transport model
 ##Craig Brinkerhoff
 ##Fall 2022
-################
 
 
 #' Wrapper to perform calibration via a genetic algorithm
@@ -24,6 +22,8 @@
 #' @param myPopSize: size of each population in the genetic algorithm [# models per generation]
 #' @param mymaxIter: stopping criterion for max number of generations to evolve
 #' @param myRun: stopping criterion for number of generations with identical performance before stopping
+#' @param mymaxFitness: stopping criterion for upper bound on fitness function [1/ppm]
+#' @param mutationRate: probably of mutation in GA parent chromosome
 #' @param cores: number of cores to run each generation in parallel (i.e. number of population members that are run in parrallel)
 #'
 #' @import ga
@@ -31,7 +31,7 @@
 #' @import ggplot2
 #'
 #' @return list of calibrated parameters, calibration figure, and calibration performance
-calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, emergenceQ, upstreamDF, lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake, upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake, myPopSize, mymaxIter, myRun, mutationRate, cores) {
+calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, emergenceQ, upstreamDF, lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake, upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake, myPopSize, mymaxIter, myRun, mymaxFitness, mutationRate, cores) {
   theme_set(theme_classic())
 
   #skip great lakes
@@ -49,7 +49,9 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
     #handle negative respiration in Great Lakes and Great basin
     lowerFWC_lake <- ifelse(substr(huc4,1,2) %in% c('04','16'), -0.00001, lowerFWC_lake)#NEGATIVE IS FOR GREAT BASIN/GREAT LAKES, WHERE WE LET PHOTOSYNTHESIS OCCUR)
     upperFWC_lake <- ifelse(substr(huc4,1,2) %in% c('04','16'), 0, upperFWC_lake)#NEGATIVE IS FOR GREAT BASIN/GREAT LAKES, WHERE WE LET PHOTOSYNTHESIS OCCUR)
-
+  
+    start <- Sys.time()
+    
     #run genetic algorithm
     calibrateParams <- GA::ga(type = "real-valued",
                             fitness =  function(x) calibrateModel(x, hydrography, huc4, glorich_data, Cgw, Catm, emergenceQ, upstreamDF),
@@ -57,14 +59,18 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
                             upper = c(upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake),
                             popSize = myPopSize,
                             maxiter = mymaxIter,
+                            maxFitness = mymaxFitness,
                             run=myRun,
+                            names=c(huc4,NA,NA,NA),
                             parallel=cores,
                             pmutation = mutationRate,
-                            optim=TRUE, #L-BFGS-B opimization for local searches
-                        #    keepBest = TRUE,
-                        #    postFitness = saveIntermediateResults,
+                            optim=TRUE, #L-BFGS-B optimization
+                            keepBest=TRUE,
+                            postFitness = saveIntermediateResults, #for saving intermediate solutions in case of catastrophe
                             seed = 12) #reproducibility
-
+    
+    end <- Sys.time()
+    
     #plot and save to file
     forPlot <- data.frame(calibrateParams@summary)
     forPlot$generation <- 1:nrow(forPlot)
@@ -73,17 +79,21 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
     calibrationPlot <- ggplot(forPlot, aes(x=generation, y=1/value, color=key, group=key)) +
       geom_point(size=4) +
       geom_line(size=1) +
+      scale_y_log10()+
       scale_color_brewer(palette='Dark2', name='Current generations \n fitness') +
       ylab('Cost Function [ppm]') +
       xlab('Species generation')
 
-      #save calibrated parameter values
+      #save calibrated parameter values, summary plot (and the entire GA object if that's your jam)
       out <- list('Cbz_riv'=calibrateParams@solution[1],
                   'Cbz_lake'=calibrateParams@solution[2],
                   'Fwc_riv'=calibrateParams@solution[3],
                   'Fwc_lake'=calibrateParams@solution[4],
                   'fitness'=calibrateParams@fitnessValue,
-                  'plot'=calibrationPlot)
+                  'plot'=calibrationPlot,
+                  'iter'=calibrateParams@iter,
+                  'calibrationTime'=end - start,
+                  'ga'=calibrateParams)
   }
  return(out)
 }
@@ -174,6 +184,7 @@ calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emer
       dplyr::summarise(medianPCO2 = median(CO2_ppm, na.rm=T))
 
   cost <- sum(c(abs(lakesVSrivers[lakesVSrivers$waterbody == 'Lake/Reservoir',]$medianPCO2 - lakeCO2), abs(lakesVSrivers[lakesVSrivers$waterbody == 'River',]$medianPCO2 - riverCO2)))
+  out <- 1/cost #take reciprocal of function to convert to a maximization problem
 
-  return(1/cost) #because the GA package maximizes the cost function
+  return(out) #because the GA package maximizes the cost function
 }

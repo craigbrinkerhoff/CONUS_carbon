@@ -1,8 +1,6 @@
-##########
 ## Calculates Raymond CO2 flux using their CO2 and their hydrography
 ## Winter 2022
 ## Craig Brinkerhoff/Brian Saccardi
-##########
 
 
 #' Runs rayond upscaling model per huc2 region
@@ -33,11 +31,13 @@ runRaymondModel <- function(path_to_data, HUC2, glorich_data,hydrographyList) {
   yield <- exp(runoff[1,]$Ln.Precipitation...mm.day.1.)/86400*0.001 #[m3/s]
 
   #get glorich co2
-  riverCO2 <- glorich_data[glorich_data$HUC2 == HUC2,]$river #[ppm]
-  lakeCO2 <- glorich_data[glorich_data$HUC2 == HUC2,]$lake #[ppm]
+ # riverCO2 <- glorich_data[glorich_data$HUC2 == HUC2,]$river #[ppm]
+#  lakeCO2 <- glorich_data[glorich_data$HUC2 == HUC2,]$lake #[ppm]
 
   #Use our water temperature data to get a basin average schmidt number
   results <- do.call("rbind", hydrographyList) #make HUC2 river network
+  riverCO2 <- median(results[results$waterbody == 'River',]$CO2_ppm) #use calibrated value to remove uncertainties from CO2s
+  lakeCO2 <- median(results[results$waterbody == 'Lake/Reservoir',]$CO2_ppm) #use calibrated value to remove uncertainties from CO2s
   temp_c <- mean(results$Water_temp_c, na.rm=T)
   henry <- henry_func(mean(results$Water_temp_c, na.rm=T))
   sc <- 1911-118.11*mean(temp_c, na.rm=T)+3.453*mean(temp_c, na.rm=T)^2-0.0413*mean(temp_c, na.rm=T)^3 #Raymond2012/Wanninkof 1991
@@ -145,9 +145,7 @@ runRaymondModel <- function(path_to_data, HUC2, glorich_data,hydrographyList) {
   #calculate regional carbon emissions rate
   rivers_FCO2_RG_total <- rivers_FCO2_RG*sum(pete_network$SA_m2) #[g-C/yr]
 
-  ####################
   #lakes (per stream order)---------------------------------------------------------------------------------------
-  ######################
   #pareto lake distribution by lake size bin
   c <- 0.85 #Raymond 2013
 

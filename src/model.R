@@ -30,9 +30,9 @@
 #' @return returns CO2 concentration [ppm]
 CO2_MODEL <- function(hrt, Q, C_gw, C_atm, C_bz, k_co2, k_bz, F_wc, fromNode, divergence, startflag, waterbody, toNode_vec, CO2_vec, Q_vec, emergenceQ) {
   ### HEADWATER/DIVERGENT REACH FLAG
-  if (startflag == 1 || divergence == 2){ #if headwater or divergent stream, just set to groundwater value and ergent streamflow
+  if (startflag == 1 || divergence == 2){ #if headwater or divergent stream, just set to groundwater value and emergent streamflow
     CO2_last <- C_gw
-    lastQ <- emergenceQ
+    lastQ <- ifelse(emergenceQ >= Q, 0, emergenceQ) #only use emergenceQ if headwater is 'big enough'
   }
 
   ### AVERAGING OF UPSTREAM INPUTS FOR ALL OTHER REACHES --> lastQ and CO2_last
@@ -45,6 +45,7 @@ CO2_MODEL <- function(hrt, Q, C_gw, C_atm, C_bz, k_co2, k_bz, F_wc, fromNode, di
     if (all(is.na(Q_vec[upstreamIndexes]))==1) {
       CO2_last <- C_gw
       lastQ <- emergenceQ
+      lastQ <- ifelse(emergenceQ >= Q, 0, emergenceQ)
     }
   }
 

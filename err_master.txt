@@ -5,9 +5,3 @@ The following objects are masked from 'package:base':
 
     intersect, setdiff, setequal, union
 
-Error:
-! Error running targets::tar_make_future()
-  Target errors: targets::tar_meta(fields = error, complete_only = TRUE)
-  Tips: https://books.ropensci.org/targets/debugging.html
-  Last error: object 'final_1801' not found
-Execution halted
