@@ -11,6 +11,8 @@
 #' @param huc4: basin id
 #' @param glorich_data: obsered CO2 concentrations per region used to upscale
 #' @param Cgw: groundwater CO2 parameter [ppm]
+#' @param emergenceQ: emergent Q from Allen et al. 2018 [m3/s]
+#' @param upstreamDF: oupstram reaches for basin to basin routing
 #' @param lowerCBZ_riv: lower river benthic CO2 parameter bound (for calibration) [ppm]
 #' @param lowerCBZ_lake: lower lake benthic CO2 parameter bound (for calibration) [ppm]
 #' @param lowerFWC_riv: lower river water-column respiration CO2 parameter bound (for calibration) [ppm/s]
@@ -103,7 +105,7 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
 
 
 
-#' Runs the actual model calibration, called by the geneti algorithm
+#' Runs the actual model calibration, called by the genetic algorithm
 #'
 #' @name calibrateModel
 #'
@@ -187,4 +189,54 @@ calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emer
   out <- 1/cost #take reciprocal of function to convert to a maximization problem
 
   return(out) #because the GA package maximizes the cost function
+}
+
+
+
+
+
+
+
+#' To grab calibrated parameters from .futures logs for basins that finish calibrating after master process is (erroneously) dropped by Unity....
+#' @name grabCalibratedParameters_from_logs
+#'
+grabCalibratedParameters_from_logs <- function(huc4){
+  #2/9/23 jobs that finished with no master worker to send them back. They be orphan jobs!!!!!
+  dirs <- list.dirs('/nas/cee-water/cjgleason/craig/CONUS_carbon/cache/20230203_172811-fxvFGQ') #pasted in the cache from the .futures logs just in case futures tries to delete something (I doubt it but still)
+  string <- dirs[grepl(huc4, dirs, fixed=T)][6] #results folder
+  
+  log <- readr::read_rds(paste0(string, '/1.rds'))
+
+  #save calibrated parameter values, summary plot (and the entire GA object if that's your jam)
+  out <- list('Cbz_riv'=log$value$value$object$Cbz_riv,
+              'Cbz_lake'=log$value$value$object$Cbz_lake,
+              'Fwc_riv'=log$value$value$object$Fwc_riv,
+              'Fwc_lake'=log$value$value$object$Fwc_lake,
+              'fitness'=log$value$value$object$fitness,
+              'plot'=log$value$value$object$plot,
+              'iter'=log$value$value$object$iter,
+              'calibrationTime'=log$value$value$object$calibrationTime,
+              'ga'=log$value$value$object$ga)
+
+  return(out)
+}
+
+
+
+
+#' To get general calibration error in ppm
+#' @name calibrationErrorAnalysis
+#'
+calibError <- function(){
+  built <- tar_built(starts_with('calibratedParameters'))
+  skipped <- tar_skipped(starts_with('calibratedParameters'))
+
+  tar_load(starts_with(built))
+  tar_load(starts_with(skipped))
+
+  calibratedParameters <- mget(ls(pattern='calibratedParameters_'))
+
+  fits <- sapply(calibratedParameters, FUN=function(x) x$fitness)
+
+  return(mean(fits, na.rm=T)) #NAs are great lakes
 }

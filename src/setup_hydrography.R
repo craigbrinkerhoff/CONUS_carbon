@@ -7,7 +7,7 @@
 
 #' Preps, builds, and cleans nhd into a usable routing file
 #'
-#' @name calibrateModelWrapper
+#' @name setupHydrography
 #'
 #' @param path_to_data: path to NHD geodatabases
 #' @param huc4: basin id
@@ -241,4 +241,30 @@ setupHydrography <- function(path_to_data, huc4){
                             'frac_lakeVol_m3', 'CatchmentAreaSqKm', 'temp_c', 'HRT', 'henry', 'k_co2', 'k_bz', 'W', 'D', 'V'))
 
   return(nhd)
+}
+
+
+
+
+
+
+
+#' Splits 1710 hydrography into two for compute. These are coastal streams N and S of Colombia River mouth, so we split by the Colombia
+#'
+#' @name split1710
+#'
+#' @param hydrography_1710: 1710 basin routing table
+#' @param sub: '1710a' or '1710b' for 1710 subbasin
+#'
+#' @import dplyr
+#' @import readr
+#'
+#' @return usable routing file for NHD
+split1710 <- function(hydrography_1710, sub){
+  IDs_1710sub <- readr::read_csv(paste0('data/',sub,'IDs.csv')) %>%
+    dplyr::select(c('NHDPlusID'))
+
+  hydrography_1710sub <- dplyr::filter(hydrography_1710, NHDPlusID %in% IDs_1710sub$NHDPlusID)
+
+  return(hydrography_1710sub)
 }

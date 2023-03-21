@@ -31,13 +31,13 @@ runRaymondModel <- function(path_to_data, HUC2, glorich_data,hydrographyList) {
   yield <- exp(runoff[1,]$Ln.Precipitation...mm.day.1.)/86400*0.001 #[m3/s]
 
   #get glorich co2
- # riverCO2 <- glorich_data[glorich_data$HUC2 == HUC2,]$river #[ppm]
-#  lakeCO2 <- glorich_data[glorich_data$HUC2 == HUC2,]$lake #[ppm]
+  riverCO2 <- glorich_data[glorich_data$HUC2 == HUC2,]$river #[ppm]
+  lakeCO2 <- glorich_data[glorich_data$HUC2 == HUC2,]$lake #[ppm]
 
   #Use our water temperature data to get a basin average schmidt number
   results <- do.call("rbind", hydrographyList) #make HUC2 river network
-  riverCO2 <- median(results[results$waterbody == 'River',]$CO2_ppm) #use calibrated value to remove uncertainties from CO2s
-  lakeCO2 <- median(results[results$waterbody == 'Lake/Reservoir',]$CO2_ppm) #use calibrated value to remove uncertainties from CO2s
+#  riverCO2 <- median(results[results$waterbody == 'River',]$CO2_ppm) #use calibrated value to remove uncertainties from CO2s
+#  lakeCO2 <- median(results[results$waterbody == 'Lake/Reservoir',]$CO2_ppm) #use calibrated value to remove uncertainties from CO2s
   temp_c <- mean(results$Water_temp_c, na.rm=T)
   henry <- henry_func(mean(results$Water_temp_c, na.rm=T))
   sc <- 1911-118.11*mean(temp_c, na.rm=T)+3.453*mean(temp_c, na.rm=T)^2-0.0413*mean(temp_c, na.rm=T)^3 #Raymond2012/Wanninkof 1991
@@ -137,13 +137,13 @@ runRaymondModel <- function(path_to_data, HUC2, glorich_data,hydrographyList) {
   pete_network$k_600 <- pete_network$slope*pete_network$velocity*2841.6+2.03 #[m/day]
   pete_network$k_co2 <- pete_network$k_600/(600/sc)^-0.5
   pete_network$k_co2_m_s <- (pete_network$k_co2)/(24*60*60) #[m/s]
-  rivers_k_co2_RG_m_s <- weighted.mean(pete_network$k_co2_m_s, pete_network$SA_m2) #normalize by surface area for each order
+  rivers_k_co2_RG_m_s <- weighted.mean(pete_network$k_co2_m_s, pete_network$SA_m2, na.rm=T) #normalize by surface area for each order
 
   #calculate a regional fco2
   rivers_FCO2_RG <- ((riverCO2-390)*henry*1e-6)*rivers_k_co2_RG_m_s*(1/0.001)*12.01*(60*60*24*365) #[g-C/m2/yr]
 
   #calculate regional carbon emissions rate
-  rivers_FCO2_RG_total <- rivers_FCO2_RG*sum(pete_network$SA_m2) #[g-C/yr]
+  rivers_FCO2_RG_total <- rivers_FCO2_RG*sum(pete_network$SA_m2, na.rm=T) #[g-C/yr]
 
   #lakes (per stream order)---------------------------------------------------------------------------------------
   #pareto lake distribution by lake size bin
@@ -185,7 +185,7 @@ runRaymondModel <- function(path_to_data, HUC2, glorich_data,hydrographyList) {
 
   pete_lake_reservoir$surface_area_fin_skm <- ifelse(is.na(pete_lake_reservoir$obs_surface_area_km2)==1, pete_lake_reservoir$mean_area_km2*pete_lake_reservoir$binned_num_lakes, pete_lake_reservoir$obs_surface_area_km2)
 
-  pete_lake_reservoir$k600_m_dy <- c(0.54, 1.16, 1.32, 1.32, 1.9) #[m/dy] Read etal 2012
+  pete_lake_reservoir$k600_m_dy <- c(0.54, 1.16, 1.32, 1.9, 1.9) #[m/dy] Read etal 2012
   pete_lake_reservoir$kco2 <- pete_lake_reservoir$k600_m_dy/(600/sc)^-0.5
   pete_lake_reservoir$k_co2_m_s <- (pete_lake_reservoir$kco2)/(24*60*60) #[m/s]
 
@@ -193,7 +193,7 @@ runRaymondModel <- function(path_to_data, HUC2, glorich_data,hydrographyList) {
   pete_lake_reservoir$lakes_FCO2_RG <- ((lakeCO2-390)*henry*1e-6)*pete_lake_reservoir$k_co2_m_s*(1/0.001)*12.01*(60*60*24*365) #[g-C/m2/yr]
 
   #calculate regional carbon emissions rate
-  lakes_FCO2_RG_total <- sum(pete_lake_reservoir$lakes_FCO2_RG*pete_lake_reservoir$surface_area_fin_skm*1e6) #[g-C/yr]
+  lakes_FCO2_RG_total <- sum(pete_lake_reservoir$lakes_FCO2_RG*pete_lake_reservoir$surface_area_fin_skm*1e6, na.rm=T) #[g-C/yr]
 
   #save results to file-----------------------------------
   network_fluxes_RG <- data.frame('huc2'=HUC2,
