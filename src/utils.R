@@ -230,6 +230,50 @@ calcEmissions <- function(model, huc4){
 }
 
 
+emissions_uncertainty <- function(calibratedParameters, model){
+  combined_fitness <- calibratedParameters$fitness
+  cost <- (1/combined_fitness)/2 #eq 16 in paper
+
+  model$sa <- ifelse(model$waterbody == 'River', model$W_m*model$LengthKM*1000, model$lakeSA_m2) #m2
+  SA <- sum(model$sa, na.rm=T) #m2
+
+  sigma <- median(model$k_co2_m_s, na.rm=T) * ((cost*median(model$henry, na.rm=T))/1000000)*(1/0.001)*12.01*(60*60*24*365) #g-C/m2/yr
+  sigma <- sigma * SA * 1e-12 #Tg-C/yr
+
+  return(sigma) #Tg-C/yr
+}
+
+
+
+saveShapefile_huc2 <- function(path_to_data, codes_huc02, raymond_01, raymond_02, raymond_03, raymond_06, raymond_09, raymond_11, raymond_12, raymond_14, raymond_16, raymond_18){
+  combined_results <- rbind(raymond_01, raymond_02, raymond_03, raymond_06, raymond_09, raymond_11, raymond_12, raymond_14, raymond_16, raymond_18)
+
+    #read in all HUC4 basins
+    basins_overall <- sf::st_read(paste0(path_to_data, '/HUC2_', codes_huc02[1], '/WBD_', codes_huc02[1], '_HU2_Shape/Shape/WBDHU2.shp')) %>% dplyr::select(c('huc2', 'name'))
+    for(i in codes_huc02[-1]){
+      basins <- sf::st_read(paste0(path_to_data, '/HUC2_', i, '/WBD_', i, '_HU2_Shape/Shape/WBDHU2.shp')) %>%
+          dplyr::select(c('huc2', 'name')) #basin polygons
+      basins_overall <- rbind(basins_overall, basins)
+    }
+
+    #join model results
+    basins_overall <- dplyr::left_join(basins_overall, combined_results, by='huc2') %>%
+      dplyr::group_by(huc2) %>% #sum rivers and lakes/reservoirs
+      dplyr::summarise(sumFCO2_lumped_TgC_yr = sum(sumFCO2_lumped_TgC_yr),
+               sumFCO2_TgC_yr = sum(sumFCO2_TgC_yr),
+               sumFCO2_conus_TgC_yr = sum(sumFCO2_conus_TgC_yr),
+               sumFCO2_semiDist_TgC_yr = sum(sumFCO2_semiDist_TgC_yr),
+               cal_uncertainty = mean(cal_uncertainty)) #take mean of identical numbers to pass the value through the group_by
+
+    #round for mapping
+    basins_overall <- dplyr::select(basins_overall, c('huc2', 'sumFCO2_lumped_TgC_yr', 'sumFCO2_semiDist_TgC_yr', 'sumFCO2_TgC_yr', 'sumFCO2_conus_TgC_yr', 'cal_uncertainty'))
+  
+    #return shapefile
+    return(basins_overall)
+}
+
+
+
 
 #' Finds model properties for reaches that connect to basins downstream (i.e. the exported values from the basin)
 #'
@@ -253,7 +297,7 @@ getExported <- function(model, huc4, lookUpTable,Catm) {
     return(out)
   }
 
-  indiana_hucs <- c('0508', '0509', '0514', '0512', '0712', '0404', '0405', '0410') #indiana-effected basins
+  indiana_hucs <- c('0508', '0509', '0514', '0512', '0712', '0404', '0405', '0410') #Indiana-effected basins
 
   out <- data.frame()
   for(downstreamBasin in downstreamBasins){
@@ -390,6 +434,10 @@ fixBadTemps <- function(temp, temp_vec, fromNode, fromNode_vec, toNode, toNode_v
 }
 
 
+
+
+
+
 #' Aggregates combined targets at each processing level into a single dataset of basin flux results
 #'
 #' @name aggregateAllLevels
@@ -433,7 +481,7 @@ abstractAllResults <- function(allResults, raymondList){
                          n = sum(n))
 
   huc2Raymond <- dplyr::group_by(raymond, huc2) %>%
-        dplyr::summarise(sumFCO2_raymond_TgC_yr = sum(sumFCO2_RG_TgC_yr))
+        dplyr::summarise(sumFCO2_raymond_TgC_yr = sum(sumFCO2_lumped_TgC_yr))
 
   out <- left_join(huc2Results, huc2Raymond, by='huc2')
   return(out)

@@ -77,7 +77,8 @@ mapped_lvlTerminal <- tar_map(
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #terminal basins that need to pull from cached results because of hpc problems...
@@ -92,7 +93,8 @@ mapped_lvlTerminal_bugFix <- tar_map(
        tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)),
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 
@@ -113,7 +115,8 @@ mapped_lvl0 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,C_atmosphere)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #level 0 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters.... SHOULD BE REMOVED IF YOU NEED TO RERUN AFTER FIXING BATCHTOOLS BUG
@@ -129,7 +132,8 @@ mapped_lvl0_bugFix <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #level 1 downstream basins
@@ -149,7 +153,8 @@ mapped_lvl1 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl0)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #level 1 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters.... SHOULD BE REMOVED IF YOU NEED TO RERUN AFTER FIXING BATCHTOOLS BUG
@@ -165,7 +170,8 @@ mapped_lvl1_bugFix <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl0)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #level 2 downstream basins
@@ -185,7 +191,8 @@ mapped_lvl2 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl1)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #level 2 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters.... SHOULD BE REMOVED IF YOU NEED TO RERUN AFTER FIXING BATCHTOOLS BUG
@@ -201,7 +208,8 @@ mapped_lvl2_bugFix <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl1)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 
@@ -222,7 +230,8 @@ mapped_lvl3 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl2)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #level 4 downstream basins
@@ -242,7 +251,8 @@ mapped_lvl4 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl3)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #level 5 downstream basins
@@ -262,7 +272,8 @@ mapped_lvl5 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl4)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #level 6 downstream basins
@@ -282,7 +293,8 @@ mapped_lvl6 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl5)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #level 7 downstream basins
@@ -302,7 +314,8 @@ mapped_lvl7 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl6)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #level 8 downstream basins
@@ -322,7 +335,8 @@ mapped_lvl8 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl7)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 
@@ -343,7 +357,8 @@ mapped_lvl9 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl8)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 
@@ -364,7 +379,8 @@ mapped_lvl10 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl9)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 
@@ -385,7 +401,8 @@ mapped_lvl11 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl10)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 
@@ -406,7 +423,8 @@ mapped_lvl12 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl11)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 
@@ -427,7 +445,8 @@ mapped_lvl13 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl12)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 
@@ -448,7 +467,8 @@ mapped_lvl14 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl13)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 
@@ -469,7 +489,8 @@ mapped_lvl15 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl14)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #level 16 downstream basins
@@ -489,7 +510,8 @@ mapped_lvl16 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl15)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 
@@ -510,7 +532,8 @@ mapped_lvl17 <- tar_map(
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl16)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 
@@ -530,7 +553,8 @@ mapped_lvl18 <- tar_map(
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl17)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
-       tar_target(emissions, calcEmissions(final, huc4)) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 #Special 1710 basin splitting
@@ -548,7 +572,8 @@ mapped_1710 <- tar_map(
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, substr(sub,1,4), emergenceQ, NA)), #run final version of model
        tar_target(written, writeToFile(final, substr(sub,1,4))), #write final model to file
-       tar_target(emissions, calcEmissions(final, substr(sub,1,4))) #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, substr(sub,1,4))), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
 
 
@@ -881,27 +906,67 @@ list(
   mapped_1710,
   tar_combine(combined_emissions_1710, mapped_1710$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
-  #### run raymond upscaling per HUC2 (must be hardcoded, unfortunately, to get the HUC4 network objects)
-  tar_target(raymond_01, runRaymondModel(path_to_dataRaymond, '01', raymond_coscat_lookup, list(final_0101, final_0102, final_0103, final_0104, final_0105, final_0106, final_0107, final_0108, final_0109, final_0110))),
-  tar_target(raymond_02, runRaymondModel(path_to_dataRaymond, '02', raymond_coscat_lookup, list(final_0202, final_0203, final_0204, final_0205))),
-  tar_target(raymond_03, runRaymondModel(path_to_dataRaymond, '03', raymond_coscat_lookup, list(final_0301, final_0302, final_0303, final_0304, final_0305, final_0306, final_0307, final_0308, final_0309, final_0310, final_0311, final_0312, final_0313, final_0314, final_0315, final_0316, final_0317, final_0318))),
-  tar_target(raymond_04, runRaymondModel(path_to_dataRaymond, '04', raymond_coscat_lookup, list(final_0401,final_0402, final_0403, final_0404, final_0405, final_0406, final_0407, final_0408, final_0409, final_0410, final_0411, final_0412, final_0413, final_0414, final_0418, final_0419, final_0420, final_0424,
-                                                                                            final_0426, final_0427, final_0428, final_0429, final_0430))),
-  tar_target(raymond_05, runRaymondModel(path_to_dataRaymond, '05', raymond_coscat_lookup, list(final_0501, final_0502, final_0503, final_0504, final_0505, final_0506, final_0507, final_0508, final_0509, final_0510, final_0511, final_0512, final_0513, final_0514))),
-  tar_target(raymond_06, runRaymondModel(path_to_dataRaymond, '06', raymond_coscat_lookup, list(final_0601, final_0602, final_0603, final_0604))),
-  tar_target(raymond_07, runRaymondModel(path_to_dataRaymond, '07', raymond_coscat_lookup, list(final_0701, final_0702, final_0703, final_0704, final_0705, final_0706, final_0707, final_0708, final_0709, final_0710, final_0711, final_0712, final_0713, final_0714))),
-  tar_target(raymond_08, runRaymondModel(path_to_dataRaymond, '08', raymond_coscat_lookup, list(final_0801, final_0802, final_0803, final_0804, final_0805, final_0806, final_0808, final_0809))),
-  tar_target(raymond_09, runRaymondModel(path_to_dataRaymond, '09', raymond_coscat_lookup, list(final_0901, final_0902, final_0903, final_0904))),
-  tar_target(raymond_10, runRaymondModel(path_to_dataRaymond, '10', raymond_coscat_lookup, list(final_1002, final_1003, final_1004, final_1005, final_1006, final_1007, final_1008, final_1009, final_1010, final_1011, final_1012, final_1013, final_1014, final_1015,
-                                                                                            final_1016, final_1017, final_1018, final_1019, final_1020, final_1021, final_1022, final_1023, final_1024, final_1025, final_1026, final_1027, final_1028, final_1029, final_1030))),
-  tar_target(raymond_11, runRaymondModel(path_to_dataRaymond, '11', raymond_coscat_lookup, list(final_1101, final_1103, final_1103, final_1104, final_1105, final_1106, final_1107, final_1108, final_1109, final_1110, final_1111, final_1112, final_1113, final_1114))),
-  tar_target(raymond_12, runRaymondModel(path_to_dataRaymond, '12', raymond_coscat_lookup, list(final_1201, final_1202, final_1203, final_1204, final_1205, final_1206, final_1207, final_1208, final_1209, final_1210, final_1211))),
-  tar_target(raymond_13, runRaymondModel(path_to_dataRaymond, '13', raymond_coscat_lookup, list(final_1301, final_1302, final_1303, final_1304, final_1305, final_1306, final_1307, final_1308, final_1309))),
-  tar_target(raymond_14, runRaymondModel(path_to_dataRaymond, '14', raymond_coscat_lookup, list(final_1401, final_1402, final_1403, final_1404, final_1405, final_1406, final_1407, final_1408))),
-  tar_target(raymond_15, runRaymondModel(path_to_dataRaymond, '15', raymond_coscat_lookup, list(final_1501, final_1502, final_1503, final_1504, final_1505, final_1506, final_1507, final_1508))),
-  tar_target(raymond_16, runRaymondModel(path_to_dataRaymond, '16', raymond_coscat_lookup, list(final_1601, final_1602, final_1603, final_1604, final_1605, final_1606))),
-  tar_target(raymond_17, runRaymondModel(path_to_dataRaymond, '17', raymond_coscat_lookup, list(final_1701, final_1702, final_1703, final_1704, final_1705, final_1706, final_1707, final_1708, final_1709, final_1710a, final_1710b, final_1711, final_1712))),
-#  tar_target(raymond_18, runRaymondModel(path_to_dataRaymond, '18', raymond_coscat_lookup, list(final_1801, final_1802, final_1803, final_1804, final_1805, final_1806, final_1807, final_1808, final_1809, final_1810))),
+  #### RUN LUMPED MODELS AND COMPARE AGAINST OUR MODEL (AND UNCERTAINTY)----------------------------------------------------
+  tar_target(lumped_01, runLumpedModels(path_to_dataRaymond, '01', raymond_coscat_lookup, list(hydrography_0101, hydrography_0102, hydrography_0103, hydrography_0104, hydrography_0105, hydrography_0106, hydrography_0107, hydrography_0108, hydrography_0109, hydrography_0110),
+                                                                                           list(emissions_0101, emissions_0102, emissions_0103, emissions_0104, emissions_0105, emissions_0106, emissions_0107, emissions_0108, emissions_0109, emissions_0110),
+                                                                                           list(cal_uncertainty_0101, cal_uncertainty_0102, cal_uncertainty_0103, cal_uncertainty_0104, cal_uncertainty_0105, cal_uncertainty_0106, cal_uncertainty_0107, cal_uncertainty_0108, cal_uncertainty_0109, cal_uncertainty_0110))),
+  tar_target(lumped_02, runLumpedModels(path_to_dataRaymond, '02', raymond_coscat_lookup, list(hydrography_0202, hydrography_0203, hydrography_0204, hydrography_0205),
+                                                                                           list(emissions_0202, emissions_0203, emissions_0204, emissions_0205),
+                                                                                           list(cal_uncertainty_0202, cal_uncertainty_0203, cal_uncertainty_0204, cal_uncertainty_0205))),
+  tar_target(lumped_03, runLumpedModels(path_to_dataRaymond, '03', raymond_coscat_lookup, list(hydrography_0301, hydrography_0302, hydrography_0303, hydrography_0304, hydrography_0305, hydrography_0306, hydrography_0307, hydrography_0308, hydrography_0309, hydrography_0310, hydrography_0311, hydrography_0312, hydrography_0313, hydrography_0314, hydrography_0315, hydrography_0316, hydrography_0317, hydrography_0318),
+                                                                                           list(emissions_0301, emissions_0302, emissions_0303, emissions_0304, emissions_0305, emissions_0306, emissions_0307, emissions_0308, emissions_0309, emissions_0310, emissions_0311, emissions_0312, emissions_0313, emissions_0314, emissions_0315, emissions_0316, emissions_0317, emissions_0318),
+                                                                                           list(cal_uncertainty_0301, cal_uncertainty_0302, cal_uncertainty_0303, cal_uncertainty_0304, cal_uncertainty_0305, cal_uncertainty_0306, cal_uncertainty_0307, cal_uncertainty_0308, cal_uncertainty_0309, cal_uncertainty_0310, cal_uncertainty_0311, cal_uncertainty_0312, cal_uncertainty_0313, cal_uncertainty_0314, cal_uncertainty_0315, cal_uncertainty_0316, cal_uncertainty_0317, cal_uncertainty_0318))),
+  tar_target(lumped_04, runLumpedModels(path_to_dataRaymond, '04', raymond_coscat_lookup, list(hydrography_0401,hydrography_0402, hydrography_0403, hydrography_0404, hydrography_0405, hydrography_0406, hydrography_0407, hydrography_0408, hydrography_0409, hydrography_0410, hydrography_0411, hydrography_0412, hydrography_0413, hydrography_0414, hydrography_0418, hydrography_0419, hydrography_0420, hydrography_0424,
+                                                                                            hydrography_0426, hydrography_0427, hydrography_0428, hydrography_0429, hydrography_0430),
+                                                                                           list(emissions_0401,emissions_0402, emissions_0403, emissions_0404, emissions_0405, emissions_0406, emissions_0407, emissions_0408, emissions_0409, emissions_0410, emissions_0411, emissions_0412, emissions_0413, emissions_0414, emissions_0418, emissions_0419, emissions_0420, emissions_0424,
+                                                                                            emissions_0426, emissions_0427, emissions_0428, emissions_0429, emissions_0430),
+                                                                                           list(cal_uncertainty_0401,cal_uncertainty_0402, cal_uncertainty_0403, cal_uncertainty_0404, cal_uncertainty_0405, cal_uncertainty_0406, cal_uncertainty_0407, cal_uncertainty_0408, cal_uncertainty_0409, cal_uncertainty_0410, cal_uncertainty_0411, cal_uncertainty_0412, cal_uncertainty_0413, cal_uncertainty_0414, cal_uncertainty_0418, cal_uncertainty_0419, cal_uncertainty_0420, cal_uncertainty_0424,
+                                                                                            cal_uncertainty_0426, cal_uncertainty_0427, cal_uncertainty_0428, cal_uncertainty_0429, cal_uncertainty_0430))),
+  tar_target(lumped_05, runLumpedModels(path_to_dataRaymond, '05', raymond_coscat_lookup, list(hydrography_0501, hydrography_0502, hydrography_0503, hydrography_0504, hydrography_0505, hydrography_0506, hydrography_0507, hydrography_0508, hydrography_0509, hydrography_0510, hydrography_0511, hydrography_0512, hydrography_0513, hydrography_0514),
+                                                                                           list(emissions_0501, emissions_0502, emissions_0503, emissions_0504, emissions_0505, emissions_0506, emissions_0507, emissions_0508, emissions_0509, emissions_0510, emissions_0511, emissions_0512, emissions_0513, emissions_0514),
+                                                                                           list(cal_uncertainty_0501, cal_uncertainty_0502, cal_uncertainty_0503, cal_uncertainty_0504, cal_uncertainty_0505, cal_uncertainty_0506, cal_uncertainty_0507, cal_uncertainty_0508, cal_uncertainty_0509, cal_uncertainty_0510, cal_uncertainty_0511, cal_uncertainty_0512, cal_uncertainty_0513, cal_uncertainty_0514))),
+  tar_target(lumped_06, runLumpedModels(path_to_dataRaymond, '06', raymond_coscat_lookup, list(hydrography_0601, hydrography_0602, hydrography_0603, hydrography_0604),
+                                                                                           list(emissions_0601, emissions_0602, emissions_0603, emissions_0604),
+                                                                                           list(cal_uncertainty_0601, cal_uncertainty_0602, cal_uncertainty_0603, cal_uncertainty_0604))),
+  tar_target(lumped_07, runLumpedModels(path_to_dataRaymond, '07', raymond_coscat_lookup, list(hydrography_0701, hydrography_0702, hydrography_0703, hydrography_0704, hydrography_0705, hydrography_0706, hydrography_0707, hydrography_0708, hydrography_0709, hydrography_0710, hydrography_0711, hydrography_0712, hydrography_0713, hydrography_0714),
+                                                                                           list(emissions_0701, emissions_0702, emissions_0703, emissions_0704, emissions_0705, emissions_0706, emissions_0707, emissions_0708, emissions_0709, emissions_0710, emissions_0711, emissions_0712, emissions_0713, emissions_0714),
+                                                                                           list(cal_uncertainty_0701, cal_uncertainty_0702, cal_uncertainty_0703, cal_uncertainty_0704, cal_uncertainty_0705, cal_uncertainty_0706, cal_uncertainty_0707, cal_uncertainty_0708, cal_uncertainty_0709, cal_uncertainty_0710, cal_uncertainty_0711, cal_uncertainty_0712, cal_uncertainty_0713, cal_uncertainty_0714))),
+  tar_target(lumped_08, runLumpedModels(path_to_dataRaymond, '08', raymond_coscat_lookup, list(hydrography_0801, hydrography_0802, hydrography_0803, hydrography_0804, hydrography_0805, hydrography_0806, hydrography_0808, hydrography_0809),
+                                                                                           list(emissions_0801, emissions_0802, emissions_0803, emissions_0804, emissions_0805, emissions_0806, emissions_0808, emissions_0809),
+                                                                                           list(cal_uncertainty_0801, cal_uncertainty_0802, cal_uncertainty_0803, cal_uncertainty_0804, cal_uncertainty_0805, cal_uncertainty_0806, cal_uncertainty_0808, cal_uncertainty_0809))),
+  tar_target(lumped_09, runLumpedModels(path_to_dataRaymond, '09', raymond_coscat_lookup, list(hydrography_0901, hydrography_0902, hydrography_0903, hydrography_0904),
+                                                                                           list(emissions_0901, emissions_0902, emissions_0903, emissions_0904),
+                                                                                           list(cal_uncertainty_0901, cal_uncertainty_0902, cal_uncertainty_0903, cal_uncertainty_0904))),
+  tar_target(lumped_10, runLumpedModels(path_to_dataRaymond, '10', raymond_coscat_lookup, list(hydrography_1002, hydrography_1003, hydrography_1004, hydrography_1005, hydrography_1006, hydrography_1007, hydrography_1008, hydrography_1009, hydrography_1010, hydrography_1011, hydrography_1012, hydrography_1013, hydrography_1014, hydrography_1015,
+                                                                                            hydrography_1016, hydrography_1017, hydrography_1018, hydrography_1019, hydrography_1020, hydrography_1021, hydrography_1022, hydrography_1023, hydrography_1024, hydrography_1025, hydrography_1026, hydrography_1027, hydrography_1028, hydrography_1029, hydrography_1030),
+                                                                                           list(emissions_1002, emissions_1003, emissions_1004, emissions_1005, emissions_1006, emissions_1007, emissions_1008, emissions_1009, emissions_1010, emissions_1011, emissions_1012, emissions_1013, emissions_1014, emissions_1015,
+                                                                                            emissions_1016, emissions_1017, emissions_1018, emissions_1019, emissions_1020, emissions_1021, emissions_1022, emissions_1023, emissions_1024, emissions_1025, emissions_1026, emissions_1027, emissions_1028, emissions_1029, emissions_1030),
+                                                                                           list(cal_uncertainty_1002, cal_uncertainty_1003, cal_uncertainty_1004, cal_uncertainty_1005, cal_uncertainty_1006, cal_uncertainty_1007, cal_uncertainty_1008, cal_uncertainty_1009, cal_uncertainty_1010, cal_uncertainty_1011, cal_uncertainty_1012, cal_uncertainty_1013, cal_uncertainty_1014, cal_uncertainty_1015,
+                                                                                            cal_uncertainty_1016, cal_uncertainty_1017, cal_uncertainty_1018, cal_uncertainty_1019, cal_uncertainty_1020, cal_uncertainty_1021, cal_uncertainty_1022, cal_uncertainty_1023, cal_uncertainty_1024, cal_uncertainty_1025, cal_uncertainty_1026, cal_uncertainty_1027, cal_uncertainty_1028, cal_uncertainty_1029, cal_uncertainty_1030))),
+  tar_target(lumped_11, runLumpedModels(path_to_dataRaymond, '11', raymond_coscat_lookup, list(hydrography_1101, hydrography_1103, hydrography_1103, hydrography_1104, hydrography_1105, hydrography_1106, hydrography_1107, hydrography_1108, hydrography_1109, hydrography_1110, hydrography_1111, hydrography_1112, hydrography_1113, hydrography_1114),
+                                                                                           list(emissions_1101, emissions_1103, emissions_1103, emissions_1104, emissions_1105, emissions_1106, emissions_1107, emissions_1108, emissions_1109, emissions_1110, emissions_1111, emissions_1112, emissions_1113, emissions_1114),
+                                                                                           list(cal_uncertainty_1101, cal_uncertainty_1103, cal_uncertainty_1103, cal_uncertainty_1104, cal_uncertainty_1105, cal_uncertainty_1106, cal_uncertainty_1107, cal_uncertainty_1108, cal_uncertainty_1109, cal_uncertainty_1110, cal_uncertainty_1111, cal_uncertainty_1112, cal_uncertainty_1113, cal_uncertainty_1114))),
+  tar_target(lumped_12, runLumpedModels(path_to_dataRaymond, '12', raymond_coscat_lookup, list(hydrography_1201, hydrography_1202, hydrography_1203, hydrography_1204, hydrography_1205, hydrography_1206, hydrography_1207, hydrography_1208, hydrography_1209, hydrography_1210, hydrography_1211),
+                                                                                           list(emissions_1201, emissions_1202, emissions_1203, emissions_1204, emissions_1205, emissions_1206, emissions_1207, emissions_1208, emissions_1209, emissions_1210, emissions_1211),
+                                                                                           list(cal_uncertainty_1201, cal_uncertainty_1202, cal_uncertainty_1203, cal_uncertainty_1204, cal_uncertainty_1205, cal_uncertainty_1206, cal_uncertainty_1207, cal_uncertainty_1208, cal_uncertainty_1209, cal_uncertainty_1210, cal_uncertainty_1211))),
+  tar_target(lumped_13, runLumpedModels(path_to_dataRaymond, '13', raymond_coscat_lookup, list(hydrography_1301, hydrography_1302, hydrography_1303, hydrography_1304, hydrography_1305, hydrography_1306, hydrography_1307, hydrography_1308, hydrography_1309),
+                                                                                           list(emissions_1301, emissions_1302, emissions_1303, emissions_1304, emissions_1305, emissions_1306, emissions_1307, emissions_1308, emissions_1309),
+                                                                                           list(cal_uncertainty_1301, cal_uncertainty_1302, cal_uncertainty_1303, cal_uncertainty_1304, cal_uncertainty_1305, cal_uncertainty_1306, cal_uncertainty_1307, cal_uncertainty_1308, cal_uncertainty_1309))),
+  tar_target(lumped_14, runLumpedModels(path_to_dataRaymond, '14', raymond_coscat_lookup, list(hydrography_1401, hydrography_1402, hydrography_1403, hydrography_1404, hydrography_1405, hydrography_1406, hydrography_1407, hydrography_1408),
+                                                                                           list(emissions_1401, emissions_1402, emissions_1403, emissions_1404, emissions_1405, emissions_1406, emissions_1407, emissions_1408),
+                                                                                           list(cal_uncertainty_1401, cal_uncertainty_1402, cal_uncertainty_1403, cal_uncertainty_1404, cal_uncertainty_1405, cal_uncertainty_1406, cal_uncertainty_1407, cal_uncertainty_1408))),
+  tar_target(lumped_15, runLumpedModels(path_to_dataRaymond, '15', raymond_coscat_lookup, list(hydrography_1501, hydrography_1502, hydrography_1503, hydrography_1504, hydrography_1505, hydrography_1506, hydrography_1507, hydrography_1508),
+                                                                                           list(emissions_1501, emissions_1502, emissions_1503, emissions_1504, emissions_1505, emissions_1506, emissions_1507, emissions_1508),
+                                                                                           list(cal_uncertainty_1501, cal_uncertainty_1502, cal_uncertainty_1503, cal_uncertainty_1504, cal_uncertainty_1505, cal_uncertainty_1506, cal_uncertainty_1507, cal_uncertainty_1508))),
+  tar_target(lumped_16, runLumpedModels(path_to_dataRaymond, '16', raymond_coscat_lookup, list(hydrography_1601, hydrography_1602, hydrography_1603, hydrography_1604, hydrography_1605, hydrography_1606),
+                                                                                           list(emissions_1601, emissions_1602, emissions_1603, emissions_1604, emissions_1605, emissions_1606),
+                                                                                           list(cal_uncertainty_1601, cal_uncertainty_1602, cal_uncertainty_1603, cal_uncertainty_1604, cal_uncertainty_1605, cal_uncertainty_1606))),
+  tar_target(lumped_17, runLumpedModels(path_to_dataRaymond, '17', raymond_coscat_lookup, list(hydrography_1701, hydrography_1702, hydrography_1703, hydrography_1704, hydrography_1705, hydrography_1706, hydrography_1707, hydrography_1708, hydrography_1709, hydrography_1710a, hydrography_1710b, hydrography_1711, hydrography_1712),
+                                                                                           list(emissions_1701, emissions_1702, emissions_1703, emissions_1704, emissions_1705, emissions_1706, emissions_1707, emissions_1708, emissions_1709, emissions_1710a, emissions_1710b, emissions_1711, emissions_1712),
+                                                                                           list(cal_uncertainty_1701, cal_uncertainty_1702, cal_uncertainty_1703, cal_uncertainty_1704, cal_uncertainty_1705, cal_uncertainty_1706, cal_uncertainty_1707, cal_uncertainty_1708, cal_uncertainty_1709, cal_uncertainty_1710a, cal_uncertainty_1710b, cal_uncertainty_1711, cal_uncertainty_1712))),
+  tar_target(lumped_18, runLumpedModels(path_to_dataRaymond, '18', raymond_coscat_lookup, list(hydrography_1801, hydrography_1802, hydrography_1803, hydrography_1804, hydrography_1805, hydrography_1806, hydrography_1807, hydrography_1808, hydrography_1809, hydrography_1810),
+                                                                                           list(emissions_1801, emissions_1802, emissions_1803, emissions_1804, emissions_1805, emissions_1806, emissions_1807, emissions_1808, emissions_1809, emissions_1810),
+                                                                                           list(cal_uncertainty_1801, cal_uncertainty_1802, cal_uncertainty_1803, cal_uncertainty_1804, cal_uncertainty_1805, cal_uncertainty_1806, cal_uncertainty_1807, cal_uncertainty_1808, cal_uncertainty_1809, cal_uncertainty_1810))),
 
   #### bring together all levels of results via utility functions (can't combine a combined for some reason...)
   tar_target(allModelResults, aggregateAllLevels(combined_emissions_lvlTerminal, combined_emissions_lvl0, combined_emissions_lvl1, combined_emissions_lvl2, combined_emissions_lvl3, combined_emissions_lvl4,
@@ -909,9 +974,15 @@ list(
                                                  combined_emissions_lvl10, combined_emissions_lvl11, combined_emissions_lvl12, combined_emissions_lvl13, combined_emissions_lvl14,
                                                  combined_emissions_lvl15, combined_emissions_lvl16, combined_emissions_lvl17, combined_emissions_lvl18, combined_emissions_1710), deployment = "main"),
 
-  #### join raymond model and aggregate to HUC2 level
+  #### join lumped modelS and aggregate to HUC2 level
 #  tar_target(allResults, abstractAllResults(allModelResults, list(raymond_01, raymond_02, raymond_03, raymond_04, raymond_05, raymond_06, raymond_07, raymond_08, raymond_09, raymond_10,
 #                                                                  raymond_11, raymond_12, raymond_13, raymond_14, raymond_15, raymond_16, raymond_17, raymond_18)), deployment = "main")
+
+  #figures
+  tar_target(shapefile_huc2, saveShapefile_huc2(path_to_data, c('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18'),
+                                                lumped_01, lumped_02, lumped_03, lumped_06, lumped_09, lumped_11, lumped_12, lumped_14, lumped_16, lumped_18)),
+  tar_target(modelsCompare, compareLumpedFig(path_to_data, shapefile_huc2)),
+  tar_target(modelsConceptual, conceptualPlot(final_0107, raymond_coscat_lookup)),
 
   # validate discharge model
   tar_target(nhdGages, getNHDGages(path_to_data, c('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18'))), #gages joined to NHD a priori, used for erom verification

@@ -1168,3 +1168,41 @@ Geodetic CRS:  NAD83
 * built target emissions_1006 [5.81 seconds]
 * built target written_1006 [5.217 seconds]
 * built target exportedCO2_1006 [27.915 seconds]
+* built target calibratedParameters_0804 [1.304 days]
+* start target final_0804
+* built target final_0804 [1.275 minutes]
+* start target emissions_0804
+* start target exportedCO2_0804
+* start target written_0804
+* built target emissions_0804 [5.958 seconds]
+* built target written_0804 [6.047 seconds]
+* built target exportedCO2_0804 [38.613 seconds]
+* built target calibratedParameters_1111 [1.406 days]
+* start target final_1111
+* built target final_1111 [1.011 minutes]
+* start target written_1111
+* start target exportedCO2_1111
+* start target emissions_1111
+* start target raymond_11
+* built target written_1111 [6.558 seconds]
+* built target emissions_1111 [5.708 seconds]
+* built target exportedCO2_1111 [34.111 seconds]
+* built target raymond_11 [2.014 minutes]
+* end pipeline [2.965 days]
+There were 50 or more warnings (use warnings() to see the first 50)
+Error : Listing of jobs failed (exit code 1);
+cmd: 'squeue --user=$USER --states=R,S,CG,RS,SI,SO,ST --noheader --format=%i -r'
+output:
+squeue: error: Unable to resolve "slurmctld1": Unknown host
+squeue: error: Unable to establish control machine address
+squeue: error: Unable to resolve "slurmctld1": Unknown host
+squeue: error: Unable to establish control machine address
+slurm_load_jobs error: No error
+Error : Listing of jobs failed (exit code 1);
+cmd: 'squeue --user=$USER --states=R,S,CG,RS,SI,SO,ST --noheader --format=%i -r'
+output:
+squeue: error: Unable to resolve "slurmctld1": Unknown host
+squeue: error: Unable to establish control machine address
+squeue: error: Unable to resolve "slurmctld1": Unknown host
+squeue: error: Unable to establish control machine address
+slurm_load_jobs error: No error
