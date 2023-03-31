@@ -203,7 +203,7 @@ compareLumpedFig <- function(path_to_data, results) {
             	size=2,
             	alpha=0)+
     	labs(tag='A')+
-    	scale_fill_gradientn(name='% difference in carbon emissions',
+    	scale_fill_gradientn(name='% difference in carbon\nemissions from lumped',
         	                 colors=c('#e63946', 'white', '#1d3557'),
             	             limits=c(-200,200),
                 	         guide = guide_colorbar(direction = "horizontal",
@@ -223,19 +223,18 @@ compareLumpedFig <- function(path_to_data, results) {
   	#BARPLOTS TOTAL--------------------------------------------
     #sum across the U.S.
     forPlot <- data.frame('Distributed'=sum(results$sumFCO2_TgC_yr, na.rm=T),
-    					  'Semi_distributed'=sum(results$sumFCO2_semiDist_TgC_yr, na.rm=T),
+    					  'SemiDistributed'=sum(results$sumFCO2_semiDist_TgC_yr, na.rm=T),
     					  'Lumped'=sum(results$sumFCO2_lumped_TgC_yr, na.rm=T),
     					  'Lumped_sigma'=sum(results$cal_uncertainty, na.rm=T))
 
-  	forPlot <- tidyr::gather(forPlot, key=key, value=value, c('Distributed', 'Lumped', 'Semi_distributed'))
+  	forPlot <- tidyr::gather(forPlot, key=key, value=value, c('Distributed', 'Lumped', 'SemiDistributed'))
   	forPlot[forPlot$key != 'Distributed',]$Lumped_sigma <- NA #don't apply to upscaling model
-  	forPlot$key <- factor(forPlot$key, levels=c('Lumped', 'Semi_distributed', 'Distributed'))
+  	forPlot$key <- factor(forPlot$key, levels=c('Lumped', 'SemiDistributed', 'Distributed'))
 
   	bars <- ggplot(forPlot, aes(x=key, y=value, fill=key)) +
   		geom_col(size=1.5, color='black', size=1.5) +
   		geom_errorbar(aes(ymin=value-Lumped_sigma, ymax=value+Lumped_sigma), width=.15, size=1.75) +
   		scale_fill_manual(values=c('#5f0f40','#9a031e', '#fb8b24')) +
-  		scale_x_discrete(labels= c('Lumped', 'Semi-Distributed', 'Distributed'))
   		labs(tag='B')+
   		xlab('')+
   		ylab('CO2 Flux [Tg-C/yr]') +
@@ -267,14 +266,15 @@ compareLumpedFig <- function(path_to_data, results) {
 
 
 
-conceptualPlot <- function(final_0107, glorich_data){
+conceptualPlot <- function(final_model, glorich_data){
 	theme_set(theme_classic())
 
 	##READ IN BASIN 0107-------------------------------------------------------------------------------------
-	final_0107 <- dplyr::select(final_0107, c('NHDPlusID', 'StreamOrde', 'waterbody', 'Water_temp_c','Q_m3_s','W_m', 'lakeSA_m2', 'k_co2_m_s', 'FCO2_gC_m2_yr'))
+	final_model <- dplyr::select(final_model, c('NHDPlusID', 'StreamOrde', 'waterbody', 'Water_temp_c','Q_m3_s','W_m','lakeSA_m2', 'k600_m_s','k_co2_m_s', 'CO2_ppm', 'FCO2_gC_m2_yr'))
   	network <- sf::st_read(dsn = paste0(path_to_data, '/HUC2_01/NHDPLUS_H_0107_HU4_GDB/NHDPLUS_H_0107_HU4_GDB.gdb'), layer='NHDFlowline')
-  	network <- dplyr::left_join(network, final_0107, 'NHDPlusID') %>%
-  		sf::st_zm()
+  	network <- dplyr::left_join(network, final_model, 'NHDPlusID') %>%
+  		sf::st_zm() %>%
+  		dplyr::filter(is.na(waterbody)==0)
   	basin <- sf::st_read(paste0(path_to_data, '/HUC2_01/WBD_01_HU2_Shape/Shape/WBDHU4.shp')) %>%
   		dplyr::filter(huc4 == '0107')
 
@@ -288,13 +288,16 @@ conceptualPlot <- function(final_0107, glorich_data){
 
   	rivers_by_order <- dplyr::group_by(network[network$waterbody == 'River',], StreamOrde) %>%
     	dplyr::summarise(kco2_m_s = mean(k_co2_m_s),
+    					 k600_m_s = mean(k600_m_s),
         	             SA_m2 = sum(LengthKM*W_m*1000))
 
   	#get basin k co2
   	rivers_k_co2_lumped_m_s <- weighted.mean(rivers_by_order$kco2_m_s, rivers_by_order$SA_m2, na.rm=T) #normalize by surface area for each order
+  	rivers_k_600_lumped_m_s <- weighted.mean(rivers_by_order$k600_m_s, rivers_by_order$SA_m2, na.rm=T) #normalize by surface area for each order
 
   	#calculate a basin fco2
-  	rivers_FCO2_lumped <- ((riverCO2-390)*henry*1e-6)*rivers_k_co2_lumped_m_s*(1/0.001)*12.01*(60*60*24*365) #[g-C/m2/yr]
+  	rivers_FCO2_lumped <- ((riverCO2-400)*henry*1e-6)*rivers_k_co2_lumped_m_s*(1/0.001)*12.01*(60*60*24*365) #[g-C/m2/yr]
+  	rivers_FCO2_lumped_total <- rivers_FCO2_lumped*sum(rivers_by_order$SA_m2, na.rm=T) #[g-C/yr]
 
   	lakes_by_area <- dplyr::filter(network, waterbody == 'Lake/Reservoir') %>% #build combined lakes dataset for lake scaling
     	dplyr::group_by(WBArea_Permanent_Identifier) %>%
@@ -307,38 +310,93 @@ conceptualPlot <- function(final_0107, glorich_data){
     	dplyr::mutate(kco2_m_s = (kco2_m_dy)/(24*60*60))  #m/s
 
   	#calculate a basin fco2
-  	lakes_by_area$lakes_FCO2_lumped <- ((lakeCO2-390)*henry*1e-6)*lakes_by_area$kco2_m_s*(1/0.001)*12.01*(60*60*24*365) #[g-C/m2/yr]
+  	lakes_by_area$lakes_FCO2_lumped <- ((lakeCO2-400)*henry*1e-6)*lakes_by_area$kco2_m_s*(1/0.001)*12.01*(60*60*24*365) #[g-C/m2/yr]
+  	lakes_FCO2_lumped_total <- sum(lakes_by_area$lakes_FCO2_lumped*lakes_by_area$area_skm*1e6, na.rm=T) #[g-C/yr]
 
   	#calculate basin carbon emissions flux
-  	lumpedFCO2_gC_C_yr <- rivers_FCO2_lumped + sum(lakes_by_area$lakes_FCO2_lumped, na.rm=T)
+  	lumpedFCO2_gC_C_m2_yr <- rivers_FCO2_lumped + sum(lakes_by_area$lakes_FCO2_lumped, na.rm=T)
 
-  	basin$lumpedFCO2_gC_C_yr <- lumpedFCO2_gC_C_yr
+  	basin$lumpedFCO2_gC_C_m2_yr <- lumpedFCO2_gC_C_m2_yr
 
 
   	##CALCULATE SEMI-DISTRIBUTED MODEL FOR 0107----------------------------------------------------------------------------------------
-  	network$semi_FCO2_gC_m2_yr <- ifelse(network$waterbody == 'River', ((riverCO2-390)*henry*1e-6)*network$k_co2_m_s*(1/0.001)*12.01*(60*60*24*365), ((lakeCO2-390)*henry*1e-6)*network$kco2_m_s*(1/0.001)*12.01*(60*60*24*365)) #gC_m2_yr
+  	network$semi_FCO2_gC_m2_yr <- ifelse(network$waterbody == 'River', ((riverCO2-400)*henry*1e-6)*network$k_co2_m_s*(1/0.001)*12.01*(60*60*24*365), ((lakeCO2-400)*henry*1e-6)*network$kco2_m_s*(1/0.001)*12.01*(60*60*24*365)) #gC_m2_yr
+  	network$semi_FCO2_gC_yr <- ifelse(network$waterbody == 'River', network$semi_FCO2_gC_m2_yr*network$W_m*network$LengthKM*1000, network$semi_FCO2_gC_m2_yr*network$lakeSA_m2)
+
+  	#CALCULATE TOTAL DISTRIBUTED FLUX----------------------------------------------------------------------------------------------
+	network$FCO2_gC_yr <- ifelse(network$waterbody == 'River', network$FCO2_gC_m2_yr*network$W_m*network$LengthKM*1000, network$FCO2_gC_m2_yr*network$lakeSA_m2)  	
+
+  	## BASIN FLUXES----------------------------------------------------------------------------------------------
+  	lumpedFCO2_GgC_C_yr <- (rivers_FCO2_lumped_total + lakes_FCO2_lumped_total) * 1e-9
+  	semiDistFCO2_GgC_C_yr <- sum(network$semi_FCO2_gC_yr, na.rm=T)*1e-9
+  	distFCO2_GgC_yr <- sum(network$FCO2_gC_yr, na.rm=T)*1e-9
+
+  	plotA <- patchwork::wrap_elements(grid::textGrob(paste0('Lumped:\n',round(lumpedFCO2_GgC_C_yr,0), ' Gg-C/yr'), y=0.6, gp=grid::gpar(col="black", fontsize=34)))
+
+  	plotB <- patchwork::wrap_elements(grid::textGrob(paste0('Semi-Distributed:\n', round(semiDistFCO2_GgC_C_yr,0), ' Gg-C/yr'), y=0.6, gp=grid::gpar(col="black", fontsize=34)))
+
+  	plotC <- patchwork::wrap_elements(grid::textGrob(paste0('Distributed:\n',round(distFCO2_GgC_yr,0), ' Gg-C/yr'), y=0.6, gp=grid::gpar(col="black", fontsize=34)))
 
 
   	## INDIVIDUAL k vs co2----------------------------------------------------------------------------------------
+  	network$lumpedCO2_ppm <- ifelse(network$waterbody == 'River', riverCO2, lakeCO2)
 
+  	network$lumped_k600_m_s <- ifelse(network$waterbody == 'River', rivers_k_600_lumped_m_s, network$k600_m_s)
+  	plotD <- ggplot(network, aes(x=lumped_k600_m_s*86400, y=lumpedCO2_ppm, color=waterbody))+
+  		geom_point(size=3) +
+  		scale_color_brewer(palette='Dark2')+
+  		xlim(0,300)+
+  		ylim(0,16000)+
+  		labs(tag='A')+
+    	theme(axis.title = element_text(face = "bold", size = 24),
+    		  axis.text = element_text(size = 22),
+        	  plot.tag = element_text(size=26,
+            	                  face='bold'))+
+    	xlab('k600 [m/dy]')+
+    	ylab('CO2 [ppm]')
+
+
+  	plotE <- ggplot(network, aes(x=k600_m_s*86400, y=lumpedCO2_ppm, color=waterbody))+
+  		geom_point(alpha=0.25, size=3) +
+  		scale_color_brewer(palette='Dark2')+
+  		geom_segment(x = 250, y = 3200, xend = 300, yend = 3200,color='black',size=3,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
+  		xlim(0,300)+
+  		ylim(0,16000)+
+  		labs(tag='B')+
+    	theme(axis.title = element_text(face = "bold", size = 24),
+    		  axis.text = element_text(size = 22),
+        	  plot.tag = element_text(size=26,
+            	                  face='bold'))+
+    	xlab('k600 [m/dy]')+
+    	ylab('')
+
+  	plotF <- ggplot(network, aes(x=k600_m_s*86400, y=CO2_ppm, color=waterbody))+
+  		geom_point(alpha=0.25, size=3) +
+  		scale_color_brewer(palette='Dark2')+
+  		geom_segment(x = 250, y = 3200, xend = 300, yend = 3200,color='black', size=3, arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
+  		xlim(0,300)+
+  		ylim(0,16000)+
+  		labs(tag='C')+
+    	theme(axis.title = element_text(face = "bold", size = 24),
+    		  axis.text = element_text(size = 22),
+        	  plot.tag = element_text(size=26,
+            	                  face='bold'))+
+    	xlab('k600 [m/dy]')+
+    	ylab('')
 
 
   	## INDIVIDUAL MAPS----------------------------------------------------------------------------------------
-    basin$forPlot <- ifelse(basin$lumpedFCO2_gC_C_yr*1e-3 < 1, '1',
-							ifelse(basin$lumpedFCO2_gC_C_yr*1e-3 < 2.5, '2.5',
-								ifelse(basin$lumpedFCO2_gC_C_yr*1e-3 < 5, '5',
-									ifelse(basin$lumpedFCO2_gC_C_yr*1e-3 < 10, '10', 'Max'))))
+    basin$forPlot <- ifelse(basin$lumpedFCO2_gC_C_m2_yr*1e-3 < 1, '1',
+							ifelse(basin$lumpedFCO2_gC_C_m2_yr*1e-3 < 2.5, '2.5',
+								ifelse(basin$lumpedFCO2_gC_C_m2_yr*1e-3 < 5, '5',
+									ifelse(basin$lumpedFCO2_gC_C_m2_yr*1e-3 < 10, '10', '5+'))))
     plotG <- ggplot(basin, aes(fill=forPlot)) +
     	geom_sf()+
     	coord_sf(datum = NA)+
-    	scale_fill_manual(name='FCO2 [Kg-C/yr]',
-        	               values=c('#a1cca5', '#8fb996', '#709775', '#415d43', '#111d13'),
-   					   	   breaks=c('1', '2.5', '5', '10', 'Max')) +
-    #	scale_size_binned(name='Discharge [cms]',
-    #    	              breaks=c(0.1, 1, 10, 100),
-    #        	          range=c(0.4,2),
-    #            	      guide = "none")+
-    	labs(tag='G')+
+    	scale_fill_manual(name='FCO2\n[Kg-C/m2/yr]',
+                           values=c('#2589bd', '#187795', '#38686a', '#a3b4a2','#cdc6ae'),
+                           breaks=c('0.5', '1', '2.5', '5', '5+'))+
+    	labs(tag='D')+
     	theme(plot.title = element_text(face = "italic", size = 26),
         	  plot.tag = element_text(size=26,
             	                  face='bold'))+
@@ -352,18 +410,18 @@ conceptualPlot <- function(final_0107, glorich_data){
     network$forPlot <- ifelse(network$semi_FCO2_gC_m2_yr*1e-3 < 0.5, '0.5',
 							ifelse(network$semi_FCO2_gC_m2_yr*1e-3 < 1, '1',
 								ifelse(network$semi_FCO2_gC_m2_yr*1e-3 < 2.5, '2.5',
-									ifelse(network$semi_FCO2_gC_m2_yr*1e-3 < 5, '5', 'Max'))))
-    plotH <- ggplot(network, aes(color=forPlot, size=Q_m3_s)) +
+									ifelse(network$semi_FCO2_gC_m2_yr*1e-3 < 5, '5', '5+'))))
+    plotH <- ggplot(network, aes(color=forPlot, linewidth=Q_m3_s)) +
     	geom_sf()+
     	coord_sf(datum = NA)+
-    	scale_color_manual(name='FCO2 [Kg-C/yr]',
-        	               values=c('#a1cca5', '#8fb996', '#709775', '#415d43', '#111d13'),
-   					   	   breaks=c('1', '2.5', '5', '10', 'Max')) +
-    	scale_size_binned(name='Discharge [cms]',
+    	scale_color_manual(name='FCO2\n[Kg-C/m2/yr]',
+						   values=c('#2589bd', '#187795', '#38686a', '#a3b4a2','#cdc6ae'),
+                           breaks=c('0.5', '1', '2.5', '5', '5+'))+
+    	scale_linewidth_binned(name='Discharge [cms]',
         	              breaks=c(0.1, 1, 10, 100),
-            	        #  range=c(0.4,2),
+            	          range=c(0.4,2),
                 	      guide = "none")+
-    	labs(tag='H')+
+    	labs(tag='E')+
     	theme(plot.title = element_text(face = "italic", size = 26),
         	  plot.tag = element_text(size=26,
             	                  face='bold'))+
@@ -376,18 +434,19 @@ conceptualPlot <- function(final_0107, glorich_data){
     network$forPlot <- ifelse(network$FCO2_gC_m2_yr*1e-3 < 0.5, '0.5',
 							ifelse(network$FCO2_gC_m2_yr*1e-3 < 1, '1',
 								ifelse(network$FCO2_gC_m2_yr*1e-3 < 2.5, '2.5',
-									ifelse(network$FCO2_gC_m2_yr*1e-3 < 5, '5', 'Max'))))
-    plotI <- ggplot(network, aes(color=forPlot, size=Q_m3_s)) +
+									ifelse(network$FCO2_gC_m2_yr*1e-3 < 5, '5', '5+'))))
+    plotI <- ggplot(network, aes(color=forPlot, linewidth=Q_m3_s)) +
     	geom_sf()+
     	coord_sf(datum = NA)+
-    	scale_color_manual(name='FCO2 [Kg-C/yr]',
-        	               values=c('#a1cca5', '#8fb996', '#709775', '#415d43', '#111d13'),
-   					   	   breaks=c('1', '2.5', '5', '10', 'Max')) +
-    	scale_size_binned(name='Discharge [cms]',
+    	scale_color_manual(name='FCO2\n[Kg-C/m2/yr]',
+                           #values=c('#cdc6ae', '#a3b4a2', '#38686a', '#187795', '#2589bd'),
+                           values=c('#2589bd', '#187795', '#38686a', '#a3b4a2','#cdc6ae'),
+                           breaks=c('0.5', '1', '2.5', '5', '5+'))+
+    	scale_linewidth_binned(name='Discharge [cms]',
         	              breaks=c(0.1, 1, 10, 100),
-            	        #  range=c(0.4,2),
+            	          range=c(0.4,2),
                 	      guide = "none")+
-    	labs(tag='I')+
+    	labs(tag='F')+
     	theme(plot.title = element_text(face = "italic", size = 26),
         	  plot.tag = element_text(size=26,
             	                  face='bold'))+
@@ -402,24 +461,30 @@ conceptualPlot <- function(final_0107, glorich_data){
     legend <- cowplot::get_legend(plotI +
                             labs(tag = '')+
                             theme(legend.position = "bottom",
-                                  legend.text = element_text(size=24),
-                                  legend.title = element_text(size=26, face='bold'),
+                                  legend.text = element_text(size=22),
+                                  legend.title = element_text(size=24, face='bold'),
                                   legend.box="vertical",
                                   legend.margin=margin(),
-                                  legend.spacing.x = unit(1, 'cm')) +
-                            guides(color = guide_legend(override.aes = list(size=20)))) #fill legend size settings
+                                  legend.spacing.x = unit(0.4, 'cm')) +
+                            guides(color = guide_legend(override.aes = list(linewidth=20)))) #fill legend size settings
 
 
   	#COMBO PLOT---------------------------------------------
   	design <- "
   		ABC
   		DEF
+  		DEF
+  		DEF
+  		GHI
+  		GHI
   		GHI
   		JJJ
   	"
 
-  	comboPlot <- patchwork::wrap_plots(G = plotG+theme(legend.position='none'), H=plotH+theme(legend.position='none'), I=plotI+theme(legend.position='none'), J=legend, design=design)
+  	comboPlot <- patchwork::wrap_plots(A=plotA, B=plotB, C=plotC,
+  									   D=plotD+theme(legend.position='none'), E=plotE+theme(legend.position='none'), F=plotF+theme(legend.position='none'),
+  									   G=plotG+theme(legend.position='none'), H=plotH+theme(legend.position='none'), I=plotI+theme(legend.position='none'), J=legend, design=design)
 
-  	ggsave('cache/figures/conceptualCompare.jpg', comboPlot, width=20, height=20)
+  	ggsave('cache/figures/conceptualCompare.jpg', comboPlot, width=18, height=16)
   	return('see cache/figures/conceptualCompare.jpg')
 }

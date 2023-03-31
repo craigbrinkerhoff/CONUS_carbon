@@ -74,8 +74,9 @@ mapped_lvlTerminal <- tar_map(
                                                               lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
                                                               upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
                                                               myPopSize, mymaxIter, myRun, maxFitness, mutationRate, cores),
+                                              cue = tar_cue(mode = "never"),
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
-       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
+       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA),cue = tar_cue(mode = "never")), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
@@ -91,7 +92,7 @@ mapped_lvlTerminal_bugFix <- tar_map(
        tar_target(hydrography, method_function(path_to_data, huc4),
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #prep hydrography for routing
        tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)),
-       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
+       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA),cue = tar_cue(mode = "never")), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
@@ -111,10 +112,11 @@ mapped_lvl0 <- tar_map(
                                                               lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
                                                               upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
                                                               myPopSize, mymaxIter, myRun, maxFitness, mutationRate, cores),
+                                              cue = tar_cue(mode = "never"),
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
-       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
+       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA),cue = tar_cue(mode = "never")), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
-       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,C_atmosphere)), #get exported CO2 and reach end node for routing to next downstream basins
+       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,C_atmosphere),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
@@ -129,9 +131,9 @@ mapped_lvl0_bugFix <- tar_map(
        tar_target(hydrography, method_function(path_to_data, huc4),
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #prep hydrography for routing
        tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)),
-       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA)), #run final version of model
+       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA),cue = tar_cue(mode = "never")), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
-       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
+       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
@@ -149,10 +151,11 @@ mapped_lvl1 <- tar_map(
                                                               lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
                                                               upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
                                                               myPopSize, mymaxIter, myRun, maxFitness, mutationRate, cores),
+                                              cue = tar_cue(mode = "never"),
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
-       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl0)), #run final version of model
+       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl0),cue = tar_cue(mode = "never")), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
-       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
+       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
@@ -167,9 +170,9 @@ mapped_lvl1_bugFix <- tar_map(
        tar_target(hydrography, method_function(path_to_data, huc4),
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #prep hydrography for routing
        tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)),
-       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl0)), #run final version of model
+       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl0),cue = tar_cue(mode = "never")), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
-       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
+       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
@@ -187,10 +190,11 @@ mapped_lvl2 <- tar_map(
                                                               lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
                                                               upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
                                                               myPopSize, mymaxIter, myRun, maxFitness, mutationRate, cores),
+                                              cue = tar_cue(mode = "never"),
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
-       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl1)), #run final version of model
+       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl1),cue = tar_cue(mode = "never")), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
-       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
+       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
@@ -205,9 +209,9 @@ mapped_lvl2_bugFix <- tar_map(
        tar_target(hydrography, method_function(path_to_data, huc4),
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #prep hydrography for routing
        tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)),
-       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl1)), #run final version of model
+       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl1),cue = tar_cue(mode = "never")), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
-       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
+       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )
@@ -226,10 +230,11 @@ mapped_lvl3 <- tar_map(
                                                               lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
                                                               upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
                                                               myPopSize, mymaxIter, myRun, maxFitness, mutationRate, cores),
+                                              cue = tar_cue(mode = "never"),
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
-       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl2)), #run final version of model
+       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl2),cue = tar_cue(mode = "never")), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
-       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
+       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final))
 )

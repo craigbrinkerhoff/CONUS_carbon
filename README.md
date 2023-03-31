@@ -30,3 +30,8 @@ calibratedParameters <- mget(ls(pattern='calibratedParameters_'))
 
 readr::write_rds(calibratedParameters, 'cache/calibratedParameters.rds')
 ```
+
+
+```
+install.packages('gittargets')
+```
