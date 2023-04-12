@@ -1,7 +1,7 @@
 
-Attaching package: 'dplyr'
+Attaching package: ‘dplyr’
 
-The following objects are masked from 'package:base':
+The following objects are masked from ‘package:base’:
 
     intersect, setdiff, setequal, union
 
@@ -9,24 +9,5 @@ Error:
 ! Error running targets::tar_make_future()
   Target errors: targets::tar_meta(fields = error, complete_only = TRUE)
   Tips: https://books.ropensci.org/targets/debugging.html
-  Last error: Listing of jobs failed (exit code 1);
-cmd: 'squeue --user=$USER --states=R,S,CG,RS,SI,SO,ST --noheader --format=%i -r'
-output:
-squeue: error: Unable to resolve "slurmctld1": Unknown host
-squeue: error: Unable to establish control machine address
-squeue: error: Unable to resolve "slurmctld1": Unknown host
-squeue: error: Unable to establish control machine address
-slurm_load_jobs error: No error
+  Last error: object 'hydrography_1710b' not found
 Execution halted
-slurmstepd-ceewater-cpu008: error: Unable to resolve "slurmctld1": Unknown host
-slurmstepd-ceewater-cpu008: error: Unable to establish control machine address
-slurmstepd-ceewater-cpu008: error: Unable to resolve "slurmctld1": Unknown host
-slurmstepd-ceewater-cpu008: error: Unable to establish control machine address
-slurmstepd-ceewater-cpu008: error: Unable to resolve "slurmctld1": Unknown host
-slurmstepd-ceewater-cpu008: error: Unable to establish control machine address
-slurmstepd-ceewater-cpu008: error: Unable to resolve "slurmctld1": Host name lookup failure
-slurmstepd-ceewater-cpu008: error: Unable to establish control machine address
-slurmstepd-ceewater-cpu008: error: Unable to resolve "slurmctld1": Host name lookup failure
-slurmstepd-ceewater-cpu008: error: Unable to establish control machine address
-slurmstepd-ceewater-cpu008: error: Unable to resolve "slurmctld1": Host name lookup failure
-slurmstepd-ceewater-cpu008: error: Unable to establish control machine address

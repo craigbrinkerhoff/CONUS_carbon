@@ -25,7 +25,7 @@
 #' @import dplyr
 #'
 #' @return final upscaled CO2 flux estimates for a given HUC2 region
-runLumpedModels <- function(path_to_data, HUC2, glorich_data,hydrographyList,emissions_list,emissions_uncertainty_list) {
+runLumpedModels <- function(path_to_data, HUC2, glorich_data,hydrographyList,co2List,emissions_list,emissions_uncertainty_list) {
   ###########SETUP-------------------------------------
   #get glorich co2
   riverCO2 <- glorich_data[glorich_data$HUC2 == HUC2,]$river #[ppm]
@@ -33,6 +33,7 @@ runLumpedModels <- function(path_to_data, HUC2, glorich_data,hydrographyList,emi
 
   #setup hydrography
   network <- do.call("rbind", hydrographyList) #make HUC2 river network
+  model_co2 <- do.call("rbind", co2List) #make HUC2 results network
   model_emissions <- do.call("rbind", emissions_list) #make HUC2 uncertainty estimates
   cal_uncertainty <- sum(do.call("rbind", emissions_uncertainty_list)) #make HUC2 uncertainty estimates
 
@@ -79,9 +80,14 @@ runLumpedModels <- function(path_to_data, HUC2, glorich_data,hydrographyList,emi
   lakes_FCO2_lumped_total <- sum(lakes_by_order$lakes_FCO2_lumped*lakes_by_order$area_skm*1e6, na.rm=T) #[g-C/yr]
 
  
-  #SEMI-DISTRIBUTED MODEL------------------------
+  #SEMI-DISTRIBUTED MODEL 1---------------------------------
   network$semi_FCO2_gC_m2_yr <- ifelse(network$waterbody == 'River', ((riverCO2-400)*henry*1e-6)*(network$k_co2*network$D)*(1/0.001)*12.01*(60*60*24*365), ((lakeCO2-400)*henry*1e-6)*(network$k_co2*network$D)*(1/0.001)*12.01*(60*60*24*365)) #gC_m2_yr
   network$semi_FCO2_gC_yr <- ifelse(network$waterbody == 'River', network$semi_FCO2_gC_m2_yr*network$W*network$LengthKM*1000, network$semi_FCO2_gC_m2_yr*network$frac_lakeSurfaceArea_m2)
+
+  #SEMI-DISTRIBUTED MODEL 2---------------------------------
+  model_co2$semi2_FCO2_gC_m2_yr <- ifelse(model_co2$waterbody == 'River', ((model_co2$CO2_ppm-400)*henry*1e-6)*(rivers_k_co2_lumped_m_s)*(1/0.001)*12.01*(60*60*24*365), ((model_co2$CO2_ppm-400)*henry*1e-6)*(model_co2$k_co2_m_s)*(1/0.001)*12.01*(60*60*24*365)) #gC_m2_yr
+  model_co2$semi2_FCO2_gC_yr <- ifelse(model_co2$waterbody == 'River', model_co2$semi2_FCO2_gC_m2_yr*model_co2$W_m*model_co2$LengthKM*1000, model_co2$semi2_FCO2_gC_m2_yr*model_co2$lakeSA_m2)
+
 
   #OUR MODEL EMISSIONS--------------------------------------
   networkOutput <- dplyr::group_by(model_emissions, waterbody) %>%
@@ -93,6 +99,7 @@ runLumpedModels <- function(path_to_data, HUC2, glorich_data,hydrographyList,emi
   network_fluxes_lumped <- data.frame('huc2'=HUC2,
                                   'sumFCO2_lumped_TgC_yr' = c(rivers_FCO2_lumped_total*1e-12, lakes_FCO2_lumped_total*1e-12),
                                   'sumFCO2_semiDist_TgC_yr'=c(sum(network[network$waterbody == 'River',]$semi_FCO2_gC_yr, na.rm=T)*1e-12, sum(network[network$waterbody == 'Lake/Reservoir',]$semi_FCO2_gC_yr, na.rm=T)*1e-12),
+                                  'sumFCO2_semiDist2_TgC_yr'=c(sum(model_co2[model_co2$waterbody == 'River',]$semi2_FCO2_gC_yr, na.rm=T)*1e-12, sum(model_co2[model_co2$waterbody == 'Lake/Reservoir',]$semi2_FCO2_gC_yr, na.rm=T)*1e-12),                                  
                                   'sumFCO2_TgC_yr'=c(networkOutput[networkOutput$waterbody == 'River',]$sumFCO2_TgC_yr, networkOutput[networkOutput$waterbody == 'Lake/Reservoir',]$sumFCO2_TgC_yr),
                                   'sumFCO2_conus_TgC_yr'=c(networkOutput[networkOutput$waterbody == 'River',]$sumFCO2_conus_TgC_yr, networkOutput[networkOutput$waterbody == 'Lake/Reservoir',]$sumFCO2_conus_TgC_yr),
                                   'waterbody'=c('River', 'Lake/Reservoir'),

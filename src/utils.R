@@ -206,6 +206,41 @@ kbz_func <- function(slope, depth, waterbody, temp){
 
 
 
+#' Calculate GW contributions to basin carbon evasion, accounting for streamflow losses where groundwater isn't a CO2 source
+#'
+#' @name getGWcontrib
+#'
+#' @param model: river netork data frame
+#' @param huc4: basin ID
+#' @param path_to_data: path to NHD geodatabases
+#'
+#' @return Groundwater Co2 contributions to CO2 evasion [Tg-C/yr]
+getGWcontrib <- function(model, huc4, path_to_data){
+  #read in erminalPa b/c i forgot to add it to hydrography table...
+  huc2 <- substr(huc4, 1, 2)
+  huc4n <- ifelse(nchar(huc4) > 4, substr(huc4, 1, 4), huc4) #handle 1710a and 1710b (left joiin below takes care of this)
+
+  dsnPath <- paste0(path_to_data, '/HUC2_', huc2, '/NHDPLUS_H_', huc4n, '_HU4_GDB/NHDPLUS_H_', huc4n, '_HU4_GDB.gdb')
+  NHD_HR_VAA <- sf::st_read(dsn = dsnPath, layer = "NHDPlusFlowlineVAA", quiet=TRUE) #additional 'value-added' attributes
+  NHD_HR_VAA <- dplyr::select(NHD_HR_VAA, c('NHDPlusID', 'TerminalPa'))
+
+  #get total exported Q to apply Cgw to
+  exportedQ <- model %>%
+    dplyr::left_join(NHD_HR_VAA, by='NHDPlusID') %>%
+    dplyr::group_by(TerminalPa) %>%
+    dplyr::summarize(Qout = max(Q_cms, na.rm = T))
+  
+  #Get total Cgw contribution to basin
+  henry <- median(model$henry, na.rm=T)
+  GWcontrib <- sum(((16000-400)*henry*1e-6)*(1/0.001)*12.01*sum(exportedQ$Qout)*(60*60*24*365)) * 1e-12#Tg-C/yr
+  
+  out <- data.frame('huc4'=huc4,
+                    'contribGW_TgC_yr'=GWcontrib)
+  return(out)
+}
+
+
+
 #' calculate CO2 flux to atmosphere for a river reach
 #'
 #' @name calcEmissions
@@ -221,7 +256,8 @@ calcEmissions <- function(model, huc4){
 
   #aggregate over watershed
   networkOutput <- dplyr::group_by(model, waterbody) %>%
-                       dplyr::summarise(sumFCO2_TgC_yr = sum(FCO2_gC_yr, na.rm=T)*1e-12, #basin Tg-C/yr
+                       dplyr::summarise(huc4=huc4,
+                                        sumFCO2_TgC_yr = sum(FCO2_gC_yr, na.rm=T)*1e-12, #basin Tg-C/yr
                                         sumFCO2_conus_TgC_yr = sum(FCO2_gC_yr*conus, na.rm=T)*1e-12, #basin Tg-C/yr with no international streams
                                         n = n())
 
@@ -230,6 +266,15 @@ calcEmissions <- function(model, huc4){
 }
 
 
+
+#' Calculate calibration uncertainty per basin
+#'
+#' @name emissions_uncertainty
+#'
+#' @param calibratedParameters: list of calibration results
+#' @param model: river network data frame
+#'
+#' @return uncertainty in carbon emissions due to model calibration [Tg-C/yr]
 emissions_uncertainty <- function(calibratedParameters, model){
   combined_fitness <- calibratedParameters$fitness
   cost <- (1/combined_fitness)/2 #eq 16 in paper
@@ -245,8 +290,17 @@ emissions_uncertainty <- function(calibratedParameters, model){
 
 
 
-saveShapefile_huc2 <- function(path_to_data, codes_huc02, raymond_01, raymond_02, raymond_03, raymond_06, raymond_09, raymond_11, raymond_12, raymond_14, raymond_16, raymond_18){
-  combined_results <- rbind(raymond_01, raymond_02, raymond_03, raymond_06, raymond_09, raymond_11, raymond_12, raymond_14, raymond_16, raymond_18)
+#' Build the results shapefile that compares the four carbon models
+#'
+#' @name saveShapefile_huc2
+#'
+#' @param path_to_data: path to NHD geodatabases
+#' @param codes_huc02: list of HUC2 ids
+#' @param raymond_xx: model results per HUC2 basin
+#'
+#' @return print statement, writes shapefile to file
+saveShapefile_huc2 <- function(path_to_data, codes_huc02, raymond_01, raymond_02, raymond_03, raymond_05, raymond_06, raymond_09, raymond_11, raymond_12, raymond_13, raymond_14, raymond_16, raymond_17, raymond_18){
+  combined_results <- rbind(raymond_01, raymond_02, raymond_03, raymond_05, raymond_06, raymond_09, raymond_11, raymond_12, raymond_13, raymond_14, raymond_16, raymond_17, raymond_18)
 
     #read in all HUC4 basins
     basins_overall <- sf::st_read(paste0(path_to_data, '/HUC2_', codes_huc02[1], '/WBD_', codes_huc02[1], '_HU2_Shape/Shape/WBDHU2.shp')) %>% dplyr::select(c('huc2', 'name'))
@@ -263,15 +317,72 @@ saveShapefile_huc2 <- function(path_to_data, codes_huc02, raymond_01, raymond_02
                sumFCO2_TgC_yr = sum(sumFCO2_TgC_yr),
                sumFCO2_conus_TgC_yr = sum(sumFCO2_conus_TgC_yr),
                sumFCO2_semiDist_TgC_yr = sum(sumFCO2_semiDist_TgC_yr),
+               sumFCO2_semiDist2_TgC_yr = sum(sumFCO2_semiDist2_TgC_yr),
                cal_uncertainty = mean(cal_uncertainty)) #take mean of identical numbers to pass the value through the group_by
 
     #round for mapping
-    basins_overall <- dplyr::select(basins_overall, c('huc2', 'sumFCO2_lumped_TgC_yr', 'sumFCO2_semiDist_TgC_yr', 'sumFCO2_TgC_yr', 'sumFCO2_conus_TgC_yr', 'cal_uncertainty'))
+    basins_overall <- dplyr::select(basins_overall, c('huc2', 'sumFCO2_lumped_TgC_yr', 'sumFCO2_semiDist_TgC_yr', 'sumFCO2_semiDist2_TgC_yr', 'sumFCO2_TgC_yr', 'sumFCO2_conus_TgC_yr', 'cal_uncertainty'))
   
     #return shapefile
     return(basins_overall)
 }
 
+
+
+
+#' Build the results shapefile that looks at GW and lake influences
+#'
+#' @name saveShapefile_huc4
+#'
+#' @param path_to_data: path to NHD geodatabases
+#' @param combined_contribGW: path to NHD geodatabases
+#' @param combined_emissions: path to NHD geodatabases
+#'
+#' @return print statement, writes shapefile to file
+saveShapefile_huc4 <- function(path_to_data, combined_contribGW, combined_emissions){
+    #combine lake and rivers for total
+    combined_emissions_total <- combined_emissions %>%
+      dplyr::group_by(huc4) %>%
+      dplyr::summarise(sumFCO2_TgC_yr = sum(sumFCO2_TgC_yr, na.rm=T))
+
+
+    #add percent lakes
+    lakeEmissions = combined_emissions %>%
+      dplyr::filter(waterbody == 'Lake/Reservoir') %>%
+      dplyr::group_by(huc4) %>% #account for 1710
+      dplyr::summarise(lakeFCO2_TgC_yr = sum(sumFCO2_TgC_yr, na.rm=T))
+
+    combined_emissions_total <- combined_emissions_total %>%
+      dplyr::left_join(lakeEmissions, by='huc4')
+
+    #combine 1710a and 1710b into single values for mapping
+    gw_1710 <- combined_contribGW[combined_contribGW$huc4 == '1710a',]$contribGW_TgC_yr + combined_contribGW[combined_contribGW$huc4 == '1710b',]$contribGW_TgC_yr #Tg-C/yr
+    combined_contribGW <- rbind(combined_contribGW, data.frame('method'=NA, 'huc4'='1710', 'contribGW_TgC_yr'=gw_1710))
+    combined_contribGW <- dplyr::filter(combined_contribGW, !(huc4 %in% c('1710a', '1710b')))
+
+    basins <- combined_contribGW$huc4
+
+    #read in all HUC4 basins
+    huc2 <- substr(basins[1], 1, 2)
+    basins_overall <- sf::st_read(paste0(path_to_data, '/HUC2_', huc2, '/WBD_', huc2, '_HU2_Shape/Shape/WBDHU4.shp')) %>% dplyr::filter(huc4 == basins[1]) %>% dplyr::select(c('huc4', 'name'))
+    for(i in basins[-1]){
+      huc2 <- substr(i,1,2)
+      basin <- sf::st_read(paste0(path_to_data, '/HUC2_', huc2, '/WBD_', huc2, '_HU2_Shape/Shape/WBDHU4.shp')) %>%
+          dplyr::filter(huc4 == i) %>%
+          dplyr::select(c('huc4', 'name')) #basin polygons
+      basins_overall <- rbind(basins_overall, basin)
+    }
+
+    #join model results
+    basins_overall <- basins_overall %>%
+      dplyr::left_join(combined_contribGW, by='huc4') %>%
+      dplyr::left_join(combined_emissions_total, by='huc4')
+
+    basins_overall <- dplyr::select(basins_overall, c('huc4', 'contribGW_TgC_yr', 'sumFCO2_TgC_yr', 'lakeFCO2_TgC_yr'))
+  
+    #return shapefile
+    return(basins_overall)
+}
 
 
 
@@ -435,32 +546,6 @@ fixBadTemps <- function(temp, temp_vec, fromNode, fromNode_vec, toNode, toNode_v
 
 
 
-
-
-
-#' Aggregates combined targets at each processing level into a single dataset of basin flux results
-#'
-#' @name aggregateAllLevels
-#'
-#' @param combined_emissions_lvlx: combined targets for each processing level
-#'
-#'
-#' @return data frame of all combined targets at each processing level into a single dataset of basin flux results
-aggregateAllLevels <- function(combined_emissions_lvlTerminal, combined_emissions_lvl0, combined_emissions_lvl1, combined_emissions_lvl2, combined_emissions_lvl3, combined_emissions_lvl4,
-                                               combined_emissions_lvl5, combined_emissions_lvl6, combined_emissions_lvl7, combined_emissions_lvl8, combined_emissions_lvl9,
-                                               combined_emissions_lvl10, combined_emissions_lvl11, combined_emissions_lvl12, combined_emissions_lvl13, combined_emissions_lvl14,
-                                               combined_emissions_lvl15, combined_emissions_lvl16, combined_emissions_lvl17, combined_emissions_lvl18){
-  #aggregate our model results at huc4
-  out <- rbind(combined_emissions_lvlTerminal, combined_emissions_lvl0, combined_emissions_lvl1, combined_emissions_lvl2, combined_emissions_lvl3, combined_emissions_lvl4,
-                                                 combined_emissions_lvl5, combined_emissions_lvl6, combined_emissions_lvl7, combined_emissions_lvl8, combined_emissions_lvl9,
-                                                 combined_emissions_lvl10, combined_emissions_lvl11, combined_emissions_lvl12, combined_emissions_lvl13, combined_emissions_lvl14,
-                                                 combined_emissions_lvl15, combined_emissions_lvl16, combined_emissions_lvl17, combined_emissions_lvl18)
-
-  out$huc4 <- substr(out$method, 11, 16)
-  out$huc2 <- substr(out$huc4, 1, 2)
-
-  return(out)
-}
 
 
 
