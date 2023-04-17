@@ -9,5 +9,8 @@ Error:
 ! Error running targets::tar_make_future()
   Target errors: targets::tar_meta(fields = error, complete_only = TRUE)
   Tips: https://books.ropensci.org/targets/debugging.html
-  Last error: object 'hydrography_1710b' not found
+  Last error: Listing of jobs failed (exit code 1);
+cmd: 'squeue --user=$USER --states=PD,CF,RF,RH,RQ,SE --noheader --format=%i -r'
+output:
+slurm_load_jobs error: Transport endpoint is not connected
 Execution halted

@@ -80,7 +80,7 @@ mapped_lvlTerminal <- tar_map(
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, NA))
 )
 
 #terminal basins that need to pull from cached results because of hpc problems...
@@ -97,7 +97,7 @@ mapped_lvlTerminal_bugFix <- tar_map(
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, NA))
 )
 
 
@@ -121,7 +121,7 @@ mapped_lvl0 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,C_atmosphere),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, NA))
 )
 
 #level 0 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters....
@@ -139,7 +139,7 @@ mapped_lvl0_bugFix <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, NA))
 )
 
 #level 1 downstream basins
@@ -162,7 +162,7 @@ mapped_lvl1 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl0))
 )
 
 #level 1 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters....
@@ -180,7 +180,7 @@ mapped_lvl1_bugFix <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl0))
 )
 
 #level 2 downstream basins
@@ -203,7 +203,7 @@ mapped_lvl2 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl1))
 )
 
 #level 2 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters....
@@ -221,7 +221,7 @@ mapped_lvl2_bugFix <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm),cue = tar_cue(mode = "never")), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl1))
 )
 
 
@@ -245,7 +245,7 @@ mapped_lvl3 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl2))
 )
 
 #level 3 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters....
@@ -263,7 +263,7 @@ mapped_lvl3_bugFix <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl2))
 )
 
 
@@ -286,15 +286,17 @@ mapped_lvl4 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl3))
 )
+
+
 
 #level 5 downstream basins
 mapped_lvl5 <- tar_map(
        unlist=FALSE,
        values = tibble(
          method_function = rlang::syms("setupHydrography"),
-         huc4 = lookUpTable[lookUpTable$level == 5,]$HUC4),
+         huc4 = lookUpTable[lookUpTable$level == 5 & lookUpTable$HUC4 != '1013',]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4),
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #prep hydrography for routing
@@ -308,15 +310,40 @@ mapped_lvl5 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl4))
 )
+
+
+
+
+#level 5 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters....
+mapped_lvl5_bugFix <- tar_map(
+       unlist=FALSE,
+       values = tibble(
+         method_function = rlang::syms("setupHydrography"),
+         huc4 = lookUpTable[lookUpTable$level == 5 & lookUpTable$HUC4 == '1013',]$HUC4), #ignore terminal basins that need too be split to facilitate 
+       names = "huc4",
+       tar_target(hydrography, method_function(path_to_data, huc4),
+                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #prep hydrography for routing
+       tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)),
+       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl4)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
+       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl4))
+)
+
+
+
+
 
 #level 6 downstream basins
 mapped_lvl6 <- tar_map(
        unlist=FALSE,
        values = tibble(
          method_function = rlang::syms("setupHydrography"),
-         huc4 = lookUpTable[lookUpTable$level == 6,]$HUC4),
+         huc4 = lookUpTable[lookUpTable$level == 6 & !(lookUpTable$HUC4 %in% c('1014', '0427')),]$HUC4),
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4),
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #prep hydrography for routing
@@ -330,8 +357,32 @@ mapped_lvl6 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl5))
 )
+
+
+
+#level 6 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters....
+mapped_lvl6_bugFix <- tar_map(
+       unlist=FALSE,
+       values = tibble(
+         method_function = rlang::syms("setupHydrography"),
+         huc4 = lookUpTable[lookUpTable$level == 6 & lookUpTable$HUC4 %in% c('1014', '0427'),]$HUC4), #ignore terminal basins that need too be split to facilitate 
+       names = "huc4",
+       tar_target(hydrography, method_function(path_to_data, huc4),
+                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #prep hydrography for routing
+       tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)),
+       tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl5)), #run final version of model
+       tar_target(written, writeToFile(final, huc4)), #write final model to file
+       tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl5))
+)
+
+
+
+
 
 #level 7 downstream basins
 mapped_lvl7 <- tar_map(
@@ -352,7 +403,7 @@ mapped_lvl7 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl6))
 )
 
 #level 8 downstream basins
@@ -374,7 +425,7 @@ mapped_lvl8 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl7))
 )
 
 
@@ -397,7 +448,7 @@ mapped_lvl9 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl8))
 )
 
 
@@ -420,7 +471,7 @@ mapped_lvl10 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl9))
 )
 
 
@@ -443,7 +494,7 @@ mapped_lvl11 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl10))
 )
 
 
@@ -466,7 +517,7 @@ mapped_lvl12 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl11))
 )
 
 
@@ -489,7 +540,7 @@ mapped_lvl13 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl12))
 )
 
 
@@ -512,7 +563,7 @@ mapped_lvl14 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl13))
 )
 
 
@@ -535,7 +586,7 @@ mapped_lvl15 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl14))
 )
 
 #level 16 downstream basins
@@ -557,7 +608,7 @@ mapped_lvl16 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl15))
 )
 
 
@@ -580,7 +631,7 @@ mapped_lvl17 <- tar_map(
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl16))
 )
 
 
@@ -602,7 +653,7 @@ mapped_lvl18 <- tar_map(
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl17))
 )
 
 #Special 1710 basin splitting
@@ -623,7 +674,7 @@ mapped_1710a <- tar_map(
        tar_target(written, writeToFile(final, substr(sub,1,4))), #write final model to file
        tar_target(emissions, calcEmissions(final, substr(sub,1,4))), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, sub, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, sub, path_to_data, NA))
 )
 
 
@@ -639,8 +690,9 @@ mapped_1710b <- tar_map(
        tar_target(written, writeToFile(final, substr(sub,1,4))), #write final model to file
        tar_target(emissions, calcEmissions(final, substr(sub,1,4))), #calc carbon emissions from final calibrated model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final)),
-       tar_target(contribGW, getGWcontrib(hydrography, sub, path_to_data))
+       tar_target(contribGW, getGWcontrib(hydrography, sub, path_to_data, NA))
 )
+
 
 
 
@@ -652,16 +704,12 @@ list(
 
   #### level 0 but terminal (can be run independently)
   mapped_lvlTerminal,
-  tar_combine(combined_emissions_lvlTerminal, list(mapped_lvlTerminal$emissions,
-                                                   mapped_lvlTerminal_bugFix$emissions), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### level 0 restart basins
   mapped_lvl0_bugFix,
 
   #### level 0
   mapped_lvl0,
-  tar_combine(combined_emissions_lvl0, mapped_lvl0$emissions,
-                                       mapped_lvl0_bugFix$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl0, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   
@@ -670,8 +718,6 @@ list(
 
   #### level 1
   mapped_lvl1,
-  tar_combine(combined_emissions_lvl1, mapped_lvl1$emissions,
-                                       mapped_lvl1_bugFix$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl1, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -682,8 +728,6 @@ list(
 
   #### level 2
   mapped_lvl2,
-  tar_combine(combined_emissions_lvl2, mapped_lvl2$emissions,
-                                       mapped_lvl2_bugFix$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl2, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -696,8 +740,6 @@ list(
 
   #### LEVEL 3
   mapped_lvl3,
-  tar_combine(combined_emissions_lvl3, mapped_lvl3$emissions,
-                                       mapped_lvl3_bugFix$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl3, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -709,7 +751,6 @@ list(
 
   #### LEVEL 4
   mapped_lvl4,
-  tar_combine(combined_emissions_lvl4, mapped_lvl4$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl4, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -720,9 +761,11 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,
                                      mapped_lvl4$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
+  #### LEVEL 5 RESTART BASINS
+  mapped_lvl5_bugFix,
+
   #### LEVEL 5
   mapped_lvl5,
-  tar_combine(combined_emissions_lvl5, mapped_lvl5$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl5, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -732,11 +775,14 @@ list(
                                      mapped_lvl3$exportedCO2,
                                      mapped_lvl3_bugFix$exportedCO2,                                     
                                      mapped_lvl4$exportedCO2,
-                                     mapped_lvl5$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+                                     mapped_lvl5$exportedCO2,
+                                     mapped_lvl5_bugFix$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+
+  #### LEVEL 6 RESTART BASINS
+  mapped_lvl6_bugFix,
 
   #### LEVEL 6
   mapped_lvl6,
-  tar_combine(combined_emissions_lvl6, mapped_lvl6$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl6, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -747,11 +793,12 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,
                                      mapped_lvl4$exportedCO2,
                                      mapped_lvl5$exportedCO2,
-                                     mapped_lvl6$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+                                     mapped_lvl5_bugFix$exportedCO2,
+                                     mapped_lvl6$exportedCO2,
+                                     mapped_lvl6_bugFix$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 7
   mapped_lvl7,
-  tar_combine(combined_emissions_lvl7, mapped_lvl7$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl7, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -762,12 +809,13 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,
                                      mapped_lvl4$exportedCO2,
                                      mapped_lvl5$exportedCO2,
+                                     mapped_lvl5_bugFix$exportedCO2,
                                      mapped_lvl6$exportedCO2,
+                                     mapped_lvl6_bugFix$exportedCO2,
                                      mapped_lvl7$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 8
   mapped_lvl8,
-  tar_combine(combined_emissions_lvl8, mapped_lvl8$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl8, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -778,13 +826,14 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,                                     
                                      mapped_lvl4$exportedCO2,
                                      mapped_lvl5$exportedCO2,
+                                     mapped_lvl5_bugFix$exportedCO2,
                                      mapped_lvl6$exportedCO2,
+                                     mapped_lvl6_bugFix$exportedCO2,
                                      mapped_lvl7$exportedCO2,
                                      mapped_lvl8$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 9
   mapped_lvl9,
-  tar_combine(combined_emissions_lvl9, mapped_lvl9$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl9, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -795,14 +844,15 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,
                                      mapped_lvl4$exportedCO2,
                                      mapped_lvl5$exportedCO2,
+                                     mapped_lvl5_bugFix$exportedCO2,
                                      mapped_lvl6$exportedCO2,
+                                     mapped_lvl6_bugFix$exportedCO2,
                                      mapped_lvl7$exportedCO2,
                                      mapped_lvl8$exportedCO2,
                                      mapped_lvl9$exportedCO2), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
   #### LEVEL 10
   mapped_lvl10,
-  tar_combine(combined_emissions_lvl10, mapped_lvl10$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl10, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -813,7 +863,9 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,                                     
                                      mapped_lvl4$exportedCO2,
                                      mapped_lvl5$exportedCO2,
+                                     mapped_lvl5_bugFix$exportedCO2,
                                      mapped_lvl6$exportedCO2,
+                                     mapped_lvl6_bugFix$exportedCO2,
                                      mapped_lvl7$exportedCO2,
                                      mapped_lvl8$exportedCO2,
                                      mapped_lvl9$exportedCO2,
@@ -821,7 +873,6 @@ list(
 
   #### LEVEL 11
   mapped_lvl11,
-  tar_combine(combined_emissions_lvl11, mapped_lvl11$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl11, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -832,7 +883,9 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,
                                      mapped_lvl4$exportedCO2,
                                      mapped_lvl5$exportedCO2,
+                                     mapped_lvl5_bugFix$exportedCO2,
                                      mapped_lvl6$exportedCO2,
+                                     mapped_lvl6_bugFix$exportedCO2,
                                      mapped_lvl7$exportedCO2,
                                      mapped_lvl8$exportedCO2,
                                      mapped_lvl9$exportedCO2,
@@ -841,7 +894,6 @@ list(
 
   #### LEVEL 12
   mapped_lvl12,
-  tar_combine(combined_emissions_lvl12, mapped_lvl12$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl12, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -852,7 +904,9 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,
                                      mapped_lvl4$exportedCO2,
                                      mapped_lvl5$exportedCO2,
+                                     mapped_lvl5_bugFix$exportedCO2,
                                      mapped_lvl6$exportedCO2,
+                                     mapped_lvl6_bugFix$exportedCO2,
                                      mapped_lvl7$exportedCO2,
                                      mapped_lvl8$exportedCO2,
                                      mapped_lvl9$exportedCO2,
@@ -862,7 +916,6 @@ list(
 
   #### LEVEL 13
   mapped_lvl13,
-  tar_combine(combined_emissions_lvl13, mapped_lvl13$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl13, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -873,7 +926,9 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,
                                      mapped_lvl4$exportedCO2,
                                      mapped_lvl5$exportedCO2,
+                                     mapped_lvl5_bugFix$exportedCO2,
                                      mapped_lvl6$exportedCO2,
+                                     mapped_lvl6_bugFix$exportedCO2,
                                      mapped_lvl7$exportedCO2,
                                      mapped_lvl8$exportedCO2,
                                      mapped_lvl9$exportedCO2,
@@ -884,7 +939,6 @@ list(
 
   #### LEVEL 14
   mapped_lvl14,
-  tar_combine(combined_emissions_lvl14, mapped_lvl14$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl14, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -895,7 +949,9 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,
                                      mapped_lvl4$exportedCO2,
                                      mapped_lvl5$exportedCO2,
+                                     mapped_lvl5_bugFix$exportedCO2,
                                      mapped_lvl6$exportedCO2,
+                                     mapped_lvl6_bugFix$exportedCO2,
                                      mapped_lvl7$exportedCO2,
                                      mapped_lvl8$exportedCO2,
                                      mapped_lvl9$exportedCO2,
@@ -907,7 +963,6 @@ list(
 
   #### LEVEL 15
   mapped_lvl15,
-  tar_combine(combined_emissions_lvl15, mapped_lvl15$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl15, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -918,7 +973,9 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,
                                      mapped_lvl4$exportedCO2,
                                      mapped_lvl5$exportedCO2,
+                                     mapped_lvl5_bugFix$exportedCO2,
                                      mapped_lvl6$exportedCO2,
+                                     mapped_lvl6_bugFix$exportedCO2,
                                      mapped_lvl7$exportedCO2,
                                      mapped_lvl8$exportedCO2,
                                      mapped_lvl9$exportedCO2,
@@ -931,7 +988,6 @@ list(
 
   #### LEVEL 16
   mapped_lvl16,
-  tar_combine(combined_emissions_lvl16, mapped_lvl16$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl16, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -942,7 +998,9 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,
                                      mapped_lvl4$exportedCO2,
                                      mapped_lvl5$exportedCO2,
+                                     mapped_lvl5_bugFix$exportedCO2,
                                      mapped_lvl6$exportedCO2,
+                                     mapped_lvl6_bugFix$exportedCO2,
                                      mapped_lvl7$exportedCO2,
                                      mapped_lvl8$exportedCO2,
                                      mapped_lvl9$exportedCO2,
@@ -956,7 +1014,6 @@ list(
 
   #### LEVEL 17
   mapped_lvl17,
-  tar_combine(combined_emissions_lvl17, mapped_lvl17$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
   tar_combine(exportedCO2_lvl17, list(mapped_lvl0$exportedCO2,
                                      mapped_lvl0_bugFix$exportedCO2,
                                      mapped_lvl1$exportedCO2,
@@ -967,7 +1024,9 @@ list(
                                      mapped_lvl3_bugFix$exportedCO2,
                                      mapped_lvl4$exportedCO2,
                                      mapped_lvl5$exportedCO2,
+                                     mapped_lvl5_bugFix$exportedCO2,
                                      mapped_lvl6$exportedCO2,
+                                     mapped_lvl6_bugFix$exportedCO2,
                                      mapped_lvl7$exportedCO2,
                                      mapped_lvl8$exportedCO2,
                                      mapped_lvl9$exportedCO2,
@@ -982,7 +1041,6 @@ list(
 
   #### LEVEL 18
   mapped_lvl18,
-  tar_combine(combined_emissions_lvl18, mapped_lvl18$emissions, command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
 
 
   #### 1710 MODEL (terminal so no need to include in the exporting above)
@@ -990,9 +1048,7 @@ list(
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #prep hydrography for routing
   mapped_1710a,
   mapped_1710b,
-  tar_combine(combined_emissions_1710, list(mapped_1710a$emissions,
-                                            mapped_1710b$emissions), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
-
+ 
   #### RUN LUMPED MODELS AND COMPARE AGAINST OUR MODEL (AND UNCERTAINTY)----------------------------------------------------
   tar_target(lumped_01, runLumpedModels(path_to_dataRaymond, '01', raymond_coscat_lookup, list(hydrography_0101, hydrography_0102, hydrography_0103, hydrography_0104, hydrography_0105, hydrography_0106, hydrography_0107, hydrography_0108, hydrography_0109, hydrography_0110),
                                                                                           list(final_0101, final_0102, final_0103, final_0104, final_0105, final_0106, final_0107, final_0108, final_0109, final_0110),
@@ -1006,6 +1062,7 @@ list(
                                                                                           list(final_0301, final_0302, final_0303, final_0304, final_0305, final_0306, final_0307, final_0308, final_0309, final_0310, final_0311, final_0312, final_0313, final_0314, final_0315, final_0316, final_0317, final_0318),
                                                                                           list(emissions_0301, emissions_0302, emissions_0303, emissions_0304, emissions_0305, emissions_0306, emissions_0307, emissions_0308, emissions_0309, emissions_0310, emissions_0311, emissions_0312, emissions_0313, emissions_0314, emissions_0315, emissions_0316, emissions_0317, emissions_0318),
                                                                                           list(cal_uncertainty_0301, cal_uncertainty_0302, cal_uncertainty_0303, cal_uncertainty_0304, cal_uncertainty_0305, cal_uncertainty_0306, cal_uncertainty_0307, cal_uncertainty_0308, cal_uncertainty_0309, cal_uncertainty_0310, cal_uncertainty_0311, cal_uncertainty_0312, cal_uncertainty_0313, cal_uncertainty_0314, cal_uncertainty_0315, cal_uncertainty_0316, cal_uncertainty_0317, cal_uncertainty_0318))),
+  #ignore 0427_1 as its identical to 0427 and exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2)
   tar_target(lumped_04, runLumpedModels(path_to_dataRaymond, '04', raymond_coscat_lookup, list(hydrography_0401,hydrography_0402, hydrography_0403, hydrography_0404, hydrography_0405, hydrography_0406, hydrography_0407, hydrography_0408, hydrography_0409, hydrography_0410, hydrography_0411, hydrography_0412, hydrography_0413, hydrography_0414, hydrography_0418, hydrography_0419, hydrography_0420, hydrography_0424,
                                                                                             hydrography_0426, hydrography_0427, hydrography_0428, hydrography_0429, hydrography_0430),
                                                                                           list(final_0401,final_0402, final_0403, final_0404, final_0405, final_0406, final_0407, final_0408, final_0409, final_0410, final_0411, final_0412, final_0413, final_0414, final_0418, final_0419, final_0420, final_0424,
@@ -1076,7 +1133,7 @@ list(
                                                                                           list(cal_uncertainty_1801, cal_uncertainty_1802, cal_uncertainty_1803, cal_uncertainty_1804, cal_uncertainty_1805, cal_uncertainty_1806, cal_uncertainty_1807, cal_uncertainty_1808, cal_uncertainty_1809, cal_uncertainty_1810))),
 
   #combine all GW contributions targets
-  tar_combine(combined_contribGW, list(mapped_lvlTerminal$contribGW,
+  tar_combine(combined_contribGW_init, list(mapped_lvlTerminal$contribGW,
                                        mapped_lvlTerminal_bugFix$contribGW,
                                        mapped_lvl0$contribGW,
                                        mapped_lvl0_bugFix$contribGW,
@@ -1088,24 +1145,28 @@ list(
                                        mapped_lvl3_bugFix$contribGW,
                                        mapped_lvl4$contribGW,
                                        mapped_lvl5$contribGW,
+                                       mapped_lvl5_bugFix$contribGW,
                                        mapped_lvl6$contribGW,
-                                       mapped_lvl7$contribGW,
-                                       mapped_lvl8$contribGW,
-                                       mapped_lvl9$contribGW,
-                                       mapped_lvl10$contribGW,
-                                       mapped_lvl11$contribGW,
-                                       mapped_lvl12$contribGW,
-                                       mapped_lvl13$contribGW,
-                                       mapped_lvl14$contribGW,
-                                       mapped_lvl15$contribGW,
-                                       mapped_lvl16$contribGW,
-                                       mapped_lvl17$contribGW,
-                                       mapped_lvl18$contribGW,
+                                       mapped_lvl6_bugFix$contribGW,
+                                  #     mapped_lvl7$contribGW,
+                                  #     mapped_lvl8$contribGW,
+                                  #     mapped_lvl9$contribGW,
+                                  #     mapped_lvl10$contribGW,
+                                  #     mapped_lvl11$contribGW,
+                                  #     mapped_lvl12$contribGW,
+                                  #     mapped_lvl13$contribGW,
+                                  #     mapped_lvl14$contribGW,
+                                  #     mapped_lvl15$contribGW,
+                                  #     mapped_lvl16$contribGW,
+                                  #     mapped_lvl17$contribGW,
+                                  #     mapped_lvl18$contribGW,
                                        mapped_1710a$contribGW,
-                                       mapped_1710b$contribGW), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment = "main"),  #aggregate model results across branches
+                                       mapped_1710b$contribGW), deployment='main'),
+  tar_target(combined_contribGW, fixCombo0427(combined_contribGW_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
+
 
   #combine all model emissions targets (levels that have currently finished)
-  tar_combine(combined_emissions, list(mapped_lvlTerminal$emissions,
+  tar_combine(combined_emissions_init, list(mapped_lvlTerminal$emissions,
                                        mapped_lvlTerminal_bugFix$emissions,
                                        mapped_lvl0$emissions,
                                        mapped_lvl0_bugFix$emissions,
@@ -1115,17 +1176,38 @@ list(
                                        mapped_lvl2_bugFix$emissions,
                                        mapped_lvl3$emissions,
                                        mapped_lvl3_bugFix$emissions,
+                                       mapped_lvl4$emissions,
+                                       mapped_lvl5$emissions,
+                                       mapped_lvl5_bugFix$emissions,
+                                       mapped_lvl6$emissions,
+                                       mapped_lvl6_bugFix$emissions,
+                                  #     mapped_lvl7$emissions,
+                                  #     mapped_lvl8$emissions,
+                                  #     mapped_lvl9$emissions,
+                                  #     mapped_lvl10$emissions,
+                                  #     mapped_lvl11$emissions,
+                                  #     mapped_lvl12$emissions,
+                                  #     mapped_lvl13$emissions,
+                                  #     mapped_lvl14$emissions,
+                                  #     mapped_lvl15$emissions,
+                                  #     mapped_lvl16$emissions,
+                                  #     mapped_lvl17$emissions,
+                                  #     mapped_lvl18$emissions,                                       
                                        mapped_1710a$emissions,
-                                       mapped_1710b$emissions)),
+                                       mapped_1710b$emissions), deployment='main'),
+  tar_target(combined_emissions, fixCombo0427(combined_emissions_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
 
   #build shapefile for mapping
   tar_target(shapefile_huc2, saveShapefile_huc2(path_to_data, c('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18'),
-                                                lumped_01, lumped_02, lumped_03, lumped_05, lumped_06, lumped_09, lumped_11, lumped_12, lumped_13, lumped_14, lumped_16, lumped_17, lumped_18)),
+                                                list(lumped_01, lumped_02, lumped_03, lumped_05, lumped_06, lumped_09, lumped_11, lumped_12, lumped_13, lumped_14, lumped_15, lumped_16, lumped_17, lumped_18))),
   tar_target(shapefile_huc4, saveShapefile_huc4(path_to_data, combined_contribGW, combined_emissions)),
 
   #generate paper figures
   tar_target(modelsCompare, compareLumpedFig(path_to_data, shapefile_huc2)),
-  tar_target(modelsConceptual, conceptualPlot(final_0102, final_0202, raymond_coscat_lookup)),
+  tar_target(modelsConceptual_0102, conceptualPlot(final_0102, raymond_coscat_lookup, '0102')),
+  tar_target(modelsConceptual_0202, conceptualPlot(final_0202, raymond_coscat_lookup, '0202')),
+  tar_target(modelsConceptual_1702, conceptualPlot(final_1702, raymond_coscat_lookup, '1702')),
+  tar_target(modelsConceptual_1302, conceptualPlot(final_1302, raymond_coscat_lookup, '1302')),
   tar_target(modelGW_lakes, lakes_GW_Plot(path_to_data, shapefile_huc4)),
 
   #supp figures

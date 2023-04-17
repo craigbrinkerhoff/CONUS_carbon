@@ -45,10 +45,11 @@ runLumpedModels <- function(path_to_data, HUC2, glorich_data,hydrographyList,co2
   henry <- henry_func(temp_c)
   sc <- 1911-118.11*temp_c+3.453*temp_c^2-0.0413*temp_c^3 #Raymond2012/Wanninkof 1991
 
+
   ##########RIVERS---------------------------------------
   rivers_by_order <- dplyr::group_by(network[network$waterbody == 'River',], StreamOrde) %>%
-    dplyr::summarise(kco2_m_s = mean(k_co2*D),
-                     SA_m2 = sum(LengthKM*W*1000))
+    dplyr::summarise(kco2_m_s = mean(k_co2*D, na.rm=T), #m/s
+                     SA_m2 = sum(LengthKM*W*1000, na.rm=T))
 
   #get regional k co2
   rivers_k_co2_lumped_m_s <- weighted.mean(rivers_by_order$kco2_m_s, rivers_by_order$SA_m2, na.rm=T) #normalize by surface area for each order
@@ -58,9 +59,6 @@ runLumpedModels <- function(path_to_data, HUC2, glorich_data,hydrographyList,co2
 
   #calculate regional carbon flux
   rivers_FCO2_lumped_total <- rivers_FCO2_lumped*sum(rivers_by_order$SA_m2, na.rm=T) #[g-C/yr]
-
-
-
 
   ##########LAKES/RESERVOIRS---------------------------------------
   lakes_by_order <- dplyr::filter(network, waterbody == 'Lake/Reservoir') %>% #build combined lakes dataset for lake scaling
@@ -81,7 +79,7 @@ runLumpedModels <- function(path_to_data, HUC2, glorich_data,hydrographyList,co2
 
  
   #SEMI-DISTRIBUTED MODEL 1---------------------------------
-  network$semi_FCO2_gC_m2_yr <- ifelse(network$waterbody == 'River', ((riverCO2-400)*henry*1e-6)*(network$k_co2*network$D)*(1/0.001)*12.01*(60*60*24*365), ((lakeCO2-400)*henry*1e-6)*(network$k_co2*network$D)*(1/0.001)*12.01*(60*60*24*365)) #gC_m2_yr
+  network$semi_FCO2_gC_m2_yr <- ifelse(network$waterbody == 'River', ((riverCO2-400)*network$henry*1e-6)*(network$k_co2*network$D)*(1/0.001)*12.01*(60*60*24*365), ((lakeCO2-400)*network$henry*1e-6)*(network$k_co2*network$D)*(1/0.001)*12.01*(60*60*24*365)) #gC_m2_yr
   network$semi_FCO2_gC_yr <- ifelse(network$waterbody == 'River', network$semi_FCO2_gC_m2_yr*network$W*network$LengthKM*1000, network$semi_FCO2_gC_m2_yr*network$frac_lakeSurfaceArea_m2)
 
   #SEMI-DISTRIBUTED MODEL 2---------------------------------

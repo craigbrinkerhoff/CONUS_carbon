@@ -213,29 +213,46 @@ kbz_func <- function(slope, depth, waterbody, temp){
 #' @param model: river netork data frame
 #' @param huc4: basin ID
 #' @param path_to_data: path to NHD geodatabases
+#' @param upstreamDF: df of upstream basins and their exported discharges
 #'
 #' @return Groundwater Co2 contributions to CO2 evasion [Tg-C/yr]
-getGWcontrib <- function(model, huc4, path_to_data){
-  #read in erminalPa b/c i forgot to add it to hydrography table...
-  huc2 <- substr(huc4, 1, 2)
-  huc4n <- ifelse(nchar(huc4) > 4, substr(huc4, 1, 4), huc4) #handle 1710a and 1710b (left joiin below takes care of this)
+getGWcontrib <- function(model, huc4, path_to_data, upstreamDF){
+  if(huc4 %in% c('0418', '0419', '0424', '0426', '0428')){
+    out <- data.frame('huc4'=huc4,
+                    'contribGW_TgC_yr'=NA)
+  }
+  else{
+    #get upstream basin Q if necessary
+    upstreamQ <- 0
+    if(is.na(upstreamDF) == 0){ #to skip doing this in level 0
+      # get discharge contributed by basins upstream
+      upstreamDF <- dplyr::filter(upstreamDF, downstreamBasin == huc4)
+      upstreamQ <- sum(upstreamDF$exported_Q_cms, na.rm=T)
+    }
 
-  dsnPath <- paste0(path_to_data, '/HUC2_', huc2, '/NHDPLUS_H_', huc4n, '_HU4_GDB/NHDPLUS_H_', huc4n, '_HU4_GDB.gdb')
-  NHD_HR_VAA <- sf::st_read(dsn = dsnPath, layer = "NHDPlusFlowlineVAA", quiet=TRUE) #additional 'value-added' attributes
-  NHD_HR_VAA <- dplyr::select(NHD_HR_VAA, c('NHDPlusID', 'TerminalPa'))
+    #read in erminalPa b/c i forgot to add it to hydrography table...
+    huc2 <- substr(huc4, 1, 2)
+    huc4n <- ifelse(nchar(huc4) > 4, substr(huc4, 1, 4), huc4) #handle 1710a and 1710b (left joiin below takes care of this)
 
-  #get total exported Q to apply Cgw to
-  exportedQ <- model %>%
-    dplyr::left_join(NHD_HR_VAA, by='NHDPlusID') %>%
-    dplyr::group_by(TerminalPa) %>%
-    dplyr::summarize(Qout = max(Q_cms, na.rm = T))
+    dsnPath <- paste0(path_to_data, '/HUC2_', huc2, '/NHDPLUS_H_', huc4n, '_HU4_GDB/NHDPLUS_H_', huc4n, '_HU4_GDB.gdb')
+    NHD_HR_VAA <- sf::st_read(dsn = dsnPath, layer = "NHDPlusFlowlineVAA", quiet=TRUE) #additional 'value-added' attributes
+    NHD_HR_VAA <- dplyr::select(NHD_HR_VAA, c('NHDPlusID', 'TerminalPa'))
+
+    #get total exported Q to apply Cgw to
+    exportedQ <- model %>%
+      dplyr::left_join(NHD_HR_VAA, by='NHDPlusID') %>%
+      dplyr::group_by(TerminalPa) %>%
+      dplyr::summarize(Qout = max(Q_cms, na.rm = T))
   
-  #Get total Cgw contribution to basin
-  henry <- median(model$henry, na.rm=T)
-  GWcontrib <- sum(((16000-400)*henry*1e-6)*(1/0.001)*12.01*sum(exportedQ$Qout)*(60*60*24*365)) * 1e-12#Tg-C/yr
+    #Get total Cgw contribution to basin
+    henry <- median(model$henry, na.rm=T)
+    Q_fin <- sum(exportedQ$Qout) - upstreamQ
+    Q_fin <- ifelse(Q_fin < 0, 0, Q_fin) #if losing basins/t no net gw introduced, just set to 0 water entering network
+    GWcontrib <- sum(((16000-400)*henry*1e-6)*(1/0.001)*12.01*Q_fin*(60*60*24*365)) * 1e-12#Tg-C/yr
   
-  out <- data.frame('huc4'=huc4,
-                    'contribGW_TgC_yr'=GWcontrib)
+    out <- data.frame('huc4'=huc4,
+                      'contribGW_TgC_yr'=GWcontrib)
+  }
   return(out)
 }
 
@@ -296,11 +313,11 @@ emissions_uncertainty <- function(calibratedParameters, model){
 #'
 #' @param path_to_data: path to NHD geodatabases
 #' @param codes_huc02: list of HUC2 ids
-#' @param raymond_xx: model results per HUC2 basin
+#' @param lumpedList: list of model results per hUC2 region
 #'
 #' @return print statement, writes shapefile to file
-saveShapefile_huc2 <- function(path_to_data, codes_huc02, raymond_01, raymond_02, raymond_03, raymond_05, raymond_06, raymond_09, raymond_11, raymond_12, raymond_13, raymond_14, raymond_16, raymond_17, raymond_18){
-  combined_results <- rbind(raymond_01, raymond_02, raymond_03, raymond_05, raymond_06, raymond_09, raymond_11, raymond_12, raymond_13, raymond_14, raymond_16, raymond_17, raymond_18)
+saveShapefile_huc2 <- function(path_to_data, codes_huc02, lumpedList){
+    combined_results <- do.call("rbind", lumpedList) #make lumped model object
 
     #read in all HUC4 basins
     basins_overall <- sf::st_read(paste0(path_to_data, '/HUC2_', codes_huc02[1], '/WBD_', codes_huc02[1], '_HU2_Shape/Shape/WBDHU2.shp')) %>% dplyr::select(c('huc2', 'name'))
@@ -353,7 +370,8 @@ saveShapefile_huc4 <- function(path_to_data, combined_contribGW, combined_emissi
       dplyr::summarise(lakeFCO2_TgC_yr = sum(sumFCO2_TgC_yr, na.rm=T))
 
     combined_emissions_total <- combined_emissions_total %>%
-      dplyr::left_join(lakeEmissions, by='huc4')
+      dplyr::left_join(lakeEmissions, by='huc4') %>%
+      dplyr::mutate(lakeFCO2_TgC_yr = ifelse(sumFCO2_TgC_yr == 0, NA, lakeFCO2_TgC_yr)) #handle great lakes
 
     #combine 1710a and 1710b into single values for mapping
     gw_1710 <- combined_contribGW[combined_contribGW$huc4 == '1710a',]$contribGW_TgC_yr + combined_contribGW[combined_contribGW$huc4 == '1710b',]$contribGW_TgC_yr #Tg-C/yr
@@ -630,4 +648,14 @@ saveIntermediateResults <- function(object, ...){
   
   #return object as is, DO NOT UPDATE don't want to mess up the calibration!!
   return(object)
+}
+
+
+
+
+
+fixCombo0427 <- function(combined_emissions){
+  out <- dplyr::distinct(combined_emissions, .keep_all=TRUE)
+
+  return(out)
 }

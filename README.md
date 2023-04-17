@@ -35,3 +35,7 @@ readr::write_rds(calibratedParameters, 'cache/calibratedParameters.rds')
 ```
 install.packages('gittargets')
 ```
+
+```
+git add --all -- ':!path/to/file1'
+```
