@@ -10,7 +10,7 @@ sbatch run.sh
 
 - This pipeline is facilitated by [`targets`](https://books.ropensci.org/targets/) and [`future.batchtools`](https://future.batchtools.futureverse.org/), so you need familiarity with these tools to run with confidence! We use a SLURM scheduler to submit jobs, your HPC mileage may vary.
 
-- We used a conda environment to run the entire project. The specifics of the environment are available in *environment.yml*. Note that you need to manually install `dataRetrieval` package as its not available in conda-forge.
+- We used a conda environment to run the entire project. The specifics of the environment are available in *environment.yml*. Note that you need to manually install `dataRetrieval` package as its not available in conda-forge. You also need to manually install `ggspatial` as it's not available on conda-forge.
 
 - While the necessary hardcoded file paths *should* only be in *_targets.R*, there is an assumed data repo structure. Check functions in *src/analysis.R* for examples.
 
@@ -31,9 +31,16 @@ calibratedParameters <- mget(ls(pattern='calibratedParameters_'))
 readr::write_rds(calibratedParameters, 'cache/calibratedParameters.rds')
 ```
 
-
+## git commits for target objects too!
+https://docs.ropensci.org/gittargets/articles/git.html#snapshot-data
 ```
 install.packages('gittargets')
+
+#do git commit
+
+R
+library(gittargets)
+tar_git_snapshot()
 ```
 
 ```

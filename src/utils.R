@@ -221,8 +221,21 @@ getGWcontrib <- function(model, huc4, path_to_data, upstreamDF){
     out <- data.frame('huc4'=huc4,
                     'contribGW_TgC_yr'=NA)
   }
+
   else{
-    #get upstream basin Q if necessary
+
+    #fix HUC4s with fake shoreline rivers (if necessary)
+    remove_Q <- 0 #for those great lakes basins
+  if(huc4 %in% c('0402', '0405', '0406', '0407', '0408', '0411', '0412','0401','0410','0414','0403','0404')) {
+      fix <- readr::read_csv(paste0('data/fix_',huc4,'.csv'))
+
+      model <- dplyr::left_join(model, fix, by='NHDPlusID')
+
+      remove <- model[model$GL_pass == '0',]
+      remove_Q <- max(remove$Q_cms, na.rm=T)
+    }
+
+    #remove upstream Q if necessary
     upstreamQ <- 0
     if(is.na(upstreamDF) == 0){ #to skip doing this in level 0
       # get discharge contributed by basins upstream
@@ -243,10 +256,10 @@ getGWcontrib <- function(model, huc4, path_to_data, upstreamDF){
       dplyr::left_join(NHD_HR_VAA, by='NHDPlusID') %>%
       dplyr::group_by(TerminalPa) %>%
       dplyr::summarize(Qout = max(Q_cms, na.rm = T))
-  
+
     #Get total Cgw contribution to basin
     henry <- median(model$henry, na.rm=T)
-    Q_fin <- sum(exportedQ$Qout) - upstreamQ
+    Q_fin <- sum(exportedQ$Qout) - upstreamQ - remove_Q
     Q_fin <- ifelse(Q_fin < 0, 0, Q_fin) #if losing basins/t no net gw introduced, just set to 0 water entering network
     GWcontrib <- sum(((16000-400)*henry*1e-6)*(1/0.001)*12.01*Q_fin*(60*60*24*365)) * 1e-12#Tg-C/yr
   
@@ -266,21 +279,114 @@ getGWcontrib <- function(model, huc4, path_to_data, upstreamDF){
 #'
 #' @return river network data frame with CO2 fluxes added [gC/m2/yr]
 calcEmissions <- function(model, huc4){
+  #fix HUC4s with fake shoreline rivers
+  if(huc4 %in% c('0402', '0405', '0406', '0407', '0408', '0411', '0412','0401','0410','0414','0403','0404')) {
+    fix <- readr::read_csv(paste0('data/fix_',huc4,'.csv'))
+    model <- dplyr::left_join(model, fix, by='NHDPlusID')
+
+    model[model$GL_pass == '0',]$FCO2_gC_m2_yr <- 0
+    model[model$GL_pass == '0',]$W_m <- 0
+    model[model$GL_pass == '0',]$LengthKM <- 0
+  }
+
   #calculate fluxes per reach
   model$FCO2_gC_yr <- ifelse(model$waterbody == 'River',
                                    model$FCO2_gC_m2_yr * model$W_m * model$LengthKM * 1000, #river g-C/yr
                                    model$FCO2_gC_m2_yr * model$lakeSA_m2) #lake/reservoir g-C/yr
 
   #aggregate over watershed
-  networkOutput <- dplyr::group_by(model, waterbody) %>%
-                       dplyr::summarise(huc4=huc4,
-                                        sumFCO2_TgC_yr = sum(FCO2_gC_yr, na.rm=T)*1e-12, #basin Tg-C/yr
-                                        sumFCO2_conus_TgC_yr = sum(FCO2_gC_yr*conus, na.rm=T)*1e-12, #basin Tg-C/yr with no international streams
-                                        n = n())
+  networkOutput <- model %>%
+      dplyr::mutate(SA_m2 = ifelse(waterbody=='River', W_m*LengthKM*1000, lakeSA_m2)) %>%
+      dplyr::group_by(waterbody) %>%
+      dplyr::summarise(huc4=huc4,
+          sumFCO2_TgC_yr = sum(FCO2_gC_yr, na.rm=T)*1e-12, #basin Tg-C/yr
+          sumFCO2_conus_TgC_yr = sum(FCO2_gC_yr*conus, na.rm=T)*1e-12, #basin Tg-C/yr with no international streams
+          sumSurfaceArea_skm = sum(SA_m2, na.rm=T)*1e-6,
+          sumSurfaceArea_conus_skm = sum(SA_m2*conus, na.rm=T)*1e-6,
+          n = n())
 
   out <- networkOutput
   return(out)
 }
+
+
+
+
+
+
+#' calculate basin stats
+#'
+#' @name calcBasinProperties
+#'
+#' @param model: river network data frame
+#'
+#' @return river network data frame with CO2 fluxes added [gC/m2/yr]
+calcBasinProperties <- function(model, huc4){
+  if(huc4 %in% c('0418', '0419', '0424', '0426', '0428')){
+    out <- data.frame('huc4'=huc4,
+                    'mean_k600_m_s'=NA,
+                    'median_k600_m_s'=NA,
+                    'mean_kco2_m_s'=NA,
+                    'median_kco2_m_s'=NA,
+                    'mean_slope'=NA,
+                    'median_slope'=NA)
+  }
+  else{
+    model$SA_m2 <- ifelse(model$waterbody == 'River', model$W_m*model$LengthKM*1000, model$lakeSA_m2)
+    #summary stats
+    out <- data.frame('huc4'=huc4,
+                    'mean_k600_m_s'=mean(model$k600_m_s, na.rm=T),
+                    'median_k600_m_s'=median(model$k600_m_s,na.rm=T),
+                    'mean_kco2_m_s'=mean(model$k_co2_m_s,na.rm=T),
+                    'median_kco2_m_s'=median(model$k_co2_m_s,na.rm=T),
+                    'mean_slope'=mean(model$Slope, na.rm=T),
+                    'median_slope'=median(model$Slope, na.rm=T))
+  }
+  return(out)
+}
+
+
+
+
+
+#' calculate basin lake stats
+#'
+#' @name calcBasinLakeProperties
+#'
+#' @param model: river network data frame
+#'
+#' @return river network data frame with CO2 fluxes added [gC/m2/yr]
+calcBasinLakeProperties <- function(model, huc4){
+  if(huc4 %in% c('0418', '0419', '0424', '0426', '0428')){
+    out <- data.frame('huc4'=huc4,
+                      'lakeBin'=NA,
+                      'n_reaches' = NA,
+                      'binArea_skm' = NA,
+                      'binFlux_gC_m2_yr' = NA,
+                      'binFlux_TgC_yr'=NA)
+  }
+  else{
+    model$lakeBin <- ifelse(model$lakeSA_m2*1e-6 < 0.001, '0.001',
+                        ifelse(model$lakeSA_m2*1e-6 < 0.01, '0.01',
+                            ifelse(model$lakeSA_m2*1e-6 < 0.1, '0.1',
+                                ifelse(model$lakeSA_m2*1e-6 < 1, '1',
+                                    ifelse(model$lakeSA_m2*1e-6 < 10,'10',
+                                        ifelse(model$lakeSA_m2*1e-6 < 100, '100', '100+'))))))
+
+    out <- model %>%
+      dplyr::filter(lakeSA_m2 > 0) %>%
+      dplyr::group_by(lakeBin) %>%
+      dplyr::summarise(binArea_skm = sum(lakeSA_m2*1e-6, na.rm=T),
+                       binFlux_gC_m2_yr = sum(FCO2_gC_m2_yr, na.rm=T),
+                       n_reaches = n()) %>%
+      dplyr::mutate(binFlux_TgC_yr = binFlux_gC_m2_yr*binArea_skm*1e6*1e-12,
+                    huc4=huc4) %>%
+      dplyr::select(c('huc4', 'lakeBin', 'n_reaches', 'binArea_skm', 'binFlux_gC_m2_yr', 'binFlux_TgC_yr'))
+  }
+  return(out)
+}
+
+
 
 
 
@@ -290,9 +396,10 @@ calcEmissions <- function(model, huc4){
 #'
 #' @param calibratedParameters: list of calibration results
 #' @param model: river network data frame
+#' @param huc4: model huc basin code
 #'
 #' @return uncertainty in carbon emissions due to model calibration [Tg-C/yr]
-emissions_uncertainty <- function(calibratedParameters, model){
+emissions_uncertainty <- function(calibratedParameters, model, huc4){
   combined_fitness <- calibratedParameters$fitness
   cost <- (1/combined_fitness)/2 #eq 16 in paper
 
@@ -302,7 +409,10 @@ emissions_uncertainty <- function(calibratedParameters, model){
   sigma <- median(model$k_co2_m_s, na.rm=T) * ((cost*median(model$henry, na.rm=T))/1000000)*(1/0.001)*12.01*(60*60*24*365) #g-C/m2/yr
   sigma <- sigma * SA * 1e-12 #Tg-C/yr
 
-  return(sigma) #Tg-C/yr
+  out <- data.frame('huc4'=huc4,
+                    'sigma'=sigma)
+
+  return(out) #Tg-C/yr
 }
 
 
@@ -320,10 +430,19 @@ saveShapefile_huc2 <- function(path_to_data, codes_huc02, lumpedList){
     combined_results <- do.call("rbind", lumpedList) #make lumped model object
 
     #read in all HUC4 basins
-    basins_overall <- sf::st_read(paste0(path_to_data, '/HUC2_', codes_huc02[1], '/WBD_', codes_huc02[1], '_HU2_Shape/Shape/WBDHU2.shp')) %>% dplyr::select(c('huc2', 'name'))
+    basins_overall <- sf::st_read(paste0(path_to_data, '/HUC2_', codes_huc02[1], '/WBD_', codes_huc02[1], '_HU2_Shape/Shape/WBDHU2.shp')) %>% dplyr::select(c('huc2'))
     for(i in codes_huc02[-1]){
-      basins <- sf::st_read(paste0(path_to_data, '/HUC2_', i, '/WBD_', i, '_HU2_Shape/Shape/WBDHU2.shp')) %>%
-          dplyr::select(c('huc2', 'name')) #basin polygons
+      if (i %in% c('13','04')){
+        basins <- sf::st_read(paste0(path_to_data, '/HUC2_',i,'_clipped.shp')) %>%
+          sf::st_make_valid() %>%
+          dplyr::mutate('huc2'=i) %>%
+          dplyr::select(c('huc2')) #basin polygons
+      }
+      else{
+        basins <- sf::st_read(paste0(path_to_data, '/HUC2_', i, '/WBD_', i, '_HU2_Shape/Shape/WBDHU2.shp')) %>%
+          dplyr::select(c('huc2')) #basin polygons        
+      }
+
       basins_overall <- rbind(basins_overall, basins)
     }
 
@@ -333,12 +452,12 @@ saveShapefile_huc2 <- function(path_to_data, codes_huc02, lumpedList){
       dplyr::summarise(sumFCO2_lumped_TgC_yr = sum(sumFCO2_lumped_TgC_yr),
                sumFCO2_TgC_yr = sum(sumFCO2_TgC_yr),
                sumFCO2_conus_TgC_yr = sum(sumFCO2_conus_TgC_yr),
-               sumFCO2_semiDist_TgC_yr = sum(sumFCO2_semiDist_TgC_yr),
-               sumFCO2_semiDist2_TgC_yr = sum(sumFCO2_semiDist2_TgC_yr),
-               cal_uncertainty = mean(cal_uncertainty)) #take mean of identical numbers to pass the value through the group_by
+               sumFCO2_lumped_k_TgC_yr = sum(sumFCO2_lumped_k_TgC_yr),
+               sumFCO2_lumped_co2_TgC_yr = sum(sumFCO2_lumped_co2_TgC_yr),
+               cal_uncertainty = sum(cal_uncertainty, na.rm=T)) #take sum number and NA to pass the value through the group_by
 
     #round for mapping
-    basins_overall <- dplyr::select(basins_overall, c('huc2', 'sumFCO2_lumped_TgC_yr', 'sumFCO2_semiDist_TgC_yr', 'sumFCO2_semiDist2_TgC_yr', 'sumFCO2_TgC_yr', 'sumFCO2_conus_TgC_yr', 'cal_uncertainty'))
+    basins_overall <- dplyr::select(basins_overall, c('huc2', 'sumFCO2_lumped_TgC_yr', 'sumFCO2_lumped_k_TgC_yr', 'sumFCO2_lumped_co2_TgC_yr', 'sumFCO2_TgC_yr', 'sumFCO2_conus_TgC_yr', 'cal_uncertainty'))
   
     #return shapefile
     return(basins_overall)
@@ -360,8 +479,10 @@ saveShapefile_huc4 <- function(path_to_data, combined_contribGW, combined_emissi
     #combine lake and rivers for total
     combined_emissions_total <- combined_emissions %>%
       dplyr::group_by(huc4) %>%
-      dplyr::summarise(sumFCO2_TgC_yr = sum(sumFCO2_TgC_yr, na.rm=T))
-
+      dplyr::summarise(sumFCO2_TgC_yr = sum(sumFCO2_TgC_yr, na.rm=T),
+                       sumFCO2_conus_TgC_yr = sum(sumFCO2_conus_TgC_yr, na.rm=T),
+                       sumFCO2_lost_TgC_yr = sum(abs(sumFCO2_TgC_yr),na.rm=T),
+                       sumSurfaceArea_skm = sum(sumSurfaceArea_skm, na.rm=T)) #for GW comparison, we compare it against total GW lost (whether through emissions or photosynthesis)
 
     #add percent lakes
     lakeEmissions = combined_emissions %>%
@@ -396,7 +517,7 @@ saveShapefile_huc4 <- function(path_to_data, combined_contribGW, combined_emissi
       dplyr::left_join(combined_contribGW, by='huc4') %>%
       dplyr::left_join(combined_emissions_total, by='huc4')
 
-    basins_overall <- dplyr::select(basins_overall, c('huc4', 'contribGW_TgC_yr', 'sumFCO2_TgC_yr', 'lakeFCO2_TgC_yr'))
+    basins_overall <- dplyr::select(basins_overall, c('huc4', 'contribGW_TgC_yr', 'sumFCO2_TgC_yr', 'sumFCO2_conus_TgC_yr','lakeFCO2_TgC_yr','sumFCO2_lost_TgC_yr', 'sumSurfaceArea_skm'))
   
     #return shapefile
     return(basins_overall)
@@ -657,5 +778,27 @@ saveIntermediateResults <- function(object, ...){
 fixCombo0427 <- function(combined_emissions){
   out <- dplyr::distinct(combined_emissions, .keep_all=TRUE)
 
+  return(out)
+}
+
+
+
+
+gatherResults <- function(combined_emissions, combined_contribGW,combined_uncertainty, combined_basinProperties, combined_basinLakeProperties, lumpedList){
+  combined_lumped <- do.call("rbind", lumpedList) #make lumped model object
+
+  out <- list('totalFlux_TgC_yr'=sum(combined_lumped$sumFCO2_TgC_yr,na.rm=T),
+              'totalFlux_conus_TgC_yr'=sum(combined_lumped$sumFCO2_conus_TgC_yr,na.rm=T),
+              'totalFluxLumped_TgC_yr'=sum(combined_lumped$sumFCO2_lumped_TgC_yr, na.rm=T),
+              'totalFluxLumped_k_TgC_yr'=sum(combined_lumped$sumFCO2_lumped_co2_TgC_yr, na.rm=T),
+              'totalFluxLumped_co2_TgC_yr'=sum(combined_lumped$sumFCO2_lumped_k_TgC_yr, na.rm=T),
+              'conus_uncertainty_TgC_yr'=sum(combined_uncertainty$sigma, na.rm=T), #great lakes are NA                     
+              'huc4_emissions'=combined_emissions,
+              'huc4_GW'=combined_contribGW,
+              'huc4_basinProperties'=combined_basinProperties,
+              'huc4_basinLakeProperties'=combined_basinLakeProperties,
+              'huc2_results'=combined_lumped)
+
+  readr::write_rds(out, 'cache/summaryResults.rds')
   return(out)
 }
