@@ -289,6 +289,22 @@ calcEmissions <- function(model, huc4){
     model[model$GL_pass == '0',]$LengthKM <- 0
   }
 
+  # #calculate whole-lake kco2
+  # classes <- c(0.1, 1, 10) #[km2]
+  # lakes <- model %>%
+  #   dplyr::group_by(WBArea_Permanent_Identifier) %>%
+  #   dplyr::summarise(wholeLakeSA_km2 = sum(lakeSA_m2,na.rm=T)*1e-6,
+  #                    wholeLakeTemp_c = mean(Water_temp_c, na.rm=T)) %>%
+  #   dplyr::mutate(wholeLakeK600_m_dy = ifelse(wholeLakeSA_km2 <= classes[1], 0.54,
+  #                                     ifelse(wholeLakeSA_km2 <= classes[2], 1.16,
+  #                                         ifelse(wholeLakeSA_km2 <= classes[3], 1.32, 1.90))),
+  #                 sc = 1911-118.11*wholeLakeTemp_c+3.453*wholeLakeTemp_c^2-0.0413*wholeLakeTemp_c^3) %>% #[m/day])
+  #   dplyr::mutate(wholeLakeKco2_m_s = (wholeLakeK600_m_dy / (600/sc)^-0.5)/(24*60*60)) %>% #m/s
+  #   dplyr::select(c('WBArea_Permanent_Identifier', 'wholeLakeKco2_m_s'))
+
+  # model <- dplyr::left_join(model, lakes)
+  # model$FCO2_gC_m2_yr <- ifelse(model$waterbody == 'Lake/Reservoir', model$wholeLakeKco2_m_s*(((model$CO2_ppm - 400)*model$henry)/1000000)*(1/0.001)*12.01*(60*60*24*365), model$FCO2_gC_m2_yr)
+
   #calculate fluxes per reach
   model$FCO2_gC_yr <- ifelse(model$waterbody == 'River',
                                    model$FCO2_gC_m2_yr * model$W_m * model$LengthKM * 1000, #river g-C/yr
@@ -688,29 +704,6 @@ fixBadTemps <- function(temp, temp_vec, fromNode, fromNode_vec, toNode, toNode_v
 
 
 
-#' Aggregates model results to HUC2 regional level to compare against raymond model
-#'
-#' @name abstractAllResults
-#'
-#' @param combined_emissions_lvlx: combined targets for each processing level
-#'
-#'
-#' @return data frame of all model results per HUC2 region AND all raymond upscaling results per HUC2 region
-abstractAllResults <- function(allResults, raymondList){
-  raymond <- do.call("rbind", raymondList) #make raymond model object
-
-  huc2Results <- dplyr::group_by(allResults, huc2) %>%
-        dplyr::summarise(sumFCO2_conus_TgC_yr = sum(sumFCO2_conus_TgC_yr),
-                         sumFCO2_TgC_yr = sum(sumFCO2_TgC_yr),
-                         n = sum(n))
-
-  huc2Raymond <- dplyr::group_by(raymond, huc2) %>%
-        dplyr::summarise(sumFCO2_raymond_TgC_yr = sum(sumFCO2_lumped_TgC_yr))
-
-  out <- left_join(huc2Results, huc2Raymond, by='huc2')
-  return(out)
-}
-
 
 #' Write selected river networks to csv so that brian can map them and play with them. Uses `fwrite` from the data.table package to be as efficient as possible
 #'
@@ -800,5 +793,15 @@ gatherResults <- function(combined_emissions, combined_contribGW,combined_uncert
               'huc2_results'=combined_lumped)
 
   readr::write_rds(out, 'cache/summaryResults.rds')
+  return(out)
+}
+
+
+
+getRandomSample <- function(network) {
+  set.seed(345)
+  out <- network %>%
+    dplyr::slice_sample(n=1000)
+
   return(out)
 }

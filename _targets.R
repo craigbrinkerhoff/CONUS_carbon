@@ -83,7 +83,8 @@ mapped_lvlTerminal <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, NA)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 #terminal basins that need to pull from cached results because of hpc problems...
@@ -103,7 +104,8 @@ mapped_lvlTerminal_bugFix <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, NA)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -130,7 +132,8 @@ mapped_lvl0 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, NA)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 #level 0 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters....
@@ -151,7 +154,8 @@ mapped_lvl0_bugFix <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, NA)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 #level 1 downstream basins
@@ -177,7 +181,8 @@ mapped_lvl1 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl0)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 #level 1 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters....
@@ -198,7 +203,8 @@ mapped_lvl1_bugFix <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl0)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 #level 2 downstream basins
@@ -224,7 +230,8 @@ mapped_lvl2 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl1)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 #level 2 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters....
@@ -245,7 +252,8 @@ mapped_lvl2_bugFix <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl1)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -272,7 +280,8 @@ mapped_lvl3 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl2)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 #level 3 basins that lost connection with main process, so temporary fix is to manually access their job logs to grab the calibrated parameters....
@@ -293,7 +302,8 @@ mapped_lvl3_bugFix <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl2)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -319,7 +329,8 @@ mapped_lvl4 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl3)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -346,7 +357,8 @@ mapped_lvl5 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl4)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -370,7 +382,8 @@ mapped_lvl5_bugFix <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl4)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -399,7 +412,8 @@ mapped_lvl6 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl5)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -422,7 +436,8 @@ mapped_lvl6_bugFix <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl5)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -451,7 +466,8 @@ mapped_lvl7 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl6)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 #level 8 downstream basins
@@ -476,7 +492,8 @@ mapped_lvl8 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl7)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -502,7 +519,8 @@ mapped_lvl9 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl8)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -528,7 +546,8 @@ mapped_lvl10 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl9)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -554,7 +573,8 @@ mapped_lvl11 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl10)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -581,7 +601,8 @@ mapped_lvl12 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl11)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -607,7 +628,8 @@ mapped_lvl13 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl12)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -634,7 +656,8 @@ mapped_lvl14 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl13)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -647,11 +670,12 @@ mapped_lvl15 <- tar_map(
        names = "huc4",
        tar_target(hydrography, method_function(path_to_data, huc4),
                                               resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #prep hydrography for routing
-       tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl14, #calibrate model to raymond CO2
-                                                              lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
-                                                              upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
-                                                              myPopSize, mymaxIter, myRun, maxFitness, mutationRate, cores),
-                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
+       # tar_target(calibratedParameters, calibrateModelWrapper(hydrography, huc4, glorich_data, C_groundwater, C_atmosphere, emergenceQ, exportedCO2_lvl14, #calibrate model to raymond CO2
+       #                                                        lowerCBZ_riv, lowerCBZ_lake, lowerFWC_riv, lowerFWC_lake,
+       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
+       #                                                        myPopSize, mymaxIter, myRun, maxFitness, mutationRate, cores),
+       #                                        resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
+       tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)), #SINGLE BASIN, SO NO NEED FOR BUG FIX STUFF, JUST CALL THIS VERSION OF THE TARGET
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl14)), #run final version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)), #get exported CO2 and reach end node for routing to next downstream basins
@@ -660,7 +684,8 @@ mapped_lvl15 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl14)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 #level 16 downstream basins
@@ -685,7 +710,8 @@ mapped_lvl16 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl15)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -711,7 +737,8 @@ mapped_lvl17 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl16)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -736,7 +763,8 @@ mapped_lvl18 <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, huc4, path_to_data, exportedCO2_lvl17)),
        tar_target(map, indvRiverMaps(final, huc4)),
        tar_target(basinProperties, calcBasinProperties(final, huc4)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 #Special 1710 basin splitting
@@ -760,7 +788,8 @@ mapped_1710a <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, sub, path_to_data, NA)),
        tar_target(map, indvRiverMaps(final, sub)),
        tar_target(basinProperties, calcBasinProperties(final, sub)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, sub))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, sub)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -779,7 +808,8 @@ mapped_1710b <- tar_map(
        tar_target(contribGW, getGWcontrib(hydrography, sub, path_to_data, NA)),
        tar_target(map, indvRiverMaps(final, sub)),
        tar_target(basinProperties, calcBasinProperties(final, sub)),
-       tar_target(basinLakeProperties, calcBasinLakeProperties(final, sub))
+       tar_target(basinLakeProperties, calcBasinLakeProperties(final, sub)),
+       tar_target(randomSample, getRandomSample(final))
 )
 
 
@@ -1246,10 +1276,10 @@ list(
                                        mapped_lvl12$cal_uncertainty,
                                        mapped_lvl13$cal_uncertainty,
                                        mapped_lvl14$cal_uncertainty,
-                                  #     mapped_lvl15$cal_uncertainty,
-                                  #     mapped_lvl16$cal_uncertainty,
-                                  #     mapped_lvl17$cal_uncertainty,
-                                  #     mapped_lvl18$cal_uncertainty,
+                                       mapped_lvl15$cal_uncertainty,
+                                       mapped_lvl16$cal_uncertainty,
+                                       mapped_lvl17$cal_uncertainty,
+                                       mapped_lvl18$cal_uncertainty,
                                        mapped_1710a$cal_uncertainty,
                                        mapped_1710b$cal_uncertainty), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_uncertainty, fixCombo0427(combined_uncertainty_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
@@ -1278,10 +1308,10 @@ list(
                                        mapped_lvl12$contribGW,
                                        mapped_lvl13$contribGW,
                                        mapped_lvl14$contribGW,
-                                  #     mapped_lvl15$contribGW,
-                                  #     mapped_lvl16$contribGW,
-                                  #     mapped_lvl17$contribGW,
-                                  #     mapped_lvl18$contribGW,
+                                       mapped_lvl15$contribGW,
+                                       mapped_lvl16$contribGW,
+                                       mapped_lvl17$contribGW,
+                                       mapped_lvl18$contribGW,
                                        mapped_1710a$contribGW,
                                        mapped_1710b$contribGW), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_contribGW, fixCombo0427(combined_contribGW_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
@@ -1311,10 +1341,10 @@ list(
                                        mapped_lvl12$emissions,
                                        mapped_lvl13$emissions,
                                        mapped_lvl14$emissions,
-                                  #     mapped_lvl15$emissions,
-                                  #     mapped_lvl16$emissions,
-                                  #     mapped_lvl17$emissions,
-                                  #     mapped_lvl18$emissions,                                       
+                                       mapped_lvl15$emissions,
+                                       mapped_lvl16$emissions,
+                                       mapped_lvl17$emissions,
+                                       mapped_lvl18$emissions,                                       
                                        mapped_1710a$emissions,
                                        mapped_1710b$emissions), deployment='main'),
   tar_target(combined_emissions, fixCombo0427(combined_emissions_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
@@ -1344,10 +1374,10 @@ list(
                                        mapped_lvl12$basinProperties,
                                        mapped_lvl13$basinProperties,
                                        mapped_lvl14$basinProperties,
-                                  #     mapped_lvl15$basinProperties,
-                                  #     mapped_lvl16$basinProperties,
-                                  #     mapped_lvl17$basinProperties,
-                                  #     mapped_lvl18$basinProperties,                                       
+                                       mapped_lvl15$basinProperties,
+                                       mapped_lvl16$basinProperties,
+                                       mapped_lvl17$basinProperties,
+                                       mapped_lvl18$basinProperties,                                       
                                        mapped_1710a$basinProperties,
                                        mapped_1710b$basinProperties), deployment='main'),
   tar_target(combined_basinProperties, fixCombo0427(combined_basinProperties_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
@@ -1378,10 +1408,10 @@ list(
                                        mapped_lvl12$basinLakeProperties,
                                        mapped_lvl13$basinLakeProperties,
                                        mapped_lvl14$basinLakeProperties,
-                                  #     mapped_lvl15$basinLakeProperties,
-                                  #     mapped_lvl16$basinLakeProperties,
-                                  #     mapped_lvl17$basinLakeProperties,
-                                  #     mapped_lvl18$basinLakeProperties,                                       
+                                       mapped_lvl15$basinLakeProperties,
+                                       mapped_lvl16$basinLakeProperties,
+                                       mapped_lvl17$basinLakeProperties,
+                                       mapped_lvl18$basinLakeProperties,                                       
                                        mapped_1710a$basinLakeProperties,
                                        mapped_1710b$basinLakeProperties), deployment='main'),
   tar_target(combined_basinLakeProperties, fixCombo0427(combined_basinLakeProperties_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
@@ -1411,41 +1441,71 @@ list(
                                        mapped_lvl12$map,
                                        mapped_lvl13$map,
                                        mapped_lvl14$map,
-                                  #     mapped_lvl15$map,
-                                  #     mapped_lvl16$map,
-                                  #     mapped_lvl17$map,
-                                  #     mapped_lvl18$map,                                       
+                                       mapped_lvl15$map,
+                                       mapped_lvl16$map,
+                                       mapped_lvl17$map,
+                                       mapped_lvl18$map,                                       
                                        mapped_1710a$map,
                                        mapped_1710b$map), deployment='main', command = list(!!!.x)),
 
 
-    #combine all huc2 model result targets (levels that have currently finished)
- # tar_combine(combined_lumped, deployment='main'),
+  tar_combine(combined_randomSample_init, list(mapped_lvlTerminal$randomSample,
+                                       mapped_lvlTerminal_bugFix$randomSample,
+                                       mapped_lvl0$randomSample,
+                                       mapped_lvl0_bugFix$randomSample,
+                                       mapped_lvl1$randomSample,
+                                       mapped_lvl1_bugFix$randomSample,
+                                       mapped_lvl2$randomSample,
+                                       mapped_lvl2_bugFix$randomSample,
+                                       mapped_lvl3$randomSample,
+                                       mapped_lvl3_bugFix$randomSample,
+                                       mapped_lvl4$randomSample,
+                                       mapped_lvl5$randomSample,
+                                       mapped_lvl5_bugFix$randomSample,
+                                       mapped_lvl6$randomSample,
+                                       mapped_lvl6_bugFix$randomSample,
+                                       mapped_lvl7$randomSample,
+                                       mapped_lvl8$randomSample,
+                                       mapped_lvl9$randomSample,
+                                       mapped_lvl10$randomSample,
+                                       mapped_lvl11$randomSample,
+                                       mapped_lvl12$randomSample,
+                                       mapped_lvl13$randomSample,
+                                       mapped_lvl14$randomSample,
+                                       mapped_lvl15$randomSample,
+                                       mapped_lvl16$randomSample,
+                                       mapped_lvl17$randomSample,
+                                       mapped_lvl18$randomSample,                                       
+                                       mapped_1710a$randomSample,
+                                       mapped_1710b$randomSample), deployment='main'),
+  tar_target(combined_randomSample, fixCombo0427(combined_randomSample_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
+
 
 
   #build shapefile for mapping
-  tar_target(shapefile_huc2, saveShapefile_huc2(path_to_data, c('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18'),
-                                                list(lumped_01, lumped_02, lumped_03, lumped_04, lumped_05, lumped_06, lumped_07, lumped_09, lumped_10, lumped_11, lumped_12, lumped_13, lumped_14, lumped_15, lumped_16, lumped_17, lumped_18))),
+#  tar_target(shapefile_huc2, saveShapefile_huc2(path_to_data, c('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18'),
+#                                                list(lumped_01, lumped_02, lumped_03, lumped_04, lumped_05, lumped_06, lumped_07, lumped_08, lumped_09, lumped_10, lumped_11, lumped_12, lumped_13, lumped_14, lumped_15, lumped_16, lumped_17, lumped_18))),
   tar_target(shapefile_huc4, saveShapefile_huc4(path_to_data, combined_contribGW, combined_emissions)),
 
   #build summary stats rds
   tar_target(summaryObject, gatherResults(combined_emissions, combined_contribGW, combined_uncertainty, combined_basinProperties, combined_basinLakeProperties,
-                                          list(lumped_01, lumped_02, lumped_03, lumped_04, lumped_05, lumped_06, lumped_07, lumped_09, lumped_10, lumped_11, lumped_12, lumped_13, lumped_14, lumped_15, lumped_16, lumped_17, lumped_18))),
+                                          list(lumped_01, lumped_02, lumped_03, lumped_04, lumped_05, lumped_06, lumped_07, lumped_08, lumped_09, lumped_10, lumped_11, lumped_12, lumped_13, lumped_14, lumped_15, lumped_16, lumped_17, lumped_18))),
 
   #generate paper figures
-  tar_target(modelsCompare, compareLumpedFig(path_to_data, shapefile_huc2)),
-  tar_target(modelsConceptual_0102, conceptualPlot(final_0102, raymond_coscat_lookup, '0102')),
-  tar_target(modelsConceptual_0202, conceptualPlot(final_0202, raymond_coscat_lookup, '0202')),
-  tar_target(modelsConceptual_1702, conceptualPlot(final_1702, raymond_coscat_lookup, '1702')),
-  tar_target(modelsConceptual_1302, conceptualPlot(final_1302, raymond_coscat_lookup, '1302')),
-  tar_target(modelGW_lakes, lakes_GW_Plot(path_to_data, shapefile_huc4)),
-  tar_target(mainMap, mainMapFunction(combined_rivermaps,map_0314, map_0315,map_0316,map_0317,map_0318)),#combined_rivermaps
+  tar_target(figMainMap, mainMapFunction(combined_rivermaps,map_0314, map_0315,map_0316,map_0317,map_0318)),#combined_rivermaps
+  tar_target(figGW_lakes, lakes_GW_Plot(path_to_data, shapefile_huc4)),
+  tar_target(figCompareGlorich, glorichCompare(combined_randomSample)),
+  tar_target(figModelCompare, compareLumpedFig(path_to_data, list(lumped_01, lumped_02, lumped_03, lumped_04, lumped_05, lumped_06, lumped_07, lumped_08, lumped_09, lumped_10, lumped_11, lumped_12, lumped_13, lumped_14, lumped_15, lumped_16, lumped_17, lumped_18))),
 
   #supp figures
   # validate discharge model
   tar_target(nhdGages, getNHDGages(path_to_data, c('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18'))), #gages joined to NHD a priori, used for erom verification
   tar_target(USGS_data, getGageData(path_to_data, nhdGages, c('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18'))), #calculates mean observed flow 1970-2018 to verify erom model
-  tar_target(eromValidation, eromValidationFig(USGS_data, nhdGages))
+  tar_target(eromValidation, eromValidationFig(USGS_data, nhdGages)),
+  tar_target(modelsConceptual_0102, conceptualPlot(final_0102, raymond_coscat_lookup, '0102')),
+  tar_target(modelsConceptual_0202, conceptualPlot(final_0202, raymond_coscat_lookup, '0202')),
+  tar_target(modelsConceptual_1702, conceptualPlot(final_1702, raymond_coscat_lookup, '1702')),
+  tar_target(modelsConceptual_1302, conceptualPlot(final_1302, raymond_coscat_lookup, '1302'))
 
   #calibration figures
 )

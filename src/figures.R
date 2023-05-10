@@ -175,69 +175,69 @@ calibrationFigures <- function(combined_calib){
 
 
 
-compareLumpedFig <- function(path_to_data, results) {
+compareLumpedFig <- function(path_to_data, lumpedList) {
   	theme_set(theme_classic())
   
-  	# CONUS boundary
-  	states <- sf::st_read(paste0(path_to_data, '/other_shapefiles/cb_2018_us_state_5m.shp'))
-  	states <- dplyr::filter(states, !(NAME %in% c('Alaska',
-                                                'American Samoa',
-                                                'Commonwealth of the Northern Mariana Islands',
-                                                'Guam',
-                                                'District of Columbia',
-                                                'Puerto Rico',
-                                                'United States Virgin Islands',
-                                                'Hawaii'))) #remove non CONUS states/territories
-  	states <- sf::st_union(states)
+  	# # CONUS boundary
+  	# states <- sf::st_read(paste0(path_to_data, '/other_shapefiles/cb_2018_us_state_5m.shp'))
+  	# states <- dplyr::filter(states, !(NAME %in% c('Alaska',
+    #                                             'American Samoa',
+    #                                             'Commonwealth of the Northern Mariana Islands',
+    #                                             'Guam',
+    #                                             'District of Columbia',
+    #                                             'Puerto Rico',
+    #                                             'United States Virgin Islands',
+    #                                             'Hawaii'))) #remove non CONUS states/territories
+  	# states <- sf::st_union(states)
   
-  	#round results
-  	results$perc_diff <- round(((results$sumFCO2_TgC_yr - results$sumFCO2_lumped_TgC_yr)/results$sumFCO2_lumped_TgC_yr )*100,0) #setup percent
+  	# #round results
+  	# results$perc_diff <- round(((results$sumFCO2_TgC_yr - results$sumFCO2_lumped_TgC_yr)/results$sumFCO2_lumped_TgC_yr )*100,0) #setup percent
 
-  	#PERC DIFF MAP-------------------------------------------------
-  	map <- ggplot(results) +
-    	geom_sf(aes(fill=perc_diff), #actual map
-        	    color='black',
-            	size=0.5) +
-    	geom_sf(data=states, #conus boundary
-        	    color='black',
-            	linewidth=0.75,
-            	alpha=0)+
-    	labs(tag='A')+
-    	scale_fill_gradientn(name='% difference in carbon\nemissions from lumped',
-        	                 colors=c('#e63946', 'white', '#1d3557'),
-            	             limits=c(-100,100),
-                	         guide = guide_colorbar(direction = "horizontal",
-                    	                            title.position = "bottom"))+
-    	theme(axis.title = element_text(size=26, face='bold'),axis.text = element_text(family="Futura-Medium", size=20))+ #axis text settings
-    	theme(legend.position = c(0.15, 0.1),
-        	  legend.key.size = unit(2, 'cm'))+ #legend position settings
-    	theme(text = element_text(family = "Futura-Medium"), #legend text settings
-        	  legend.title = element_text(face = "bold", size = 18),
-          	  legend.text = element_text(family = "Futura-Medium", size = 18),
-          	  plot.tag = element_text(size=26,
-            	                      face='bold'))+
-    	xlab('')+
-    	ylab('')
+  	# #PERC DIFF MAP-------------------------------------------------
+  	# map <- ggplot(results) +
+    # 	geom_sf(aes(fill=perc_diff), #actual map
+    #     	    color='black',
+    #         	size=0.5) +
+    # 	geom_sf(data=states, #conus boundary
+    #     	    color='black',
+    #         	linewidth=0.75,
+    #         	alpha=0)+
+    # 	labs(tag='A')+
+    # 	scale_fill_gradientn(name='% difference in carbon\nemissions from lumped',
+    #     	                 colors=c('#e63946', 'white', '#1d3557'),
+    #         	             limits=c(-100,100),
+    #             	         guide = guide_colorbar(direction = "horizontal",
+    #                 	                            title.position = "bottom"))+
+    # 	theme(axis.title = element_text(size=26, face='bold'),axis.text = element_text(family="Futura-Medium", size=20))+ #axis text settings
+    # 	theme(legend.position = c(0.15, 0.1),
+    #     	  legend.key.size = unit(2, 'cm'))+ #legend position settings
+    # 	theme(text = element_text(family = "Futura-Medium"), #legend text settings
+    #     	  legend.title = element_text(face = "bold", size = 18),
+    #       	  legend.text = element_text(family = "Futura-Medium", size = 18),
+    #       	  plot.tag = element_text(size=26,
+    #         	                      face='bold'))+
+    # 	xlab('')+
+    # 	ylab('')
+
+	lumped <- do.call("rbind", lumpedList) #make raymond model object
 
 
   	#BARPLOTS TOTAL--------------------------------------------
     #sum across the U.S.
-    forPlot <- data.frame('Distributed'=sum(results$sumFCO2_TgC_yr, na.rm=T),
-    					  'Lumped_k'=sum(results$sumFCO2_lumped_k_TgC_yr, na.rm=T), #flip the numbers internally so the figures are cohesive
-    					  'Lumped_co2'=sum(results$sumFCO2_lumped_co2_TgC_yr, na.rm=T),    					  
-    					  'Lumped_full'=sum(results$sumFCO2_lumped_TgC_yr, na.rm=T),
-    					  'Lumped_sigma'=sum(results$cal_uncertainty, na.rm=T))
+    forPlot <- data.frame('Distributed'=sum(lumped$sumFCO2_TgC_yr, na.rm=T),    					  
+    					  'Lumped_full'=sum(lumped$sumFCO2_lumped_TgC_yr, na.rm=T),
+    					  'Lumped_sigma'=sum(lumped$cal_uncertainty, na.rm=T))
 
-  	forPlot <- tidyr::gather(forPlot, key=key, value=value, c('Distributed', 'Lumped_full', 'Lumped_k', 'Lumped_co2'))
+  	forPlot <- tidyr::gather(forPlot, key=key, value=value, c('Distributed', 'Lumped_full'))
   	forPlot[forPlot$key != 'Distributed',]$Lumped_sigma <- NA #don't apply to upscaling model
-  	forPlot$key <- factor(forPlot$key, levels=c('Lumped_full', 'Lumped_k', 'Lumped_co2','Distributed'))
+  	forPlot$key <- factor(forPlot$key, levels=c('Lumped_full', 'Distributed'))
 
   	bars <- ggplot(forPlot, aes(x=key, y=value, fill=key)) +
   		geom_col(size=1.5, color='black', size=1.5) +
   		geom_errorbar(aes(ymin=value-Lumped_sigma, ymax=value+Lumped_sigma), width=.15, size=1.75) +
-  		scale_fill_manual(values=c('#f4f1de', '#e07a5f', '#3d405b', '#81b29a'))+
-  		scale_x_discrete(labels=c('Fully Lumped', 'Lumped kco2', 'Lumped CO2', 'Distributed'))+
-  		labs(tag='B')+
+  		scale_fill_manual(values=c('#20a39e', '#ffba49'))+
+  		scale_x_discrete(labels=c('Upscaling', 'Transport'))+
+  		labs(tag='A')+
   		xlab('')+
   		ylab('CO2 Flux [Tg-C/yr]') +
   		theme(legend.position='none') +
@@ -245,20 +245,39 @@ compareLumpedFig <- function(path_to_data, results) {
     	theme(plot.tag = element_text(size=26,face='bold'))
 
 
+  	#BARPLOTS LAKES--------------------------------------------
+    results_huc2 <- lumped %>%
+    	dplyr::group_by(waterbody) %>%
+    	dplyr::summarise(sumFCO2_TgC_yr = sum(sumFCO2_TgC_yr, na.rm=T),
+    					 sumFCO2_lumped_TgC_yr = sum(sumFCO2_lumped_TgC_yr, na.rm=T))
+
+    #sum across the U.S.
+    forPlot <- data.frame('Distributed'=round((sum(results_huc2[results_huc2$waterbody == 'Lake/Reservoir',]$sumFCO2_TgC_yr, na.rm=T) / sum(results_huc2$sumFCO2_TgC_yr, na.rm=T))*100, 0), 					  
+    					  'Lumped_full'=round((sum(results_huc2[results_huc2$waterbody == 'Lake/Reservoir',]$sumFCO2_lumped_TgC_yr, na.rm=T) / sum(results_huc2$sumFCO2_lumped_TgC_yr, na.rm=T))*100, 0))
+
+  	forPlot <- tidyr::gather(forPlot, key=key, value=value, c('Distributed', 'Lumped_full'))
+  	forPlot[forPlot$key != 'Distributed',]$Lumped_sigma <- NA #don't apply to upscaling model
+  	forPlot$key <- factor(forPlot$key, levels=c('Lumped_full', 'Distributed'))
+
+  	lakeBars <- ggplot(forPlot, aes(x=key, y=value, fill=key)) +
+  		geom_col(size=1.5, color='black', size=1.5) +
+  		scale_fill_manual(values=c('#20a39e', '#ffba49'))+
+  		scale_x_discrete(labels=c('Upscaling', 'Transport'))+
+  		labs(tag='B')+
+  		xlab('')+
+  		ylab('% emissions from lakes/reservoirs') +
+  		theme(legend.position='none') +
+  		theme(axis.title = element_text(size=26, face='bold', color='black'), axis.text = element_text(size=20, color='black'))+ #axis text settings
+    	theme(plot.tag = element_text(size=26,face='bold'))
+
   	#COMBO PLOT---------------------------------------------
   	design <- "
-  		AAAAAAA
-  		AAAAAAA
-  		AAAAAAA
-  		AAAAAAA
-  		AAAAAAA
-  		CBBBBBD
-  		CBBBBBD
+  		AB
   	"
 
-  	comboPlot <- patchwork::wrap_plots(A=map, B=bars, design=design)
+  	comboPlot <- patchwork::wrap_plots(A=bars, B=lakeBars, design=design)
 
-  	ggsave('cache/figures/modelsCompare.jpg', comboPlot, width=20, height=20)
+  	ggsave('cache/figures/modelsCompare.jpg', comboPlot, width=15, height=10)
   	return('see cache/figures/modelsCompare.jpg')
 }
 
@@ -738,14 +757,16 @@ indvRiverMaps <- function(results, huc4){
   		# Adding column based on other column:
   		fin<-shapefile %>%
     		dplyr::mutate(CO2_col = dplyr::case_when(
-      			CO2_ppm <= 1000 ~ '0-1000'
-      			,CO2_ppm <= 1500 ~ '1000-1500'
-      			,CO2_ppm <= 2500 ~ '1500-2500'
-      			,CO2_ppm <= 4000 ~ '2500-4000'
-      			,TRUE ~ '4000-16000'
+      			FCO2_gC_m2_yr <= 500 ~ '0-500'
+      			,FCO2_gC_m2_yr <= 1000 ~ '500-1000'
+      			,FCO2_gC_m2_yr <= 2500 ~ '1000-2500'
+      			,FCO2_gC_m2_yr <= 5000 ~ '2500-5000'
+      			,FCO2_gC_m2_yr <= 10000 ~ '5000-10000'
+      			,TRUE ~ '10000+'
     			)) %>%
     		dplyr::select(c('CO2_col', 'Q_m3_s', ))
 
+    	fin$CO2_col <- factor(fin$CO2_col, levels = c('0-500', '500-1000', '1000-2500', '2500-5000', '5000-10000', '10000+'))
   	return(fin)
 	}
 }
@@ -979,29 +1000,15 @@ mainMapFunction <- function(mapList, map_0314, map_0315,map_0316,map_0317,map_03
 		geom_sf(data = mapList[[201]], aes(color = CO2_col),linewidth=0.1) +
 		geom_sf(data = mapList[[202]], aes(color = CO2_col),linewidth=0.1) +
 		geom_sf(data = mapList[[203]], aes(color = CO2_col),linewidth=0.1) +
-		#geom_sf(data = mapList[[204]], aes(color = CO2_col),linewidth=0.1) +
-		#geom_sf(data = mapList[[205]], aes(color = CO2_col),linewidth=0.1) +
-		#geom_sf(data = mapList[[206]], aes(color = CO2_col),linewidth=0.1) +
-		#geom_sf(data = mapList[[207]], aes(color = CO2_col),linewidth=0.1) +
-		#geom_sf(data = mapList[[208]], aes(color = CO2_col),linewidth=0.1) +
-		#geom_sf(data = mapList[[209]], aes(color = CO2_col),linewidth=0.1) +
-		#geom_sf(data = mapList[[210]], aes(color = CO2_col),linewidth=0.1) +
-		#geom_sf(data = mapList[[211]], aes(color = CO2_col),linewidth=0.1) +
-		#geom_sf(data = mapList[[212]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[204]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[205]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[206]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[207]], aes(color = CO2_col),linewidth=0.1) +
 		geom_sf(data=states, #conus boundary
         	    color='black',
             	linewidth=0.75,
             	alpha=0)+
-		scale_color_brewer(palette='RdYlBu', direction=-1,name='CO2 [ppm]')+  				
-  		#viridis::scale_color_viridis(option='mako',discrete=TRUE, name='CO2 [ppm]') +
-	#  	scale_linewidth_binned(name='Discharge [cms]',
-    #    	              breaks=c(0.1, 1, 10,100,1000,10000),
-    #        	          range=c(0.3,2.5),
-    #            	      guide = "none")+
-    #	scale_alpha_binned(name='Discharge [cms]',
-    #    	              breaks=c(0.1, 1, 10,1001,000,10000),
-    #        	          range=c(0.4,1),
-    #            	      guide = "none")+
+		scale_color_brewer(palette='RdYlBu', direction=-1,name='FCO2 [gC/m2/yr]')+
  		theme(plot.title = element_text(face = "italic", size = 26),
     	  	axis.text = element_text(size = 22),
         	plot.tag = element_text(size=26,
@@ -1013,23 +1020,23 @@ mainMapFunction <- function(mapList, map_0314, map_0315,map_0316,map_0317,map_03
  			legend.spacing.y = unit(0.1, 'cm'))+
  		guides(color = guide_legend(override.aes = list(linewidth=8), byrow = TRUE))
 
- 	#INSET CENTERING----------------------------------
-  	zoom_to <- c(-87.87,32.89)# c(-86.26, 30.9)  # inset centers
+  	#INSET CENTERING----------------------------------
+   	zoom_to <- c(-87.87,32.89)# c(-86.26, 30.9)  # inset centers
 
-  	#set up zoom bounds
- 	zoom_level <- 3
-	lon_span <- 360 / 5^zoom_level
-	lat_span <- 360 / 5^zoom_level
-	lon_bounds_1 <- c(zoom_to[1] - lon_span / 2, zoom_to[1] + lon_span / 2)
-	lat_bounds_1 <- c(zoom_to[2] - lat_span / 2, zoom_to[2] + lat_span / 2)
+   	#set up zoom bounds
+  	zoom_level <- 3
+ 	lon_span <- 360 / 5^zoom_level
+ 	lat_span <- 360 / 5^zoom_level
+ 	lon_bounds_1 <- c(zoom_to[1] - lon_span / 2, zoom_to[1] + lon_span / 2)
+ 	lat_bounds_1 <- c(zoom_to[2] - lat_span / 2, zoom_to[2] + lat_span / 2)
 
-	#set up inset box
-    df <- data.frame(lon_bounds_1, lat_bounds_1)
-	box_1 <- df %>% 
-  		sf::st_as_sf(coords = c("lon_bounds_1", "lat_bounds_1"), 
-           		crs = 4326) %>% 
-  		sf::st_bbox() %>% 
-  		sf::st_as_sfc()
+ 	#set up inset box
+     df <- data.frame(lon_bounds_1, lat_bounds_1)
+ 	box_1 <- df %>% 
+   		sf::st_as_sf(coords = c("lon_bounds_1", "lat_bounds_1"), 
+            		crs = 4326) %>% 
+   		sf::st_bbox() %>% 
+   		sf::st_as_sfc()
 
   	#set up zoom bounds
  	zoom_level <- 4
@@ -1088,15 +1095,14 @@ mainMapFunction <- function(mapList, map_0314, map_0315,map_0316,map_0317,map_03
         	breaks=c(0.01,0.1, 1, 10,100,1000),
             range=c(0.3,2.5))+  		
   		geom_sf(data=box_2,
-    		color='darkgrey',
+    		color='#fca311',
     		linewidth=3,
     		alpha=0) +		
   		ggsn::scalebar(data=insetShp1,location='bottomleft', dist = 50, dist_unit = "km",transform = TRUE, model = "WGS84", box.fill=c('white','red'),st.color='white',st.dist=0.05,border.size=0.05) +  
   		xlab('')+
   		ylab('')+
   		coord_sf(datum=NA) +
-		scale_color_brewer(palette='RdYlBu', direction=-1,name='CO2 [ppm]')+  				
-  		#viridis::scale_color_viridis(option='mako',discrete=TRUE, name='CO2 [ppm]') +
+		scale_color_brewer(palette='RdYlBu', direction=-1,name='FCO2 [gC/m2/yr]')+  				
     	theme(legend.position='none',
     		  panel.background = element_rect(fill = "black"))
 
@@ -1108,14 +1114,14 @@ mainMapFunction <- function(mapList, map_0314, map_0315,map_0316,map_0317,map_03
         	breaks=c(0.01,0.1, 1, 10,100,1000),
             range=c(0.3,2.5))+  		
   		geom_sf(data=box_3,
-    		color='darkgrey',
+    		color='#fca311',
     		linewidth=3,
     		alpha=0) +
   		ggsn::scalebar(data=insetShp2,location='bottomleft', dist = 10, dist_unit = "km",transform = TRUE, model = "WGS84", box.fill=c('white','red'),st.color='white',st.dist=0.05,border.size=0.05) +  
   		xlab('')+
   		ylab('')+  		
   		coord_sf(datum=NA) +
-		scale_color_brewer(palette='RdYlBu', direction=-1,name='CO2 [ppm]')+  				
+		scale_color_brewer(palette='RdYlBu', direction=-1,name='FCO2 [gC/m2/yr]')+  				
   		#viridis::scale_color_viridis(option='mako',discrete=TRUE, name='CO2 [ppm]') +
      	theme(legend.position='none',
      		  panel.background = element_rect(fill = "black"))
@@ -1134,16 +1140,15 @@ mainMapFunction <- function(mapList, map_0314, map_0315,map_0316,map_0317,map_03
         	breaks=c(0.01,0.1, 1, 10,100,1000),
             range=c(0.3,2.5))+  		
   		geom_sf(data=box_4,
-    		color='darkgrey',
+    		color='#fca311',
     		linewidth=3,
     		alpha=0) +
     	ggsn::scalebar(data=insetShp3,location='bottomleft', dist = 2, dist_unit = "km",transform = TRUE, model = "WGS84", box.fill=c('white','red'),st.color='white',st.dist=0.05,border.size=0.05) +
     	xlab('')+
   		ylab('')+
   		coord_sf(datum=NA) +
-		scale_color_brewer(palette='RdYlBu', direction=-1,name='CO2 [ppm]')+  
+		scale_color_brewer(palette='RdYlBu', direction=-1,name='FCO2 [gC/m2/yr]')+  
 		#scale_fill_brewer(palette='RdYlBu', direction=-1,name='CO2 [ppm]')+						
-  		#viridis::scale_color_viridis(option='mako',discrete=TRUE, name='CO2 [ppm]') + 		
      	theme(legend.position='none',
      		  panel.background = element_rect(fill = "black"))
 
@@ -1164,29 +1169,104 @@ mainMapFunction <- function(mapList, map_0314, map_0315,map_0316,map_0317,map_03
   		xlab('')+
   		ylab('')+
   		coord_sf(datum=NA) +  
-		scale_color_brewer(palette='RdYlBu', direction=-1,name='CO2 [ppm]')+  		
-		scale_fill_brewer(palette='RdYlBu', direction=-1,name='CO2 [ppm]')+  								
-  		#viridis::scale_color_viridis(option='mako',discrete=TRUE, name='CO2 [ppm]') +
+		scale_color_brewer(palette='RdYlBu', direction=-1,name='FCO2 [gC/m2/yr]')+  		
+		scale_fill_brewer(palette='RdYlBu', direction=-1,name='FCO2 [gC/m2/yr]')+  								
      	theme(legend.position='none',
      		  panel.background = element_rect(fill = "black"))
 
     #ADD INSET 1 BOUNDING BOXES---------------------------------
     bigMap <- bigMap +
     	geom_sf(data=box_1,
-    			color='darkgrey',
+    			color='#fca311',
     			linewidth=3,
     			alpha=0)
 
   	#COMBO PLOT---------------------------------------------
+  	 design <- "
+  	 	BCDE
+  	 "
+
+  	 comboPlot <- patchwork::wrap_plots(B=inset4, C=inset3, D=inset2, E=inset1, design=design)
+
+	ggsave(filename="cache/figures/mainMap_1.jpg",plot=bigMap,width=20,height=15)
+	ggsave(filename="cache/figures/mainMap_2.jpg",plot=comboPlot,width=20,height=5)
+	
+	return('see cache/figures/')
+}
+
+
+
+
+glorichCompare <- function(ourModel){
+	theme_set(theme_classic())
+
+#	ourModel <- do.call("rbind", modelList) #make raymond model object
+	glorich <- readr::read_csv('data/glorich_rocher_ros_2019.csv')
+	glorich_shp <- sf::st_as_sf(x=glorich,
+                   coords = c("Longitude", "Latitude"),
+               		crs = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+
+	ourModel <- ourModel %>%
+		dplyr::filter(waterbody == 'River')
+
+
+
+	#little map
+	library(rnaturalearth)
+	library(rnaturalearthdata)
+	world <- ne_countries(scale = "medium", returnclass = "sf")
+
+	map_world <- ggplot(glorich_shp, aes(color=STAT_ID)) +
+		geom_sf(color='#102542')+
+    	geom_sf(data=world, #conus boundary
+        	    color='black',
+            	linewidth=0.25,
+            	alpha=0) +
+    	coord_sf(expand = FALSE) +
+    	    	theme(axis.title = element_text(face = "bold", size = 24),
+    		  axis.text = element_text(size = 22),
+        	  plot.tag = element_text(size=26,
+            	                  face='bold'))
+
+    #glorich plot
+  	glorichPlot <- ggplot(glorich, aes(x=k600, y=pco2))+
+  		geom_point(size=4, alpha=0.4, color='#102542') +
+  	#	xlim(0,1000)+
+  #		ylim(0,25000)+
+  		labs(tag='B')+
+  		theme(legend.text = element_text(size=22))+
+    	theme(axis.title = element_text(face = "bold", size = 24),
+    		  axis.text = element_text(size = 22),
+        	  plot.tag = element_text(size=26,
+            	                  face='bold'))+
+    	xlab('k600 [m/dy]')+
+    	ylab('')
+
+    glorichPlot <- glorichPlot +
+    	patchwork::inset_element(map_world, right = 0.98, bottom = 0.6, left = 0.28, top = 1.1)
+
+    #model plot
+  	ourPlot <- ggplot(ourModel, aes(x=k600_m_s*86400, y=CO2_ppm))+
+  		geom_point(size=4, alpha=0.4, color='#ffba49') +
+  		xlim(0,1000)+
+  	#	ylim(0,25000)+
+  		labs(tag='A')+
+  		theme(legend.text = element_text(size=22))+
+    	theme(axis.title = element_text(face = "bold", size = 24),
+    		  axis.text = element_text(size = 22),
+        	  plot.tag = element_text(size=26,
+            	                  face='bold'))+
+    	xlab('k600 [m/dy]')+
+    	ylab('CO2 [ppm]')    	
+
+
+  	#COMBO PLOT---------------------------------------------
   	design <- "
-  		AAAA
-  		AAAA
-  		AAAA
-  		BCDE
+  		AB
   	"
 
-  	comboPlot <- patchwork::wrap_plots(A=bigMap, B=inset4, C=inset3, D=inset2, E=inset1, design=design)
+  	comboPlot <- patchwork::wrap_plots(A=ourPlot, B=glorichPlot, design=design)
 
-	ggsave(filename="cache/figures/mainMap.jpg",plot=comboPlot,width=20,height=18)
-	return('see cache/figures/mainMap.jpg')
+	ggsave(filename="cache/figures/glorichCompare.jpg",plot=comboPlot,width=20,height=10)
+	return('see cache/figures/glorichCompare.jpg')    	
 }
