@@ -12,13 +12,13 @@
 
 
 
-#' Runs rayond upscaling model per huc2 region
+#' Runs upscaling model per huc2 region
 #'
-#' @name runRaymondModel
+#' @name runLumpedModels
 #'
 #' @param path_to_data: path to NHD geodatabases
 #' @param HUC2: HUC2 region id
-#' @param glorich_data: obsered CO2 concentrations per region used to upscale
+#' @param glorich_data: observed CO2 concentrations per region used to upscale
 #'
 #' @import dplyr
 #' @import terra
@@ -123,53 +123,6 @@ runLumpedModels <- function(path_to_data, HUC2, glorich_data,hydrographyList,co2
                                   'sumFCO2_conus_TgC_yr'=c(networkOutput[networkOutput$waterbody == 'River',]$sumFCO2_conus_TgC_yr, networkOutput[networkOutput$waterbody == 'Lake/Reservoir',]$sumFCO2_conus_TgC_yr),
                                   'waterbody'=c('River', 'Lake/Reservoir'),
                                   'cal_uncertainty'=c(cal_uncertainty,NA)) #Just set to NA on the lakes half because this is for the entire basin
-
-
-  # theme_set(theme_classic())
-  #   forPlot <- dplyr::left_join(network, model_co2, by='NHDPlusID') %>%
-  #   dplyr::select(c('NHDPlusID', 'lumpedCO2_FCO2_gC_m2_yr', 'lumpedK_FCO2_gC_m2_yr', 'FCO2_gC_m2_yr')) %>%
-  #   tidyr::gather(key=key, value=value, c('lumpedCO2_FCO2_gC_m2_yr', 'lumpedK_FCO2_gC_m2_yr', 'FCO2_gC_m2_yr'))
-
-  # plotFlux <- ggplot(forPlot, aes(x=value, fill=key))+
-  #   geom_histogram(linewidth=1, color='black') +
-  #   scale_x_log10()+
-  #   scale_fill_brewer(palette='Dark2', name='', labels=c('Distributed','Lumped CO2', 'Lumped kco2'))+
-  #   xlab('Flux [gC/m2/yr]')+
-  #   ylab('') +
-  #   theme(axis.text=element_text(size=20),
-  #         axis.title=element_text(size=24,face="bold"),
-  #         legend.text = element_text(size=20),
-  #         legend.position=c(0.25,0.8))    
-
-
-  # plotk <- ggplot(model_co2, aes(x=k_co2_m_s*86400))+
-  #   geom_histogram(linewidth=1, color='black', fill='darkgrey') +
-  #   scale_x_log10()+
-  #   xlab('kco2 [m/dy]')+
-  #   ylab('') +
-  #   theme(axis.text=element_text(size=20),
-  #         axis.title=element_text(size=24,face="bold"),
-  #         legend.text = element_text(size=20),
-  #         legend.position=c(0.8,0.2))
-
-
-  # plotco2 <- ggplot(model_co2, aes(x=CO2_ppm))+
-  #   geom_histogram(linewidth=1, color='black', fill='darkgrey') +
-  #   scale_x_log10()+
-  #   xlab('pCO2 [ppm]')+
-  #   ylab('Count') +
-  #   theme(axis.text=element_text(size=20),
-  #         axis.title=element_text(size=24,face="bold"),
-  #         legend.text = element_text(size=20),
-  #         legend.position=c(0.8,0.2))               
-
-  #   design <- "
-  #   ABC
-  #   "
-  #   comboPlot <- patchwork::wrap_plots(A=plotco2, B=plotk, C=plotFlux, design=design)
-
-  # ggsave(filename=paste0('cache/figures/fluxSupp_',HUC2, '.jpg'),plot=comboPlot,width=20,height=8)
-
 
  return(network_fluxes_lumped)
 

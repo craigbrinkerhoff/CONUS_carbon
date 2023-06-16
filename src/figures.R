@@ -1,9 +1,19 @@
 ## Make some paper figures
 ## Craig Brinkerhoff
-## Spring 2023
+## Summer 2023
 
 
 
+#' validate nhd discharge model
+#'
+#' @name eromValidationFig
+#'
+#' @param USGS_data: df of gauge data mean annual flow
+#' @param nhdGages: df of NHD model discharges
+#'
+#' @import dplyr
+#'
+#' @return discharge validation figure written to file
 eromValidationFig <- function(USGS_data, nhdGages){
 	theme_set(theme_classic())
 
@@ -39,12 +49,26 @@ eromValidationFig <- function(USGS_data, nhdGages){
 
 
 
+
+
+#' produce figures of calibration performance
+#'
+#' @name calibrationFigures
+#'
+#' @param combined_calib: list of calibration results
+#'
+#' @import patchwork
+#' @import cowplot
+#'
+#' @return calibration figures written to file
 calibrationFigures <- function(combined_calib){
 	theme_set(theme_classic())
 
 	combined_fitness <- sapply(combined_calib, function(x){return(x$fitness)})
 	combined_fitness <- (1/combined_fitness) #convert to ppm per 'median river/lake/reservoir' reach
 
+
+	#summary plot-----------------------------------------------------------------------------------------
 	forPlot <- data.frame('huc4'=substr(names(combined_fitness), 22,26),
 						  'fitness'=combined_fitness)
 	plot <- ggplot(forPlot, aes(x=fitness)) +
@@ -52,7 +76,7 @@ calibrationFigures <- function(combined_calib){
 		geom_vline(xintercept = median(forPlot$fitness, na.rm=T), color='darkgrey', linetype='dotted', size=1.5) + 
     	geom_hline(yintercept = 0.50, color='darkgrey', linetype='dotted', size=1.5) +
     	annotate('text', label=paste0('median error across\nbasins: ', round(median(forPlot$fitness, na.rm=T),0), ' ppm'), x=1000, y=0.65, size=8)+
-		xlab('Calibration error per basin [ppm]') +
+		xlab('Calibration error per basin (ppm)') +
 		ylab('Probability') +
 		theme(axis.title = element_text(size=20),
           axis.text = element_text(family="Futura-Medium", size=18))+ #axis text settings
@@ -60,7 +84,7 @@ calibrationFigures <- function(combined_calib){
 
 	ggsave('cache/figures/calib/calibrationSummary.jpg', plot, width=8, height=8)
 
-
+	#build calibration figures-----------------------------------------------------------------------------
 	ticker <- 1
 	a <- 1
 	b <- 20
@@ -110,7 +134,7 @@ calibrationFigures <- function(combined_calib){
 
 		#y-axis
 		y_axis <- cowplot::get_plot_component(ggplot() +
-  	  		labs(y = "Calibration Error [ppm]") +
+  	  		labs(y = "Calibration Error (ppm)") +
   	  		theme(axis.title = element_text(size=30)), "ylab-l")
 
 
@@ -174,6 +198,23 @@ calibrationFigures <- function(combined_calib){
 
 
 
+
+
+#' produce figure comparing transport and upscaling models (figure 2)
+#'
+#' @name compareModels
+#'
+#' @param path_to_data: character path to data repo
+#' @param ourModel: df of random sample of model rivers (1000 per basin for all 206 basins)
+#' @param lumpedList: upscaling model results
+#' @param glorich: in situ data df
+#'
+#' @import patchwork
+#' @import sf
+#' @import tidyr
+#' @import readr
+#'
+#' @return manuscript figure 2 written to file
 compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
   	theme_set(theme_classic())
 
@@ -221,20 +262,17 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
   	glorich$k600_m_dy <- ifelse(glorich$eD <= 0.02, exp(3.10+0.35*log(glorich$eD)), exp(6.43+1.18*log(glorich$eD)))
 
   	glorich$snap_distance_m_num <- as.numeric(glorich$snap_distance_m)
-  	glorich <- dplyr::filter(glorich, snap_distance_m_num <= 20)
+  	glorich <- dplyr::filter(glorich, snap_distance_m_num <= 10) %>%
+  		dplyr::filter(pco2 > 400)
 
-		glorich_shp <- readr::read_csv('data/glorich_rocher_ros_2019.csv')
-		glorich_shp <- sf::st_as_sf(x=glorich_shp,
-                   coords = c("Longitude", "Latitude"),
-               		crs = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0") %>%
-				dplyr::filter(STAT_ID %in% glorich$STAT_ID)
+	glorich_shp <- readr::read_csv('data/glorich_rocher_ros_2019.csv')
+	glorich_shp <- sf::st_as_sf(x=glorich_shp,
+                coords = c("Longitude", "Latitude"),
+           		crs = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0") %>%
+			dplyr::filter(STAT_ID %in% glorich$STAT_ID)
 
-	#little map
-	# library(rnaturalearth)
-	# library(rnaturalearthdata)
-	# world <- ne_countries(scale = "medium", returnclass = "sf", country='united states of america')
-
-	  	# CONUS boundary
+	#little map------------------------------
+	# CONUS boundary
   	states <- sf::st_read(paste0(path_to_data, '/other_shapefiles/cb_2018_us_state_5m.shp'))
   	states <- dplyr::filter(states, !(NAME %in% c('Alaska',
                                                 'American Samoa',
@@ -253,19 +291,21 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
             	linewidth=0.25,
             	alpha=0) +
     	coord_sf(expand = FALSE) +
-    	    	theme(axis.title = element_text(face = "bold", size = 24),
+    	theme(axis.title = element_text(face = "bold", size = 18),
     		  axis.text = element_text(size = 18),
-        	  plot.tag = element_text(size=26,
-            	                  face='bold'))
+        	  plot.tag = element_text(size=18,
+            	                  face='bold'),
+              axis.text.x = element_text(angle = 90),
+        	  panel.background = element_blank())
 
-    #upscaling model
+    #upscaling model-----------------------------------
     lumpedModel <- dplyr::select(ourModel, c('lumped_k600_m_dy', 'lumped_CO2')) %>%
     	dplyr::mutate(model='Upscaling') %>%
     	dplyr::select('model', 'lumped_k600_m_dy', 'lumped_CO2') %>%
     	dplyr::distinct(lumped_k600_m_dy, .keep_all = TRUE)
     colnames(lumpedModel) <- c('model', 'k600_m_dy', 'CO2_ppm')
 
-    #glorich plot
+    #plot-----------------------------------
     ourModel <- dplyr::select(ourModel, c('k600_m_s', 'CO2_ppm')) %>%
     	dplyr::mutate(k600_m_dy = k600_m_s*86400,
     								model='Transport') %>%
@@ -277,13 +317,16 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
     glorich <- dplyr::select(glorich, c('model', 'k600_m_dy', 'CO2_ppm'))
 
     forPlot <- rbind(ourModel, glorich, lumpedModel)
-  	
-  	glorichPlot <- ggplot(forPlot, aes(x=k600_m_dy, y=CO2_ppm, color=model))+
-  		geom_point(size=4, alpha=0.3) +
-  		geom_segment(x = 200, y = 3200, xend = 250, yend = 3200,color='black',size=3,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
-  		scale_color_manual(name='', values=c('#102542', '#ffba49', '#20a39e'))+
-  		xlim(0,250)+
-  		ylim(0,24000)+
+
+  	glorichPlot <- ggplot(forPlot, aes(x=k600_m_dy, y=CO2_ppm, color=model, linetype=model))+
+  		geom_density_2d(size=1.5, bins=6)+
+  	#	geom_point(size=4, alpha=0.3) +
+  		geom_segment(x = 800, y = 500, xend = 900, yend = 500,color='black',size=2.5,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
+  		geom_segment(x = 10, y = 4300, xend = 10, yend = 4800,color='black',size=2.5,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
+  		scale_color_manual(name='', values=c('#102542', '#ffba49', '#20a39e'), guide=guide_legend(override.aes=list(linetype=c('dotted','solid','solid'))))+
+  		scale_linetype_manual(name='',values=c('dotted', 'solid', 'solid'))+
+  	#	xlim(0,250)+
+  	#	ylim(0,7500)+
   		labs(tag='A')+
   		theme(legend.position='bottom',
   					legend.text=element_text(size=22))+
@@ -291,54 +334,12 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
     		  axis.text = element_text(size = 22),
         	  plot.tag = element_text(size=26,
             	                  face='bold'))+
-    	xlab('k600 (m/dy)')+
+    	xlab(expression(bold(k[600]~(m/dy))))+
     	ylab(expression(bold(CO[2]~(ppm)))) +
-    	guides(color = guide_legend(override.aes = list(alpha=1)))
+    	guides(linetype='none')
 
      glorichPlot <- glorichPlot +
-    	 	patchwork::inset_element(map_world, right = 0.98, bottom = 0.6, left = 0.15, top = 0.99)
-
-    #model plot
-  	# ourPlot <- ggplot(ourModel, aes(x=k600_m_s*86400, y=CO2_ppm))+
-  	# 	geom_point(size=4, alpha=0.4, color='#ffba49') +
-  	# 	xlim(0,250)+
-  	# 	ylim(0,24000)+
-  	# 	labs(tag='A')+
-  	# 	geom_segment(x = 200, y = 3200, xend = 250, yend = 3200,color='black',size=3,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
-  	# 	theme(legend.text = element_text(size=22))+
-    # 	theme(axis.title = element_text(face = "bold", size = 24),
-    # 		  axis.text = element_text(size = 22),
-    #     	  plot.tag = element_text(size=26,
-    #         	                  face='bold'))+
-    # 	xlab('k600 [m/dy]')+
-    # 	ylab('CO2 [ppm]')   
-
-
-
-  	#BARPLOTS LAKES--------------------------------------------
-    # results_huc2 <- lumped %>%
-    # 	dplyr::group_by(waterbody) %>%
-    # 	dplyr::summarise(sumFCO2_TgC_yr = sum(sumFCO2_TgC_yr, na.rm=T),
-    # 					 sumFCO2_lumped_TgC_yr = sum(sumFCO2_lumped_TgC_yr, na.rm=T))
-
-    # #sum across the U.S.
-    # forPlot <- data.frame('Distributed'=round((sum(results_huc2[results_huc2$waterbody == 'Lake/Reservoir',]$sumFCO2_TgC_yr, na.rm=T) / sum(results_huc2$sumFCO2_TgC_yr, na.rm=T))*100, 0), 					  
-    # 					  'Lumped_full'=round((sum(results_huc2[results_huc2$waterbody == 'Lake/Reservoir',]$sumFCO2_lumped_TgC_yr, na.rm=T) / sum(results_huc2$sumFCO2_lumped_TgC_yr, na.rm=T))*100, 0))
-
-  	# forPlot <- tidyr::gather(forPlot, key=key, value=value, c('Distributed', 'Lumped_full'))
-  	# forPlot[forPlot$key != 'Distributed',]$Lumped_sigma <- NA #don't apply to upscaling model
-  	# forPlot$key <- factor(forPlot$key, levels=c('Lumped_full', 'Distributed'))
-
-  	# lakeBars <- ggplot(forPlot, aes(x=key, y=value, fill=key)) +
-  	# 	geom_col(size=1.5, color='black', size=1.5) +
-  	# 	scale_fill_manual(values=c('#20a39e', '#ffba49'))+
-  	# 	scale_x_discrete(labels=c('Upscaling', 'Transport'))+
-  	# 	labs(tag='B')+
-  	# 	xlab('')+
-  	# 	ylab('% emissions from lakes/reservoirs') +
-  	# 	theme(legend.position='none') +
-  	# 	theme(axis.title = element_text(size=26, face='bold', color='black'), axis.text = element_text(size=20, color='black'))+ #axis text settings
-    # 	theme(plot.tag = element_text(size=26,face='bold'))
+    	 	patchwork::inset_element(map_world, right = 1.0, bottom = 0.7, left = 0.35, top = 1.0)
 
   	#COMBO PLOT---------------------------------------------
   	design <- "
@@ -356,7 +357,22 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
 
 
 
-
+#' produce figure comparing transport and upscaling models (extended data figures 2+)
+#'
+#' @name conceptualPlot
+#'
+#' @param final_model: our model for x basin
+#' @param glorich_data: CO2 inputs for upscaling model
+#' @param huc4_id: basin ID
+#'
+#' @import dplyr
+#' @import patchwork
+#' @import sf
+#' @import ggsn
+#' @import cowplot
+#' @import stringr
+#'
+#' @return manuscript extended data figures written to file
 conceptualPlot <- function(final_model, glorich_data, huc4_id){
 	theme_set(theme_classic())
 
@@ -411,7 +427,7 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
   	#calculate basin carbon emissions flux
   	lumpedFCO2_gC_C_m2_yr <- rivers_FCO2_lumped + sum(lakes_by_area$lakes_FCO2_lumped, na.rm=T)
 
-  	network$lumpedFCO2_gC_C_m2_yr <- lumpedFCO2_gC_C_m2_yr
+  	network$lumped_FCO2_gC_m2_yr <- lumpedFCO2_gC_C_m2_yr
 
 
   	##CALCULATE SEMI-DISTRIBUTED MODEL FOR 0102----------------------------------------------------------------------------------------
@@ -431,16 +447,16 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
   	semi2DistFCO2_GgC_C_yr <- sum(network$semi2_FCO2_gC_yr, na.rm=T)*1e-9
   	distFCO2_GgC_yr <- sum(network$FCO2_gC_yr, na.rm=T)*1e-9
 
-  	plotA <- patchwork::wrap_elements(grid::textGrob(paste0('Fully Lumped:\n',round(lumpedFCO2_GgC_C_yr,0), ' Gg-C/yr'), y=0.6, gp=grid::gpar(col="black", fontsize=34)))
+  	plotA <- patchwork::wrap_elements(grid::textGrob(paste0('Statistical Upscaling\n',round(lumpedFCO2_GgC_C_yr,0), ' Gg-C/yr'), y=0.6, gp=grid::gpar(col="black", fontsize=34)))
 
-  	plotB <- patchwork::wrap_elements(grid::textGrob(paste0('Lumped kco2:\n', round(semi2DistFCO2_GgC_C_yr,0), ' Gg-C/yr'), y=0.6, gp=grid::gpar(col="black", fontsize=34)))
+  	plotB <- patchwork::wrap_elements(grid::textGrob(paste0('Semi-Upscaling 1\n', round(semi2DistFCO2_GgC_C_yr,0), ' Gg-C/yr'), y=0.6, gp=grid::gpar(col="black", fontsize=34)))
 
-  	plotC <- patchwork::wrap_elements(grid::textGrob(paste0('Lumped CO2:\n', round(semiDistFCO2_GgC_C_yr,0), ' Gg-C/yr'), y=0.6, gp=grid::gpar(col="black", fontsize=34)))  	
+  	plotC <- patchwork::wrap_elements(grid::textGrob(paste0('Semi Upscaling 2\n', round(semiDistFCO2_GgC_C_yr,0), ' Gg-C/yr'), y=0.6, gp=grid::gpar(col="black", fontsize=34)))  	
 
-  	plotD <- patchwork::wrap_elements(grid::textGrob(paste0('Distributed:\n',round(distFCO2_GgC_yr,0), ' Gg-C/yr'), y=0.6, gp=grid::gpar(col="black", fontsize=34)))
+  	plotD <- patchwork::wrap_elements(grid::textGrob(paste0('Mechanistic Transport\n',round(distFCO2_GgC_yr,0), ' Gg-C/yr'), y=0.6, gp=grid::gpar(col="black", fontsize=34)))
 
 
-  	## INDIVIDUAL k vs co2----------------------------------------------------------------------------------------
+  	##K VS. CO2 PLOTS----------------------------------------------------------------------------------------
   	network$lumpedCO2_ppm <- ifelse(network$waterbody == 'River', riverCO2, lakeCO2)
 
   	network$lumped_k600_m_s <- ifelse(network$waterbody == 'River', rivers_k_600_lumped_m_s, network$k600_m_s)
@@ -456,8 +472,8 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
     		  axis.text = element_text(size = 22),
         	  plot.tag = element_text(size=26,
             	                  face='bold'))+
-    	xlab('k600 [m/dy]')+
-    	ylab('CO2 [ppm]')
+    	xlab(expression(bold(k[600]~(m/dy))))+
+    	ylab(expression(bold(CO[2]~(ppm))))
 
 
 
@@ -471,7 +487,7 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
     		  axis.text = element_text(size = 22),
         	  plot.tag = element_text(size=26,
             	                  face='bold'))+
-    	xlab('k600 [m/dy]')+
+    	xlab(expression(bold(k[600]~(m/dy))))+
     	ylab('')
 
 
@@ -486,7 +502,7 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
     		  axis.text = element_text(size = 22),
         	  plot.tag = element_text(size=26,
             	                  face='bold'))+
-    	xlab('k600 [m/dy]')+
+    	xlab(expression(bold(k[600]~(m/dy))))+
     	ylab('')
 
 
@@ -501,29 +517,31 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
     		  axis.text = element_text(size = 22),
         	  plot.tag = element_text(size=26,
             	                  face='bold'))+
-    	xlab('k600 [m/dy]')+
+    	xlab(expression(bold(k[600]~(m/dy))))+
     	ylab('')
 
 
-  	## INDIVIDUAL MAPS----------------------------------------------------------------------------------------
-    network$forPlot <- ifelse(network$lumpedFCO2_gC_C_m2_yr*1e-3 < 0.5, '0.5',
-							ifelse(network$lumpedFCO2_gC_C_m2_yr*1e-3 < 1, '1',
-								ifelse(network$lumpedFCO2_gC_C_m2_yr*1e-3 < 2.5, '2.5',
-									ifelse(network$lumpedFCO2_gC_C_m2_yr*1e-3 < 5, '5', '5+'))))
+  	##RIVER NETWORK MAPS----------------------------------------------------------------------------------------
+    network <- network %>%
+    		dplyr::mutate(forPlot = dplyr::case_when(
+      			lumped_FCO2_gC_m2_yr*1e-3 <= 0.5 ~ '0-0.5'
+      			,lumped_FCO2_gC_m2_yr*1e-3 <= 1 ~ '0.5-1'
+      			,lumped_FCO2_gC_m2_yr*1e-3 <= 2.5 ~ '1-2.5'
+      			,lumped_FCO2_gC_m2_yr*1e-3 <= 5 ~ '2.5-5'
+      			,lumped_FCO2_gC_m2_yr*1e-3 <= 10 ~ '5-10'
+      			,TRUE ~ '10+'
+    			))
+
+    network$forPlot <- factor(network$forPlot, levels = c('0-0.5', '0.5-1', '1-2.5', '2.5-5', '5-10', '10+'))
+
     plotI <- ggplot() +
-    	geom_sf(data=network, aes(color=forPlot, linewidth=Q_m3_s, alpha=Q_m3_s))+
+    	geom_sf(data=network, aes(color=forPlot, linewidth=Q_m3_s))+
     	ggsn::scalebar(data=network,location='bottomleft', dist = 25, dist_unit = "km",transform = TRUE, model = "WGS84",st.dist=0.05) +  
-    	scale_color_manual(name='FCO2\n[Kg-C/m2/yr]',
-						   values=c('#5c374c', '#985277', '#ce6a85', '#ff8c61','#faa275'),
-                           breaks=c('0.5', '1', '2.5', '5', '5+'))+
+    	scale_color_brewer(palette='RdYlBu', direction=-1,name=expression(bold(FCO[2]~(Kg-C/m^2/yr))))+
     	scale_linewidth_binned(name='Discharge [cms]',
         	              breaks=c(0.001, 0.01, 0.1, 1, 10,100),
             	          range=c(0.4,2),
-                	      guide = "none")+
-    	scale_alpha_binned(name='Discharge [cms]',
-        	              breaks=c(0.001, 0.01, 0.1, 1, 10),
-            	          range=c(0.4,1),
-                	      guide = "none")+   	
+                	      guide = "none")+  	
     	labs(tag='E')+
     	coord_sf(datum = NA)+    	
     	theme(plot.title = element_text(face = "italic", size = 26),
@@ -535,24 +553,26 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
     	ylab('')
 
 
-    network$forPlot <- ifelse(network$semi2_FCO2_gC_m2_yr*1e-3 < 0.5, '0.5',
-							ifelse(network$semi2_FCO2_gC_m2_yr*1e-3 < 1, '1',
-								ifelse(network$semi2_FCO2_gC_m2_yr*1e-3 < 2.5, '2.5',
-									ifelse(network$semi2_FCO2_gC_m2_yr*1e-3 < 5, '5', '5+'))))
+    network <- network %>%
+    		dplyr::mutate(forPlot = dplyr::case_when(
+      			semi2_FCO2_gC_m2_yr*1e-3 <= 0.5 ~ '0-0.5'
+      			,semi2_FCO2_gC_m2_yr*1e-3 <= 1 ~ '0.5-1'
+      			,semi2_FCO2_gC_m2_yr*1e-3 <= 2.5 ~ '1-2.5'
+      			,semi2_FCO2_gC_m2_yr*1e-3 <= 5 ~ '2.5-5'
+      			,semi2_FCO2_gC_m2_yr*1e-3 <= 10 ~ '5-10'
+      			,TRUE ~ '10+'
+    			))
+
+    network$forPlot <- factor(network$forPlot, levels = c('0-0.5', '0.5-1', '1-2.5', '2.5-5', '5-10', '10+'))
+
     plotJ <- ggplot() +
-    	geom_sf(data=network, aes(color=forPlot, linewidth=Q_m3_s, alpha=Q_m3_s))+
+    	geom_sf(data=network, aes(color=forPlot, linewidth=Q_m3_s))+
     	ggsn::scalebar(data=network,location='bottomleft', dist = 25, dist_unit = "km",transform = TRUE, model = "WGS84",st.dist=0.05) +      	
-    	scale_color_manual(name='FCO2\n[Kg-C/m2/yr]',
-						   values=c('#5c374c', '#985277', '#ce6a85', '#ff8c61','#faa275'),
-                           breaks=c('0.5', '1', '2.5', '5', '5+'))+
+    	scale_color_brewer(palette='RdYlBu', direction=-1,name=expression(bold(FCO[2]~(Kg-C/m^2/yr))))+
     	scale_linewidth_binned(name='Discharge [cms]',
         	              breaks=c(0.001, 0.01, 0.1, 1, 10,100),
             	          range=c(0.4,2),
-                	      guide = "none")+
-    	scale_alpha_binned(name='Discharge [cms]',
-        	              breaks=c(0.001, 0.01, 0.1, 1, 10),
-            	          range=c(0.4,1),
-                	      guide = "none")+   	
+                	      guide = "none")+	
     	labs(tag='F')+
     	coord_sf(datum = NA)+    	
     	theme(plot.title = element_text(face = "italic", size = 26),
@@ -564,23 +584,25 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
     	ylab('')
 
 
-    network$forPlot <- ifelse(network$semi_FCO2_gC_m2_yr*1e-3 < 0.5, '0.5',
-							ifelse(network$semi_FCO2_gC_m2_yr*1e-3 < 1, '1',
-								ifelse(network$semi_FCO2_gC_m2_yr*1e-3 < 2.5, '2.5',
-									ifelse(network$semi_FCO2_gC_m2_yr*1e-3 < 5, '5', '5+'))))
+    network <- network %>%
+    		dplyr::mutate(forPlot = dplyr::case_when(
+      			semi_FCO2_gC_m2_yr*1e-3 <= 0.5 ~ '0-0.5'
+      			,semi_FCO2_gC_m2_yr*1e-3 <= 1 ~ '0.5-1'
+      			,semi_FCO2_gC_m2_yr*1e-3 <= 2.5 ~ '1-2.5'
+      			,semi_FCO2_gC_m2_yr*1e-3 <= 5 ~ '2.5-5'
+      			,semi_FCO2_gC_m2_yr*1e-3 <= 10 ~ '5-10'
+      			,TRUE ~ '10+'
+    			))
+
+    network$forPlot <- factor(network$forPlot, levels = c('0-0.5', '0.5-1', '1-2.5', '2.5-5', '5-10', '10+'))
+
     plotK <- ggplot() +
-    	geom_sf(data=network, aes(color=forPlot, linewidth=Q_m3_s, alpha=Q_m3_s))+
-    	ggsn::scalebar(data=network,location='bottomleft', dist = 25, dist_unit = "km",transform = TRUE, model = "WGS84",st.dist=0.05) +      	
-    	scale_color_manual(name='FCO2\n[Kg-C/m2/yr]',
-						   values=c('#5c374c', '#985277', '#ce6a85', '#ff8c61','#faa275'),
-                           breaks=c('0.5', '1', '2.5', '5', '5+'))+
+    	geom_sf(data=network, aes(color=forPlot, linewidth=Q_m3_s))+
+    	ggsn::scalebar(data=network,location='bottomleft', dist = 25, dist_unit = "km",transform = TRUE, model = "WGS84",st.dist=0.05) +
+    	scale_color_brewer(palette='RdYlBu', direction=-1,name=expression(bold(FCO[2]~(Kg-C/m^2/yr))))+
     	scale_linewidth_binned(name='Discharge [cms]',
         	              breaks=c(0.001, 0.01, 0.1, 1, 10,100),
             	          range=c(0.4,2),
-                	      guide = "none")+
-    	scale_alpha_binned(name='Discharge [cms]',
-        	              breaks=c(0.001, 0.01, 0.1, 1, 10),
-            	          range=c(0.4,1),
                 	      guide = "none")+   	
     	labs(tag='G')+
     	coord_sf(datum = NA)+    	
@@ -593,23 +615,25 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
     	ylab('')
 
 
-    network$forPlot <- ifelse(network$FCO2_gC_m2_yr*1e-3 < 0.5, '0.5',
-							ifelse(network$FCO2_gC_m2_yr*1e-3 < 1, '1',
-								ifelse(network$FCO2_gC_m2_yr*1e-3 < 2.5, '2.5',
-									ifelse(network$FCO2_gC_m2_yr*1e-3 < 5, '5', '5+'))))
+    network <- network %>%
+    		dplyr::mutate(forPlot = dplyr::case_when(
+      			FCO2_gC_m2_yr*1e-3 <= 0.5 ~ '0-0.5'
+      			,FCO2_gC_m2_yr*1e-3 <= 1 ~ '0.5-1'
+      			,FCO2_gC_m2_yr*1e-3 <= 2.5 ~ '1-2.5'
+      			,FCO2_gC_m2_yr*1e-3 <= 5 ~ '2.5-5'
+      			,FCO2_gC_m2_yr*1e-3 <= 10 ~ '5-10'
+      			,TRUE ~ '10+'
+    			))
+
+    network$forPlot <- factor(network$forPlot, levels = c('0-0.5', '0.5-1', '1-2.5', '2.5-5', '5-10', '10+'))
+
     plotL <- ggplot() +
-    	geom_sf(data=network, aes(color=forPlot, linewidth=Q_m3_s, alpha=Q_m3_s))+
+    	geom_sf(data=network, aes(color=forPlot, linewidth=Q_m3_s))+
     	ggsn::scalebar(data=network,location='bottomleft', dist = 25, dist_unit = "km",transform = TRUE, model = "WGS84",st.dist=0.05) +    	
-    	scale_color_manual(name='FCO2\n[Kg-C/m2/yr]',
-						   values=c('#5c374c', '#985277', '#ce6a85', '#ff8c61','#faa275'),
-                           breaks=c('0.5', '1', '2.5', '5', '5+'))+
+    	scale_color_brewer(palette='RdYlBu', direction=-1,name=expression(bold(FCO[2]~(Kg-C/m^2/yr))))+
     	scale_linewidth_binned(name='Discharge [cms]',
         	              breaks=c(0.001, 0.01, 0.1, 1, 10,100),
             	          range=c(0.4,2),
-                	      guide = "none")+
-    	scale_alpha_binned(name='Discharge [cms]',
-        	              breaks=c(0.001, 0.01, 0.1, 1, 10),
-            	          range=c(0.4,1),
                 	      guide = "none")+
     	labs(tag='H')+
     	coord_sf(datum = NA)+    	
@@ -631,7 +655,10 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
                                   legend.box="vertical",
                                   legend.margin=margin(),
                                   legend.spacing.x = unit(0.3, 'cm')) +
-                            guides(color = guide_legend(override.aes = list(linewidth=20)))) #fill legend size settings
+                            guides(color = guide_legend(override.aes = list(linewidth=20),
+                            							title.position="top",
+                            							title.hjust = 0.5,
+                            							nrow = 1))) #fill legend size settings
 
     ##RIVER NAME----------------------------
     basin_name <- stringr::str_wrap(paste0(basin_name, ' River'), 30) #wrap to twenty characters, seems to fit nicely
@@ -657,7 +684,7 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
 
   									   design=design)
 
-  	ggsave(paste0('cache/figures/conceptualCompare_', huc4_id, '.jpg'), comboPlot, width=26, height=18)
+  	ggsave(paste0('cache/figures/conceptualCompare_', huc4_id, '.jpg'), comboPlot, width=28, height=20)
   	return(paste0('see cache/figures/conceptualCompare_', huc4_id, '.jpg'))
 }
 
@@ -669,8 +696,22 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
 
 
 
-
-sourcesMap <- function(path_to_data, results){
+#' produce figure of sources of CO2 emissions (figure 3)
+#'
+#' @name sourcesMap
+#'
+#' @param path_to_data: character path to data repo
+#' @param results: sf object of model results
+#' @param combined_sources_by_order: df of by-stream-order results for figure
+#'
+#' @import dplyr
+#' @import sf
+#' @import tidyr
+#' @import cowplot
+#' @import patchwork
+#'
+#' @return manuscript figure 3 written to file
+sourcesMap <- function(path_to_data, results, combined_sources_by_order){
 	theme_set(theme_classic())
   
   	# CONUS boundary
@@ -688,12 +729,9 @@ sourcesMap <- function(path_to_data, results){
   	results <- dplyr::filter(results, is.na(contribGW_TgC_yr)==0 & is.na(lakeFCO2_TgC_yr)==0) #remove great lakes
 
   	#setup results to map
-  	results$perc_GW <- round((results$contribGW_TgC_yr/results$lostCO2_TgC_yr )*100,0) #setup percent
-  	results$perc_WC <- round((results$contribWC_TgC_yr/results$lostCO2_TgC_yr )*100,0) #setup percent
-  	results$perc_BZ <- round((results$contribBZ_TgC_yr/results$lostCO2_TgC_yr )*100,0) #setup percent
-  	results$perc_UP <- round((results$contribUP_TgC_yr/results$lostCO2_TgC_yr )*100,0) #setup percent
-  	results$perc_EMIT <- round((results$sumFCO2_TgC_yr/results$lostCO2_TgC_yr )*100,0) #setup percent
-  	results$perc_EXP <- round((results$exported_TgC_yr/results$lostCO2_TgC_yr )*100,0) #setup percent
+  	results$perc_GW <- round((results$contribGW_TgC_yr/(results$contribGW_TgC_yr+results$contribWC_TgC_yr+results$contribBZ_TgC_yr))*100,0) #setup percent
+  	results$perc_WC <- round((results$contribWC_TgC_yr/(results$contribGW_TgC_yr+results$contribWC_TgC_yr+results$contribBZ_TgC_yr))*100,0) #setup percent
+  	results$perc_BZ <- round((results$contribBZ_TgC_yr/(results$contribGW_TgC_yr+results$contribWC_TgC_yr+results$contribBZ_TgC_yr))*100,0) #setup percent
 
   	mapGW <- ggplot(results) +
     	geom_sf(aes(fill=perc_GW), #actual map
@@ -716,13 +754,13 @@ sourcesMap <- function(path_to_data, results){
     	theme(axis.title = element_text(size=26, face='bold'),axis.text = element_text(family="Futura-Medium", size=18))+ #axis text settings
     	theme(legend.position = c(0.2, 0.1),
         	  legend.key.size = unit(2, 'cm'))+
-        	#  panel.background = element_rect(fill = '#e8998d', color = 'black'))+ #legend position settings
     	theme(text = element_text(family = "Futura-Medium"), #legend text settings
+    		  axis.text.x = element_text(angle = 90),
         	  legend.title = element_text(face = "bold", size = 18),
           	  legend.text = element_text(family = "Futura-Medium", size = 18),
           	  plot.tag = element_text(size=26,
             	                      face='bold'),
-          	plot.title = element_text(size=26,
+          	  plot.title = element_text(size=26,
             	                      face='bold'))+
     	xlab('')+
     	ylab('')
@@ -749,8 +787,8 @@ sourcesMap <- function(path_to_data, results){
     	theme(axis.title = element_text(size=26, face='bold'),axis.text = element_text(family="Futura-Medium", size=18))+ #axis text settings
     	theme(legend.position = c(0.2, 0.1),
         	  legend.key.size = unit(2, 'cm'))+
-        	#  panel.background = element_rect(fill = '#e8998d', color = 'black'))+ #legend position settings
     	theme(text = element_text(family = "Futura-Medium"), #legend text settings
+    		  axis.text.x = element_text(angle = 90),
         	  legend.title = element_text(face = "bold", size = 18),
           	  legend.text = element_text(family = "Futura-Medium", size = 18),
           	  plot.tag = element_text(size=26,
@@ -782,116 +820,16 @@ sourcesMap <- function(path_to_data, results){
     	theme(axis.title = element_text(size=26, face='bold'),axis.text = element_text(family="Futura-Medium", size=18))+ #axis text settings
     	theme(legend.position = c(0.2, 0.1),
         	  legend.key.size = unit(2, 'cm'))+
-        	#  panel.background = element_rect(fill = '#e8998d', color = 'black'))+ #legend position settings
     	theme(text = element_text(family = "Futura-Medium"), #legend text settings
+    		  axis.text.x = element_text(angle = 90),
         	  legend.title = element_text(face = "bold", size = 18),
-          	legend.text = element_text(family = "Futura-Medium", size = 18),
-          	plot.tag = element_text(size=26,
-                                 face='bold'),
-          	plot.title = element_text(size=26,
-                                 face='bold'))+
+          	  legend.text = element_text(family = "Futura-Medium", size = 18),
+          	  plot.tag = element_text(size=26,
+                                   face='bold'),
+          	  plot.title = element_text(size=26,
+                                   face='bold'))+
     	xlab('')+
     	ylab('')
-
-  	#PERC UP MAP-------------------------------------------------
-  	# mapUP <- ggplot(results) +
-    # 	geom_sf(aes(fill=perc_UP), #actual map
-    #     	    color='black',
-    #         	size=0.5) +
-    # 	geom_sf(data=states, #conus boundary
-    #     	    color='black',
-    #         	linewidth=0.75,
-    #         	alpha=0)+
-    # 	labs(tag='D')+
-    # 	ggtitle('% upstream CO2 contributions')+
-    # 	scale_fill_gradient2(name='',
-    # 						low='white',
-    # 						mid='#7ca982',
-    # 						high='#243e36',
-    # 						midpoint=50,
-    # 						limits=c(0,100),
-    #            	         	guide = guide_colorbar(direction = "horizontal",
-    #                	                               title.position = "bottom"))+
-    # 	theme(axis.title = element_text(size=26, face='bold'),axis.text = element_text(family="Futura-Medium", size=20))+ #axis text settings
-    # 	theme(legend.position = c(0.2, 0.1),
-    #     	  legend.key.size = unit(2, 'cm'),
-    #     	  panel.background = element_rect(fill = '#e8998d', color = 'black'))+ #legend position settings
-    # 	theme(text = element_text(family = "Futura-Medium"), #legend text settings
-    #     	  legend.title = element_text(face = "bold", size = 18),
-    #       	  legend.text = element_text(family = "Futura-Medium", size = 18),
-    #       	  plot.tag = element_text(size=26,
-    #         	                      face='bold'),
-    #       	plot.title = element_text(size=26,
-    #         	                      face='bold'))+
-    # 	xlab('')+
-    # 	ylab('')
-
-	#PERC EXP MAP-------------------------------------------------
-  	# mapEXP <- ggplot(results) +
-    # 	geom_sf(aes(fill=perc_EXP), #actual map
-    #     	    color='black',
-    #         	size=0.5) +
-    # 	geom_sf(data=states, #conus boundary
-    #     	    color='black',
-    #         	linewidth=0.75,
-    #         	alpha=0)+
-    # 	labs(tag='E')+
-    # 	ggtitle('% CO2 to downstream')+
-    # 	scale_fill_gradient2(name='',
-    # 						low='white',
-    # 						mid='#7ca982',
-    # 						high='#243e36',
-    # 						midpoint=50,
-    # 						limits=c(0,100),
-    #            	         	guide = guide_colorbar(direction = "horizontal",
-    #                	                               title.position = "bottom"))+
-    # 	theme(axis.title = element_text(size=26, face='bold'),axis.text = element_text(family="Futura-Medium", size=20))+ #axis text settings
-    # 	theme(legend.position = c(0.2, 0.1),
-    #     	  legend.key.size = unit(2, 'cm'),
-    #     	  panel.background = element_rect(fill = '#465775', color = 'black'))+ #legend position settings
-    # 	theme(text = element_text(family = "Futura-Medium"), #legend text settings
-    #     	  legend.title = element_text(face = "bold", size = 18),
-    #       	  legend.text = element_text(family = "Futura-Medium", size = 18),
-    #       	  plot.tag = element_text(size=26,
-    #         	                      face='bold'),
-    #       	plot.title = element_text(size=26,
-    #         	                      face='bold'))+
-    # 	xlab('')+
-    # 	ylab('')    	
-
-
-  	#PERC UP MAP-------------------------------------------------
-  	# mapEMIT <- ggplot(results) +
-    # 	geom_sf(aes(fill=perc_EMIT), #actual map
-    #     	    color='black',
-    #         	size=0.5) +
-    # 	geom_sf(data=states, #conus boundary
-    #     	    color='black',
-    #         	linewidth=0.75,
-    #         	alpha=0)+
-    # 	labs(tag='F')+
-    # 	ggtitle('% CO2 to atmosphere')+
-    # 	scale_fill_gradient2(name='',
-    # 						low='white',
-    # 						mid='#7ca982',
-    # 						high='#243e36',
-    # 						midpoint=50,
-    # 						limits=c(0,100),
-    #            	         	guide = guide_colorbar(direction = "horizontal",
-    #                	                               title.position = "bottom"))+
-    # 	theme(axis.title = element_text(size=26, face='bold'),axis.text = element_text(family="Futura-Medium", size=20))+ #axis text settings
-    # 	theme(legend.position = c(0.2, 0.1),
-    #     	  legend.key.size = unit(2, 'cm'),
-    #     	  panel.background = element_rect(fill = '#465775', color = 'black'))+ #legend position settings
-    # 	theme(text = element_text(family = "Futura-Medium"), #legend text settings
-    #     	  legend.title = element_text(face = "bold", size = 18),
-    #       	  legend.text = element_text(family = "Futura-Medium", size = 18),
-    #       	  plot.tag = element_text(size=26,
-    #         	                      face='bold'),
-    #       	  plot.title = element_text(size=26,
-    #         	                      face='bold'))+
-    # 	xlab('')+
-    # 	ylab('')
 
 	#legend
 	legend <- cowplot::get_legend(
@@ -908,25 +846,8 @@ sourcesMap <- function(path_to_data, results){
 
 
   ####OURCES BY ORDER-------------------
-  combined_results_by_order <- readr::read_csv('sources_by_order_cira_6_4_23.csv') %>%
+  combined_results_by_order <- combined_sources_by_order %>%
    	tidyr::gather(key=key, value=value, c('percGW_reach_median', 'percBZ_reach_median', 'percWC_reach_median'))
-  # 	combined_results_by_order$huc2 <- substr(combined_results_by_order$method, 18, 19)
-  # 	combined_results_by_order$huc4 <- substr(combined_results_by_order$method, 18, 21)
-  # 	east <- c('0101', '0102', '0103', '0104', '0105', '0106', '0107', '0108', '0109', '0110', #all basins east of the Mississippi River (determined visually)
-   #  	        '0202', '0203', '0206', '0207', '0208', '0204', '0205',
-   #    	      '0301', '0302', '0303', '0304', '0305', '0306', '0307', '0308', '0309', '0310', '0311', '0312', '0313', '0314', '0315', '0316', '0317', '0318',
-   #      	    '0401', '0402', '0403', '0404', '0405', '0406', '0407', '0408', '0409', '0410', '0411', '0412', '0413', '0414', '0420', '0427', '0429', '0430',
-   #   	      	'0501', '0502', '0503', '0504', '0505', '0506', '0507', '0508', '0509', '0510', '0511', '0512', '0513', '0514',
-   #    	      '0601', '0602', '0603', '0604',
-   #      	    '0701', '0703', '0704', '0705', '0707', '0709', '0712', '0713', '0714',
-   #        	  '0801', '0803', '0806', '0807', '0809',
-   #        	  '0901', '0902', '0903', '0904')
-  # 	west <- combined_results[!(combined_results$huc4 %in% c(east)),]$huc4
-  
-  # 	combined_results_by_order$region <- ifelse(combined_results_by_order$huc4 %in% east, 'East of Mississippi River','West of Mississippi River')
-  
- 	 # keepHUCs <- combined_results[is.na(combined_results$num_flowing_dys)==0,]$huc4
-   # combined_results_by_order <- dplyr::filter(combined_results_by_order, huc4 %in% keepHUCs)
 
    #PLOT
    plotSources_by_order <- ggplot(combined_results_by_order, aes(fill=key, x=factor(StreamOrde), y=value*100)) +
@@ -974,7 +895,17 @@ sourcesMap <- function(path_to_data, results){
 
 
 
-
+#' produce figure of lake CO2 emissions (figure 4)
+#'
+#' @name lakesMap
+#'
+#' @param path_to_data: character path to data repo
+#' @param results: sf object of model results
+#'
+#' @import dplyr
+#' @import sf
+#'
+#' @return manuscript figure 4 written to file
 lakesMap <- function(path_to_data, results){
 	theme_set(theme_classic())
   
@@ -996,16 +927,7 @@ lakesMap <- function(path_to_data, results){
   	results$perc_Lakes <- round((results$lakeFCO2_TgC_yr/results$sumFCO2_TgC_yr )*100,0) #setup percent
   	results[!is.na(results$lakeFCO2_TgC_yr) & results$lakeFCO2_TgC_yr < 0,]$perc_Lakes <- 0 #if lakes are a sink, just set to 0
 
-	  	#PERC LAKES MAP-------------------------------------------------
-  	# cdf_inset <- ggplot(results, aes(perc_Lakes))+
-    # 	stat_ecdf(size=2, color='black') +
-    # 	xlim(0,100)+
-    # 	xlab('% emissions from\nlakes/reservoirs')+
-    # 	ylab('Probability')+
-    # 	theme(axis.title = element_text(size=20),
-    #     	  axis.text = element_text(family="Futura-Medium", size=18))+ #axis text settings
-    # 	theme(legend.position = 'none') #legend position settings
-
+	#PERC LAKES MAP-------------------------------------------------
   	mapLakes <- ggplot(results) +
     	geom_sf(aes(fill=perc_Lakes), #actual map
         	    color='black',
@@ -1022,11 +944,6 @@ lakesMap <- function(path_to_data, results){
     						limits=c(0,100),
                	         	guide = guide_colorbar(direction = "horizontal",
                    	                               title.position = "bottom"))+
-#    	scale_fill_gradientn(name='% emissions from lakes/reservoirs',
-#        	                 colors=c('white', '#10002b'),
-#            	             limits=c(0,50),
-#                	         guide = guide_colorbar(direction = "horizontal",
-#                    	                            title.position = "bottom"))+
     	theme(axis.title = element_text(size=26, face='bold'),axis.text = element_text(family="Futura-Medium", size=20))+ #axis text settings
     	theme(legend.position = c(0.2, 0.1),
         	  legend.key.size = unit(2, 'cm'))+ #legend position settings
@@ -1038,17 +955,23 @@ lakesMap <- function(path_to_data, results){
     	xlab('')+
     	ylab('')
 
-     # mapLakes <- mapLakes +
-     # 	patchwork::inset_element(cdf_inset, right = 0.975, bottom = 0.001, left = 0.775, top = 0.35)
-
   	ggsave('cache/figures/mapLakes.jpg', mapLakes, width=20, height=15)
   	return('see cache/figures/mapLakes.jpg')
 }
 
 
 
-
-#' prepping sf object for easy in-memory mapping
+#' prepping sf objects for easy in-memory mapping for figure 1
+#'
+#' @name indvRiverMaps
+#'
+#' @param results: sf object of model results
+#' @param huc4: basin ID
+#'
+#' @import dplyr
+#' @import sf
+#'
+#' @return sf object maps for x basin
 indvRiverMaps <- function(results, huc4){
 	 huc2 <- substr(huc4, 1, 2)
 	 huc4 <- ifelse(nchar(huc4)==5,substr(huc4,1,4),huc4)
@@ -1069,16 +992,16 @@ indvRiverMaps <- function(results, huc4){
   		# Adding column based on other column:
   		fin<-shapefile %>%
     		dplyr::mutate(CO2_col = dplyr::case_when(
-      			FCO2_gC_m2_yr <= 500 ~ '0-500'
-      			,FCO2_gC_m2_yr <= 1000 ~ '500-1000'
-      			,FCO2_gC_m2_yr <= 2500 ~ '1000-2500'
-      			,FCO2_gC_m2_yr <= 5000 ~ '2500-5000'
-      			,FCO2_gC_m2_yr <= 10000 ~ '5000-10000'
-      			,TRUE ~ '10000+'
+      			FCO2_gC_m2_yr*1e-3 <= 0.5 ~ '0-0.5'
+      			,FCO2_gC_m2_yr*1e-3 <= 1 ~ '0.5-1'
+      			,FCO2_gC_m2_yr*1e-3 <= 2.5 ~ '1-2.5'
+      			,FCO2_gC_m2_yr*1e-3 <= 5 ~ '2.5-5'
+      			,FCO2_gC_m2_yr*1e-3 <= 10 ~ '5-10'
+      			,TRUE ~ '10+'
     			)) %>%
     		dplyr::select(c('CO2_col', 'Q_m3_s', ))
 
-    	fin$CO2_col <- factor(fin$CO2_col, levels = c('0-500', '500-1000', '1000-2500', '2500-5000', '5000-10000', '10000+'))
+    	fin$CO2_col <- factor(fin$CO2_col, levels = c('0-0.5', '0.5-1', '1-2.5', '2.5-5', '5-10', '10+'))
   	return(fin)
 	}
 }
@@ -1088,8 +1011,20 @@ indvRiverMaps <- function(results, huc4){
 
 
 
-#' actual mapping of entire US river network
-mainMapFunction <- function(mapList, map_0205, map_0206,map_0207,map_0208,map_0204, map_0413, map_0501, map_0505){
+#' CONU FCO2 map (figure 1 subplot A)
+#'
+#' @name mainMapFunction1
+#'
+#' @param mapList: combined list of sf objects per basin (makes mapping easier)
+#'
+#' @import dplyr
+#' @import sf
+#' @import ggsn
+#' @import patchwork
+#' @import RColorBrewer
+#'
+#' @return writes figure 1A to file (as two separate images for memory issues- use illustrator to make the final figure)
+mainMapFunction1 <- function(mapList){
 	#remove NAs (great lakes)
 	mapList <- mapList[!is.na(mapList)]
 
@@ -1320,20 +1255,19 @@ mainMapFunction <- function(mapList, map_0205, map_0206,map_0207,map_0208,map_02
         	    color='black',
             	linewidth=0.75,
             	alpha=0)+
-		scale_color_brewer(palette='RdYlBu', direction=-1,name='FCO2 [gC/m2/yr]')+
+		scale_color_brewer(palette='RdYlBu', direction=-1,name=expression(bold(FCO[2]~(Kg-C/m^2/yr))))+
  		theme(plot.title = element_text(face = "italic", size = 26),
     	  	axis.text = element_text(size = 22),
         	plot.tag = element_text(size=26,
              	                  face='bold'),
         	legend.position=c(0.9,0.15),
-        #	legend.key.size = unit(2, 'cm'),
  			legend.text = element_text(size=18),
  			legend.title = element_text(size=22,face="bold"),
  			legend.spacing.y = unit(0.1, 'cm'))+
  		guides(color = guide_legend(override.aes = list(linewidth=8), byrow = TRUE))
 
   	#INSET CENTERING----------------------------------
-   	zoom_to <- c(-77.87450,39.52966)# c(-87.87,32.89) # inset centers
+   	zoom_to <- c(-79.3000, 39.1399) #c(-79.1293, 39.4204)# c(-77.87450,39.52966) # inset centers
 
    	#set up zoom bounds
   	zoom_level <- 3
@@ -1344,6 +1278,70 @@ mainMapFunction <- function(mapList, map_0205, map_0206,map_0207,map_0208,map_02
 
  	#set up inset box
      df <- data.frame(lon_bounds_1, lat_bounds_1)
+ 	box_1 <- df %>% 
+   		sf::st_as_sf(coords = c("lon_bounds_1", "lat_bounds_1"), 
+            		crs = 4326) %>% 
+   		sf::st_bbox() %>% 
+   		sf::st_as_sfc()
+
+ 
+    #ADD INSET 1 BOUNDING BOXES---------------------------------
+    bigMap <- bigMap +
+    	geom_sf(data=box_1,
+    			color='#fca311',
+    			linewidth=3,
+    			alpha=0)
+
+
+	ggsave(filename="cache/figures/mainMap_1.jpg",plot=bigMap,width=20,height=15)
+	
+	return('see cache/figures/')
+}
+
+
+
+
+
+
+
+
+
+
+#' CONU FCO2 map (figure 1 subplot A)
+#'
+#' @name mainMapFunction1
+#'
+#' @param map_0205: sf object for basin for inset mapping
+#' @param map_0206: sf object for basin for inset mapping
+#' @param map_0207: sf object for basin for inset mapping
+#' @param map_0208: sf object for basin for inset mapping
+#' @param map_0502: sf object for basin for inset mapping
+#' @param map_0413: sf object for basin for inset mapping
+#' @param map_0501: sf object for basin for inset mapping
+#' @param map_0505: sf object for basin for inset mapping
+#'
+#' @import dplyr
+#' @import sf
+#' @import ggsn
+#' @import patchwork
+#' @import RColorBrewer
+#'
+#' @return writes figure 1A to file (as two separate images for memory issues- use illustrator to make the final figure)
+mainMapFunction2 <- function(map_0205, map_0206,map_0207,map_0208,map_0502, map_0503, map_0501, map_0505){
+	theme_set(theme_classic())
+
+  	#INSET CENTERING----------------------------------
+   	zoom_to <- c(-79.3000, 39.1399) #c(-79.1293, 39.4204)# c(-77.87450,39.52966) # inset centers
+
+   	#set up zoom bounds
+  	zoom_level <- 3
+ 	lon_span <- 360 / 5^zoom_level
+ 	lat_span <- 360 / 5^zoom_level
+ 	lon_bounds_1 <- c(zoom_to[1] - lon_span / 2, zoom_to[1] + lon_span / 2)
+ 	lat_bounds_1 <- c(zoom_to[2] - lat_span / 2, zoom_to[2] + lat_span / 2)
+
+ 	#set up inset box
+    df <- data.frame(lon_bounds_1, lat_bounds_1)
  	box_1 <- df %>% 
    		sf::st_as_sf(coords = c("lon_bounds_1", "lat_bounds_1"), 
             		crs = 4326) %>% 
@@ -1397,12 +1395,13 @@ mainMapFunction <- function(mapList, map_0205, map_0206,map_0207,map_0208,map_02
 
 
   	#for insets
-  	insetNet <- rbind(map_0205, map_0206,map_0207,map_0208,map_0204, map_0413, map_0501, map_0505)
+  	insetNet <- rbind(map_0205, map_0206,map_0207,map_0208,map_0502, map_0503, map_0501, map_0505)
 
   	#CUSTOM COLOR SCALE-------------------
 	myColors <- rev(RColorBrewer::brewer.pal(6,"RdYlBu"))
 	names(myColors) <- levels(insetNet$CO2_col)
 	colScale <- scale_colour_manual(name = "CO2_col",values = myColors)
+	fillScale <- scale_fill_manual(name = "CO2_col",values = myColors)
 
   	#INSET 1--------------------------------------------------
   	insetShp1 <- sf::st_crop(insetNet, xmin=lon_bounds_1[1], xmax=lon_bounds_1[2], ymin=lat_bounds_1[1], ymax=lat_bounds_1[2])
@@ -1419,7 +1418,6 @@ mainMapFunction <- function(mapList, map_0205, map_0206,map_0207,map_0208,map_02
   		xlab('')+
   		ylab('')+
   		coord_sf(datum=NA) +
-	#	scale_color_brewer(palette='RdYlBu', direction=-1,name='FCO2 [gC/m2/yr]')+  				
     	theme(legend.position='none',
     		  panel.background = element_rect(fill = "black"))
 
@@ -1438,21 +1436,20 @@ mainMapFunction <- function(mapList, map_0205, map_0206,map_0207,map_0208,map_02
   		xlab('')+
   		ylab('')+  		
   		coord_sf(datum=NA) +
-	#	scale_color_brewer(palette='RdYlBu', direction=-1,name='FCO2 [gC/m2/yr]')+  				
-  		#viridis::scale_color_viridis(option='mako',discrete=TRUE, name='CO2 [ppm]') +
      	theme(legend.position='none',
      		  panel.background = element_rect(fill = "black"))
 
   	#INSET 3--------------------------------------------------
   	insetShp3 <- sf::st_crop(insetNet, xmin=lon_bounds_3[1], xmax=lon_bounds_3[2], ymin=lat_bounds_3[1], ymax=lat_bounds_3[2])
- # 	waterbodies <- sf::st_read(dsn = paste0(path_to_data, '/HUC2_03/NHDPLUS_H_0316_HU4_GDB/NHDPLUS_H_0316_HU4_GDB.gdb'), layer='NHDWaterbody') %>%
- # 		dplyr::filter(FType %in% c(390, 436))
- #   waterbodies <- sf::st_crop(waterbodies, xmin=lon_bounds_3[1], xmax=lon_bounds_3[2], ymin=lat_bounds_3[1], ymax=lat_bounds_3[2])
-    #waterbodies <- sf::st_join(waterbodies, insetShp3)
+  	waterbodies <- sf::st_read(dsn = paste0(path_to_data, '/HUC2_02/NHDPLUS_H_0207_HU4_GDB/NHDPLUS_H_0207_HU4_GDB.gdb'), layer='NHDWaterbody') %>%
+  		dplyr::filter(FType %in% c(390, 436))
+    waterbodies <- sf::st_crop(waterbodies, xmin=lon_bounds_3[1], xmax=lon_bounds_3[2], ymin=lat_bounds_3[1], ymax=lat_bounds_3[2])
+    waterbodies <- sf::st_join(waterbodies, insetShp3,  join = st_contains)
+    waterbodies <- dplyr::filter(waterbodies, is.na(CO2_col)==0) #remove upland ponds and other waterbodies we don't care about (those not actually in the model)
 
   	inset3 <- ggplot() +
   		geom_sf(data = insetShp3, aes(color = CO2_col,linewidth=Q_m3_s)) +
-#  		geom_sf(data = waterbodies, alpha=0, color='grey',size=1) +  		
+		geom_sf(data = waterbodies, aes(fill = CO2_col)) +  		
 	  	scale_linewidth_binned(name='Discharge [cms]',
         	breaks=c(0.01,0.1, 1, 10,100,1000),
             range=c(0.3,2.5))+  		
@@ -1463,49 +1460,38 @@ mainMapFunction <- function(mapList, map_0205, map_0206,map_0207,map_0208,map_02
     	ggsn::scalebar(data=insetShp3,location='bottomleft', dist = 2, dist_unit = "km",transform = TRUE, model = "WGS84", box.fill=c('white','red'),st.color='white',st.dist=0.05,border.size=0.05) +
     	xlab('')+
   		ylab('')+
-  		coord_sf(datum=NA) +
-	#	scale_color_brewer(palette='RdYlBu', direction=-1,name='FCO2 [gC/m2/yr]')+  
-		#scale_fill_brewer(palette='RdYlBu', direction=-1,name='CO2 [ppm]')+						
+  		coord_sf(datum=NA) +						
      	theme(legend.position='none',
      		  panel.background = element_rect(fill = "black"))
 
   	#INSET 4-------------------------------------------------
   	insetShp4 <- sf::st_crop(insetNet, xmin=lon_bounds_4[1], xmax=lon_bounds_4[2], ymin=lat_bounds_4[1], ymax=lat_bounds_4[2])
- # 	waterbodies <- sf::st_read(dsn = paste0(path_to_data, '/HUC2_03/NHDPLUS_H_0316_HU4_GDB/NHDPLUS_H_0316_HU4_GDB.gdb'), layer='NHDWaterbody') %>%
-  #		dplyr::filter(FType %in% c(390, 436))
-   # waterbodies <- sf::st_crop(waterbodies, xmin=lon_bounds_4[1], xmax=lon_bounds_4[2], ymin=lat_bounds_4[1], ymax=lat_bounds_4[2])
-  #  waterbodies <- sf::st_join(waterbodies, insetShp4,  join = st_contains)
+  	waterbodies <- sf::st_read(dsn = paste0(path_to_data, '/HUC2_02/NHDPLUS_H_0207_HU4_GDB/NHDPLUS_H_0207_HU4_GDB.gdb'), layer='NHDWaterbody') %>%
+  		dplyr::filter(FType %in% c(390, 436))
+    waterbodies <- sf::st_crop(waterbodies, xmin=lon_bounds_4[1], xmax=lon_bounds_4[2], ymin=lat_bounds_4[1], ymax=lat_bounds_4[2])
+    waterbodies <- sf::st_join(waterbodies, insetShp4,  join = st_contains)
+    waterbodies <- dplyr::filter(waterbodies, is.na(CO2_col)==0) #remove upland ponds and other waterbodies we don't care about (those not actually in the model)
 
   	inset4 <- ggplot() +
   		geom_sf(data = insetShp4, aes(color = CO2_col,linewidth=Q_m3_s)) +
-	#	geom_sf(data = waterbodies, aes(fill = CO2_col)) +  		
+		geom_sf(data = waterbodies, aes(fill = CO2_col)) +  		
 	  	scale_linewidth_binned(name='Discharge [cms]',
         	breaks=c(0.01,0.1, 1, 10,100,1000),
             range=c(0.3,2.5))+  		
     	ggsn::scalebar(data=insetShp4,location='bottomleft', dist = 0.5, dist_unit = "km",transform = TRUE, model = "WGS84", box.fill=c('white','red'),st.color='white',st.dist=0.05,border.size=0.05) +  
   		xlab('')+
   		ylab('')+
-  		coord_sf(datum=NA) +  
-	#	scale_color_brewer(palette='RdYlBu', direction=-1,name='FCO2 [gC/m2/yr]')+  
-	#	scale_fill_brewer(palette='RdYlBu', direction=-1,name='FCO2 [gC/m2/yr]')+  								
+  		coord_sf(datum=NA) +  							
      	theme(legend.position='none',
      		  panel.background = element_rect(fill = "black"))
 
-    #ADD INSET 1 BOUNDING BOXES---------------------------------
-    bigMap <- bigMap +
-    	geom_sf(data=box_1,
-    			color='#fca311',
-    			linewidth=3,
-    			alpha=0)
-
-  	#COMBO PLOT---------------------------------------------
+  	# #COMBO PLOT---------------------------------------------
   	 design <- "
   	 	BCDE
   	 "
 
-  	 comboPlot <- patchwork::wrap_plots(B=inset4 + colScale, C=inset3 + colScale, D=inset2 + colScale, E=inset1 + colScale, design=design)
+  	comboPlot <- patchwork::wrap_plots(B=inset4 + colScale + fillScale, C=inset3 + colScale + fillScale, D=inset2 + colScale, E=inset1 + colScale, design=design)
 
-	ggsave(filename="cache/figures/mainMap_1.jpg",plot=bigMap,width=20,height=15)
 	ggsave(filename="cache/figures/mainMap_2.jpg",plot=comboPlot,width=20,height=5)
 	
 	return('see cache/figures/')
@@ -1516,6 +1502,22 @@ mainMapFunction <- function(mapList, map_0205, map_0206,map_0207,map_0208,map_02
 
 
 
+
+
+
+
+
+#' produce map comparing upscaling to transport (exteded data figure 1)
+#'
+#' @name compareAgainstLumped
+#'
+#' @param path_to_data: character path to data repo
+#' @param results: sf object of model results
+#'
+#' @import dplyr
+#' @import sf
+#'
+#' @return manuscript extended data figure 1 written to file
 compareAgainstLumped <- function(path_to_data, results){
 	  	theme_set(theme_classic())
   
@@ -1543,7 +1545,7 @@ compareAgainstLumped <- function(path_to_data, results){
         	    color='black',
             	linewidth=0.75,
             	alpha=0)+
-    	scale_fill_gradientn(name='% difference in carbon\nemissions from lumped',
+    	scale_fill_gradientn(name='Percent difference in CO2 emissions\nfrom statistical upscaling',
         	                 colors=c('#e63946', 'white', '#1d3557'),
             	             limits=c(-100,100),
                 	         guide = guide_colorbar(direction = "horizontal",
@@ -1563,119 +1565,3 @@ compareAgainstLumped <- function(path_to_data, results){
     ggsave('cache/figures/lumpedRegionalCompare.jpg', map, width=10, height=10)
     return('see cache/figures/comparisonHUC2.jpg')
 }
-
-
-
-
-
-
-
-
-
-
-# glorichCompare <- function(ourModel){
-# 	theme_set(theme_classic())
-
-# #	ourModel <- do.call("rbind", modelList) #make raymond model object
-# 	glorich <- readr::read_csv('data/glorich_rocher_ros_2019.csv')
-# 	glorich_shp <- sf::st_as_sf(x=glorich,
-#                    coords = c("Longitude", "Latitude"),
-#                		crs = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
-
-# 	ourModel <- ourModel %>%
-# 		dplyr::select(c('CO2_ppm', 'k600_m_s')) %>%
-# 		dplyr::mutate(type='model')
-# #		dplyr::filter(waterbody == 'River')
-
-# 	glorich <- glorich %>%
-# 		dplyr::mutate(k600_m_s = k600/86400,
-# 					  type='glorich') %>%
-# 		dplyr::select(c('pco2', 'k600_m_s', 'type'))
-# 	colnames(glorich) <- c('CO2_ppm', 'k600_m_s', 'type')
-
-# 	#little map
-# 	library(rnaturalearth)
-# 	library(rnaturalearthdata)
-# 	world <- ne_countries(scale = "medium", returnclass = "sf")
-
-# 	map_world <- ggplot(glorich_shp, aes(color=STAT_ID)) +
-# 		geom_sf(color='#102542')+
-#     	geom_sf(data=world, #conus boundary
-#         	    color='black',
-#             	linewidth=0.25,
-#             	alpha=0) +
-#     	coord_sf(expand = FALSE) +
-#     	    	theme(axis.title = element_text(face = "bold", size = 24),
-#     		  axis.text = element_text(size = 22),
-#         	  plot.tag = element_text(size=26,
-#             	                  face='bold'))
-   	
-#    	#CDFs
-#    	forPlot <- rbind(glorich, ourModel)
-
-#    	co2CDF <- ggplot(forPlot, aes(x=CO2_ppm, color=type)) +
-#    		stat_ecdf(size=1.25) +
-#    		labs(tag='A')+
-#    		scale_x_log10()+
-#   		theme(legend.text = element_text(size=22))+
-#     	theme(axis.title = element_text(face = "bold", size = 24),
-#     		  axis.text = element_text(size = 22),
-#         	  plot.tag = element_text(size=26,
-#             	                  face='bold'))+
-#     	xlab('CO2 [ppm]')+
-#     	ylab('Percentile') 
-
-#    	kCDF <- ggplot(forPlot, aes(x=k600_m_s, color=type)) +
-#    		stat_ecdf(size=1.25) +
-#    		labs(tag='B')+
-#    		scale_x_log10()+
-#   		theme(legend.text = element_text(size=22))+
-#     	theme(axis.title = element_text(face = "bold", size = 24),
-#     		  axis.text = element_text(size = 22),
-#         	  plot.tag = element_text(size=26,
-#             	                  face='bold'))+
-#     	xlab('k600 [m/s]')+
-#     	ylab('Percentile')  
-
-#     # #glorich plot
-#   	# glorichPlot <- ggplot(glorich, aes(x=k600/86400, y=pco2))+
-#   	# 	geom_point(size=4, alpha=0.4, color='#102542') +
-#   	# #	xlim(0,100)+
-#   	# 	ylim(0,24000)+
-#   	# 	labs(tag='B')+
-#   	# 	theme(legend.position='none')+
-#     # 	theme(axis.title = element_text(face = "bold", size = 24),
-#     # 		  axis.text = element_text(size = 22),
-#     #     	  plot.tag = element_text(size=26,
-#     #         	                  face='bold'))+
-#     # 	xlab('k600 [m/s]')+
-#     # 	ylab('')
-
-#     # glorichPlot <- glorichPlot +
-#     # 	patchwork::inset_element(map_world, right = 0.98, bottom = 0.6, left = 0.28, top = 1.1)
-
-#     # #model plot
-#   	# ourPlot <- ggplot(ourModel, aes(x=k600_m_s, y=CO2_ppm))+
-#   	# 	geom_point(size=4, alpha=0.4, color='#ffba49') +
-#   	# 	xlim(0,0.02)+
-#   	# 	ylim(0,24000)+
-#   	# 	labs(tag='A')+
-#   	# 	theme(legend.text = element_text(size=22))+
-#     # 	theme(axis.title = element_text(face = "bold", size = 24),
-#     # 		  axis.text = element_text(size = 22),
-#     #     	  plot.tag = element_text(size=26,
-#     #         	                  face='bold'))+
-#     # 	xlab('k600 [m/s]')+
-#     # 	ylab('CO2 [ppm]')    	
-
-
-#   	#COMBO PLOT---------------------------------------------
-#   	design <- "
-#   		AB
-#   	"
-
-#   	comboPlot <- patchwork::wrap_plots(A=co2CDF, B=kCDF, design=design)
-
-# 	ggsave(filename="cache/figures/glorichCompare.jpg",plot=comboPlot,width=20,height=10)
-# 	return('see cache/figures/glorichCompare.jpg')    	
-# }

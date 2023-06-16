@@ -198,8 +198,14 @@ calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emer
 
 
 #' To grab calibrated parameters from .futures logs for basins that finish calibrating after master process is (erroneously) dropped by Unity....
+#'
 #' @name grabCalibratedParameters_from_logs
 #'
+#' @param huc4: basin id
+#'
+#' @import readr
+#'
+#' @return cost function value, evaluate given a set of parameter values
 grabCalibratedParameters_from_logs <- function(huc4){
   #2/9/23 jobs that finished with no master worker to send them back. They be orphan jobs!!!!!
   dirs <- list.dirs('/nas/cee-water/cjgleason/craig/CONUS_carbon/cache/20230203_172811-fxvFGQ') #pasted in the cache from the .futures logs just in case futures tries to delete something (I doubt it but still)
@@ -219,24 +225,4 @@ grabCalibratedParameters_from_logs <- function(huc4){
               'ga'=log$value$value$object$ga)
 
   return(out)
-}
-
-
-
-
-#' To get general calibration error in ppm
-#' @name calibrationErrorAnalysis
-#'
-calibError <- function(){
-  built <- tar_built(starts_with('calibratedParameters'))
-  skipped <- tar_skipped(starts_with('calibratedParameters'))
-
-  tar_load(starts_with(built))
-  tar_load(starts_with(skipped))
-
-  calibratedParameters <- mget(ls(pattern='calibratedParameters_'))
-
-  fits <- sapply(calibratedParameters, FUN=function(x) x$fitness)
-
-  return(mean(fits, na.rm=T)) #NAs are great lakes
 }

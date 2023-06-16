@@ -185,6 +185,7 @@ kco2_func <- function(velocity, slope, depth, temp, lakeArea, waterbody){
 #' @param slope: reach bed slope [unitless]
 #' @param depth: reach-averaged channel depth [m]
 #' @param waterbody: flag for whether reach is a river or lake/reservoir [0/1]
+#' @param temp: water temperature (Celsius)
 #'
 #' @return mass transfer rate constant from benthic/sediment zones for rivers [1/s]
 kbz_func <- function(slope, depth, waterbody, temp){
@@ -206,106 +207,6 @@ kbz_func <- function(slope, depth, waterbody, temp){
 
 
 
-#' Calculate GW contributions to basin carbon evasion, accounting for streamflow losses where groundwater isn't a CO2 source
-#'
-#' @name getGWcontrib
-#'
-#' @param model: river netork data frame
-#' @param huc4: basin ID
-#' @param path_to_data: path to NHD geodatabases
-#' @param upstreamDF: df of upstream basins and their exported discharges
-#'
-#' @return Groundwater Co2 contributions to CO2 evasion [Tg-C/yr]
-getSources <- function(model, results, calibratedParameters, emissions, huc4, path_to_data, upstreamDF){
-  #HANDLE GREAT LAKES-------------------------------------------------------
-  if(huc4 %in% c('0418', '0419', '0424', '0426', '0428')){
-    out <- data.frame('huc4'=huc4,
-                    'contribGW_TgC_yr'=NA)
-  }
-
-  else{
-
-  #HANDLE HUC4s WITH FAKE SHORELINES-----------------------------------------
-    remove_Q <- 0 #for those great lakes basins
-  if(huc4 %in% c('0402', '0405', '0406', '0407', '0408', '0411', '0412','0401','0410','0414','0403','0404')) {
-      fix <- readr::read_csv(paste0('data/fix_',huc4,'.csv'))
-
-      model <- dplyr::left_join(model, fix, by='NHDPlusID')
-
-      remove <- model[model$GL_pass == '0',]
-      remove_Q <- max(remove$Q_cms, na.rm=T)
-    }
-
-    
-    #GET UPSTREAM BASIN Q (AND LIKEWISE GET IMPORTED CO2)-----------------------------------
-    upstreamQ <- 0
-    upstreamCarbon <- 0
-    if(is.na(upstreamDF) == 0){ #to skip doing this in level 0
-      # get discharge contributed by basins upstream
-      upstreamDF <- dplyr::filter(upstreamDF, downstreamBasin == huc4)
-      upstreamQ <- sum(upstreamDF$exported_Q_cms, na.rm=T)
-
-      #get henry coefficients for specific importing CO2 reaches
-      henry <- model %>%
-        dplyr::select(c('FromNode', 'henry'))
-
-      upstreamDF <- dplyr::left_join(upstreamDF, henry, by = c('exported_ToNode'='FromNode'))
- 
-      upstreamDF$exported_CO2_gC_m3 <- ((upstreamDF$exported_CO2_ppm*upstreamDF$henry)/1000000)*(1/0.001)*12.01 #g-C/m3
-      upstreamDF$exported_CO2_TgC_yr <- upstreamDF$exported_CO2_gC_m3 * 1e-12 *  upstreamDF$exported_Q_cms * (60*60*24*365) #Tg-C/yr
-      upstreamCarbon <- sum(upstreamDF$exported_CO2_TgC_yr,na.rm=T)
-    }
-
-    #Get % GW and %CO2 exported downstream---------------------------------------------------------------------------
-    #read in erminalPa b/c i forgot to add it to hydrography table...
-    huc2 <- substr(huc4, 1, 2)
-    huc4n <- ifelse(nchar(huc4) > 4, substr(huc4, 1, 4), huc4) #handle 1710a and 1710b (left joiin below takes care of this)
-
-    dsnPath <- paste0(path_to_data, '/HUC2_', huc2, '/NHDPLUS_H_', huc4n, '_HU4_GDB/NHDPLUS_H_', huc4n, '_HU4_GDB.gdb')
-    NHD_HR_VAA <- sf::st_read(dsn = dsnPath, layer = "NHDPlusFlowlineVAA", quiet=TRUE) #additional 'value-added' attributes
-    NHD_HR_VAA <- dplyr::select(NHD_HR_VAA, c('NHDPlusID', 'TerminalPa'))
-
-    #get total exported Q to apply Cgw to
-    results <- dplyr::select(results, c('NHDPlusID', 'CO2_ppm'))
-    exportedQ <- model %>%
-      dplyr::left_join(NHD_HR_VAA, by='NHDPlusID') %>%
-      dplyr::left_join(results, by='NHDPlusID') %>%
-      dplyr::group_by(TerminalPa) %>%
-      dplyr::slice_max(Q_cms) %>%
-      dplyr::select(c('Q_cms', 'CO2_ppm', 'henry')) %>%
-      dplyr::mutate(exported_CO2_gC_m3 = ((CO2_ppm*henry)/1000000)*(1/0.001)*12.01) %>%
-      dplyr::mutate(exported_CO2_TgC_yr = exported_CO2_gC_m3 * 1e-12 *  Q_cms * (60*60*24*365))
-
-    #Get total Cgw contribution to basin
-    henry <- median(model$henry, na.rm=T)
-    Q_fin <- sum(exportedQ$Q_cms) - upstreamQ - remove_Q
-    Q_fin <- ifelse(Q_fin < 0, 0, Q_fin) #if losing basins/t no net gw introduced, just set to 0 water entering network
-    GWcontrib <- sum(((16000-400)*henry*1e-6)*(1/0.001)*12.01*Q_fin*(60*60*24*365)) * 1e-12#Tg-C/yr
-
-    exportedCO2 <- sum(exportedQ$exported_CO2_TgC_yr, na.rm=T)
-    
-    #GET WC MINERALIZATION--------------------------------------------------------------------
-    model$mineralization_gC_m3_s <-  ((ifelse(model$waterbody == 'River', calibratedParameters$Fwc_riv, calibratedParameters$Fwc_lake)*model$henry)/1000000)*(1/0.001)*12.01 #gC/m3/s
-    model$mineralization_TgC_yr <- model$mineralization_gC_m3_s * ifelse(model$waterbody == 'River', model$W*model$D*model$LengthKM*1000, model$frac_lakeVol_m3) * (60*60*24*365) * 1e-12 #TgC/yr
-
-
-    #BUILD OUTPUT---------------------------------------------------------------------------
-    out <- data.frame('huc4'=huc4,
-                      'contribGW_TgC_yr'=GWcontrib,
-                      'contribUP_TgC_yr'=upstreamCarbon,
-                      'exported_TgC_yr'=exportedCO2,
-                      'emissions_TgC_yr'=sum(emissions$sumFCO2_TgC_yr, na.rm=T),
-                      'contribWC_TgC_yr'=sum(model$mineralization_TgC_yr, na.rm=T))
-
-    #if negative, i.e. mineralization sink, just set to zero for these realtive calcs
-    out$contribWC_TgC_yr <- ifelse(out$contribWC_TgC_yr < 0,0,out$contribWC_TgC_yr)
-
-    #get benthic contribution implicitly
-    out$contribBZ_TgC_yr <- (out$emissions_TgC_yr + out$exported_TgC_yr) - (out$contribGW_TgC_yr + out$contribWC_TgC_yr + out$contribUP_TgC_yr)
-  }
-  return(out)
-}
-
 
 
 
@@ -316,6 +217,9 @@ getSources <- function(model, results, calibratedParameters, emissions, huc4, pa
 #' @name calcEmissions
 #'
 #' @param model: river network data frame
+#' @param huc4: basin ID
+#'
+#' @import dplyr
 #'
 #' @return river network data frame with CO2 fluxes added [gC/m2/yr]
 calcEmissions <- function(model, huc4){
@@ -359,6 +263,7 @@ calcEmissions <- function(model, huc4){
 #' @name calcBasinProperties
 #'
 #' @param model: river network data frame
+#' @param huc4: basin ID
 #'
 #' @return river network data frame with CO2 fluxes added [gC/m2/yr]
 calcBasinProperties <- function(model, huc4){
@@ -394,6 +299,9 @@ calcBasinProperties <- function(model, huc4){
 #' @name calcBasinLakeProperties
 #'
 #' @param model: river network data frame
+#' @param huc4: basin ID
+#'
+#' @import dplyr
 #'
 #' @return river network data frame with CO2 fluxes added [gC/m2/yr]
 calcBasinLakeProperties <- function(model, huc4){
@@ -465,6 +373,9 @@ emissions_uncertainty <- function(calibratedParameters, model, huc4){
 #' @param codes_huc02: list of HUC2 ids
 #' @param lumpedList: list of model results per hUC2 region
 #'
+#' @import dplyr
+#' @import sf
+#'
 #' @return print statement, writes shapefile to file
 saveShapefile_huc2 <- function(path_to_data, codes_huc02, lumpedList){
     combined_results <- do.call("rbind", lumpedList) #make lumped model object
@@ -514,9 +425,12 @@ saveShapefile_huc2 <- function(path_to_data, codes_huc02, lumpedList){
 #' @param combined_contribSources: df of various source and sink terms for basin CO2
 #' @param combined_emissions: df of just emissions results parsed by river vs lake
 #'
+#' @import dplyr
+#' @import sf
+#'
 #' @return print statement, writes shapefile to file
 saveShapefile_huc4 <- function(path_to_data, combined_contribSources, combined_emissions){
-    combined_contribSources <- dplyr::select(combined_contribSources, !'emissions_TgC_yr')
+    combined_contribSources <- dplyr::select(combined_contribSources, !c('emissions_TgC_yr', 'contribBZ_TgC_yr_massBal'))
 
     #combine lake and rivers for total
     combined_emissions_total <- combined_emissions %>%
@@ -563,7 +477,6 @@ saveShapefile_huc4 <- function(path_to_data, combined_contribSources, combined_e
       dplyr::left_join(combined_emissions_total, by='huc4')
 
     basins_overall <- dplyr::select(basins_overall, c('huc4', 'contribGW_TgC_yr', 'contribUP_TgC_yr', 'contribWC_TgC_yr', 'contribBZ_TgC_yr','exported_TgC_yr','sumFCO2_TgC_yr', 'sumFCO2_conus_TgC_yr','lakeFCO2_TgC_yr', 'sumSurfaceArea_skm'))
-    basins_overall$lostCO2_TgC_yr <- basins_overall$sumFCO2_TgC_yr + basins_overall$exported_TgC_yr
   
     #return shapefile
     return(basins_overall)
@@ -579,6 +492,9 @@ saveShapefile_huc4 <- function(path_to_data, combined_contribSources, combined_e
 #' @param huc4: river network basin code
 #' @param lookUpTable: table indicating the downstream basins (when applicable) for all OCNUS basins
 #' @param Catm: atmopsheric CO2 constant [ppm]
+#'
+#' @import sf
+#' @import dplyr
 #'
 #'
 #' @return list with 'exported properties' from reaches that connect to basins downstream. List includes rech fromnode (for routing), reach exported CO2, and reach discharge
@@ -651,6 +567,10 @@ getExported <- function(model, huc4, lookUpTable,Catm) {
 }
 
 
+
+
+
+
 #' Fixes geometries that are saved as multicurves rather than multilines
 #'
 #' @name fixGeometries
@@ -669,6 +589,9 @@ fixGeometries <- function(rivnet){
 
   return(rivnet)
 }
+
+
+
 
 
 
@@ -703,6 +626,9 @@ fixBadSlopes <- function(slope, slope_vec, fromNode, fromNode_vec, toNode, toNod
   }
   return(out)
 }
+
+
+
 
 
 
@@ -742,6 +668,8 @@ fixBadTemps <- function(temp, temp_vec, fromNode, fromNode_vec, toNode, toNode_v
 #' @param rivnet: target object for final routed river network
 #' @param huc4: huc4 basin ID code
 #'
+#' @import data.table
+#'
 #' @return print statement but write to file
 writeToFile <- function(rivnet, huc4){
   data.table::fwrite(rivnet, paste0('cache/final_', huc4, '.csv'))
@@ -751,11 +679,17 @@ writeToFile <- function(rivnet, huc4){
 
 
 
+
+
+
 #' Exploits the postFitness option to amend the GA object at each iteration. Allows us to write the best solution from each population to file, and just return the untouched GA object
 #'
 #' @name saveIntermediateResults
 #'
 #' @param object: GA object from current iteration
+#'
+#' @import readr
+#' @import tidyr
 #'
 #' @return untouched GA object. Also writes every 10th population best parameter set to file
 saveIntermediateResults <- function(object, ...){
@@ -798,6 +732,15 @@ saveIntermediateResults <- function(object, ...){
 
 
 
+#' removes the duplicate 0427 obejct (two inputs, but it is a great lake that goes to atmospheric so everything is identical)
+#'
+#' @name fixCombo0427
+#'
+#' @param combined_emissions: any combined target df (misleading name...)
+#'
+#' @import dplyr
+#'
+#' @return combined df with only one 0427
 fixCombo0427 <- function(combined_emissions){
   out <- dplyr::distinct(combined_emissions, .keep_all=TRUE)
 
@@ -807,7 +750,24 @@ fixCombo0427 <- function(combined_emissions){
 
 
 
-gatherResults <- function(combined_emissions, combined_contribSources,combined_uncertainty, combined_basinProperties, combined_basinLakeProperties, lumpedList){
+
+
+#' create summary object to base manuscript numbers off of
+#'
+#' @name gatherResults
+#'
+#' @param combined_emissions: all model CO2 emissions by basin
+#' @param combined_contribSources: all model CO2 emission sources by basin
+#' @param combined_uncertainty: all model CO2 emissions uncertainties by basin
+#' @param combined_basinProperties: all river network stats by basin
+#' @param combined_basinLakeProperties: all lake network stats by basin
+#' @param combined_sources_by_order: all model CO2 emission sources by reach by order by basin
+#' @param lumpedList: all regional upscaling model results
+#'
+#' @import readr
+#'
+#' @return list of all of these results!! written to file also
+gatherResults <- function(combined_emissions, combined_contribSources,combined_uncertainty, combined_basinProperties, combined_basinLakeProperties, combined_sources_by_order, lumpedList){
   combined_lumped <- do.call("rbind", lumpedList) #make lumped model object
 
   out <- list('totalFlux_TgC_yr'=sum(combined_lumped$sumFCO2_TgC_yr,na.rm=T),
@@ -820,6 +780,7 @@ gatherResults <- function(combined_emissions, combined_contribSources,combined_u
               'huc4_Sources'=combined_contribSources,
               'huc4_basinProperties'=combined_basinProperties,
               'huc4_basinLakeProperties'=combined_basinLakeProperties,
+              'sources_by_order'=combined_sources_by_order,
               'huc2_results'=combined_lumped)
 
   readr::write_rds(out, 'cache/summaryResults.rds')
@@ -828,10 +789,24 @@ gatherResults <- function(combined_emissions, combined_contribSources,combined_u
 
 
 
+
+
+
+#' randomly sample 1000 reaches from a basin
+#'
+#' @name getRandomSample
+#'
+#' @param network: model results df
+#' @param glorich_data: regional river and lake CO2
+#' @param huc4: basin ID
+#'
+#' @import dplyr
+#'
+#' @return random sample of 1000 reaches (with both models) for x basin
 getRandomSample <- function(network, glorich_data, huc4) {
   HUC2 <- substr(huc4, 1, 2)
 
-  #first get lumped model
+  #first get lumped model------------------------------------------------
   rivers_by_order <- network %>%
     dplyr::group_by(StreamOrde) %>%
     dplyr::summarise(k600_m_s = mean(k600_m_s, na.rm=T), #m/s
@@ -848,13 +823,17 @@ getRandomSample <- function(network, glorich_data, huc4) {
                                                                                             ifelse(network$lakeSA_m2*1e6 < 10, 1.32, 1.9))))
   network$lumped_CO2 <- ifelse(network$waterbody == 'River', riverCO2, lakeCO2)
 
-  #then randomly sample 500
+  #then randomly sample 1000-----------------------------------
   set.seed(345)
   out <- network %>%
-    dplyr::slice_sample(n=500)
+    dplyr::slice_sample(n=1000)
 
   return(out)
 }
+
+
+
+
 
 
 
@@ -873,6 +852,21 @@ long2UTM <- function(long) {
 
 
 
+
+
+
+
+#' join Glorich to our hydrography (to get slopes)
+#'
+#' @name getGlorichUS
+#'
+#' @param path_to_data: path to data repo
+#' @param huc4: basin ID
+#'
+#' @import dplyr
+#' @import sf
+#'
+#' @return random sample of 1000 reaches (with both models) for x basin
 getGlorichUS <- function(path_to_data, huc4){
   huc2 <- substr(huc4,1,2)
   huc4n <- ifelse(nchar(huc4) > 4, substr(huc4, 1, 4), huc4) #handle 1710a and 1710b (left joiin below takes care of this)

@@ -10,7 +10,7 @@
 #SBATCH -t 24:00:00 #45 days (in hours)
 #SBATCH -p ceewater_cjgleason-cpu
 
-module load netcdf-c
+module load netcdf-c/4.8.1_intel
 
 Rscript -e 'batchtools::doJobCollection("<%= uri %>")' # Leave alone.
 exit 0 # Leave alone.
