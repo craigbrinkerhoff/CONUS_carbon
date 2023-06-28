@@ -1667,7 +1667,7 @@ list(
                                        mapped_lvl17$sources_by_order,
                                        mapped_lvl18$sources_by_order,                                       
                                        mapped_1710a$sources_by_order,
-                                       mapped_1710b$sources_by_order), deployment='main'),
+                                       mapped_1710b$sources_by_order), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_sources_by_order, fixCombo0427(combined_sources_by_order_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
 
   #build shapefile for mapping
@@ -1699,6 +1699,8 @@ list(
   tar_target(modelsConceptual_1302, conceptualPlot(final_1302, raymond_coscat_lookup, '1302')),
   tar_target(modelsConceptual_1601, conceptualPlot(final_1601, raymond_coscat_lookup, '1601')),
   tar_target(modelsConceptual_0701, conceptualPlot(final_0701, raymond_coscat_lookup, '0701')),
+  tar_target(sources_by_order_regional_e_w, sources_by_order_regional(combined_sources_by_order)),
+
   #calibration figures
   tar_target(calibFigures, calibrationFigures(combined_calibrationOutput))
 )
