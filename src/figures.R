@@ -234,9 +234,9 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
   	bars <- ggplot(forPlot, aes(x=key, y=value, fill=key)) +
   		geom_col(size=1.5, color='black', size=1.5) +
   		geom_errorbar(aes(ymin=value-Lumped_sigma, ymax=value+Lumped_sigma), width=.15, size=1.75) +
-  		scale_fill_manual(values=c('#6c9a8b', '#e8998d'))+
+  		scale_fill_manual(values=c('#006e90', '#fe7f2d'))+
   		scale_x_discrete(labels=c('Upscaling', 'Transport'))+
-  		labs(tag='D')+  		
+  		labs(tag='C')+  		
   		xlab('')+
   		ylab(expression(bold(FCO[2]~(Tg-C/yr)))) +
   		theme(legend.position='none') +
@@ -292,7 +292,7 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
             	linewidth=0.25,
             	alpha=0) +
     	coord_sf(expand = FALSE) +
-    	labs(tag='C')+
+    	labs(tag='B')+
     	theme(axis.title = element_text(face = "bold", size = 18),
     		  axis.text = element_text(size = 18),
               axis.text.x = element_text(angle = 90),
@@ -317,10 +317,6 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
     glorich$model <- 'In situ data'
     colnames(glorich) <- c('k600_m_dy', 'CO2_ppm','model')
     glorich <- dplyr::select(glorich, c('model', 'k600_m_dy', 'CO2_ppm'))
-
-    #final setup--------------------------------------------
-    forPlot <- rbind(ourModel, glorich, lumpedModel)
-    cols <- c("In situ data"="#102542","Transport"="#e8998d","Upscaling"="#6c9a8b")
 
     #build fco2 gridded space (adapted from https://github.com/rocher-ros/co2_domains_publication/blob/master/co2_domains_figs_stats.R)------------------------------------------------------
 	pco2 <- seq(from=4600, to= 401, by=-10)
@@ -354,111 +350,93 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
       			,TRUE ~ '5+'
     			)) 
 
+
+    #final setup--------------------------------------------
+    forPlot <- rbind(ourModel, glorich, lumpedModel)
+    cols <- c("In situ data"="#102542","Transport"="#fe7f2d","Upscaling"="#006e90")
+
 	#plot transport distribution vs. in situ data----------------------------------------  
-  	glorichPlotTransport <- ggplot(forPlot)+ #seems to be a bug in geom_density_2d so I can't bin by color and get correct results (it's clearly making densities using other points...)
-  	    geom_tile(data=tx, aes(x=k, y=co2, fill=fco2_col), alpha=0.5, show.legend= T) +
-  	    geom_contour(data=tx100, aes(y=co2, x=k,  z=fco2), binwidth = 10, linetype=3, colour="grey10")+
-  	   	geom_contour(data=tx, aes(y=co2, x=k,  z=fco2), binwidth = 50, linetype=2, colour="grey10")+
-  		geom_density_2d(data=forPlot[forPlot$model == 'In situ data',], aes(x=k600_m_dy, y=CO2_ppm, color='In situ data', linewidth=..level..), linetype='solid', size=1.5, bins=5, contour_var='density')+
-  		geom_density_2d(data=forPlot[forPlot$model == 'Transport',], aes(x=k600_m_dy, y=CO2_ppm, color='Transport', linewidth=..level..), linetype='solid', size=1.5, bins=5, contour_var='density')+
-  		geom_density_2d(data=forPlot[forPlot$model == 'Upscaling',], aes(x=k600_m_dy, y=CO2_ppm, color='Upscaling', linewidth=..level..), alpha=0, linetype='solid', size=1.5, bins=5, contour_var='density')+  		
-  		geom_segment(x = 775, y = 500, xend = 875, yend = 500,color='black',size=2.5,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
-  		geom_segment(x = 10, y = 4200, xend = 10, yend = 4700,color='black',size=2.5,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
-  		scale_color_manual(name='',values=cols, guide=guide_legend(override.aes=list(linetype=c('solid','solid', 'solid'))))+
-  		scale_fill_brewer(name=expression(bold(FCO[2])),palette='RdYlBu', direction=-1)+
-  		labs(tag='B')+
-  		theme(legend.position='none', #c(0.75, 0.8),
-  				legend.text=element_text(size=24),
-  				legend.title=element_text(size=26),)+
-    	theme(axis.title = element_text(face = "bold", size = 24),
-    		  axis.text = element_text(size = 22),
-        	  plot.tag = element_text(size=26,
-            	                  face='bold'),
-        	legend.background = element_rect(fill=alpha('white', 0.5)))+
-    	xlab(expression(bold(k[600]~(m/dy))))+
-    	#ylab('') +
-    	ylab(expression(bold(CO[2]~(ppm)))) +
-    	guides(linewidth='none', color='none')
+  	# glorichPlotTransport <- ggplot(forPlot)+ #seems to be a bug in geom_density_2d so I can't bin by color and get correct results (it's clearly making densities using other points...)
+  	#     geom_tile(data=tx, aes(x=k, y=co2, fill=fco2_col), alpha=0.5, show.legend= T) +
+  	#     geom_contour(data=tx100, aes(y=co2, x=k,  z=fco2), binwidth = 10, linetype=3, colour="grey10")+
+  	#    	geom_contour(data=tx, aes(y=co2, x=k,  z=fco2), binwidth = 50, linetype=2, colour="grey10")+
+  	# 	geom_density_2d(data=forPlot[forPlot$model == 'In situ data',], aes(x=k600_m_dy, y=CO2_ppm, color='In situ data', linewidth=..level..), linetype='solid', size=1.5, bins=5, contour_var='density')+
+  	# 	geom_density_2d(data=forPlot[forPlot$model == 'Transport',], aes(x=k600_m_dy, y=CO2_ppm, color='Transport', linewidth=..level..), linetype='solid', size=1.5, bins=5, contour_var='density')+
+  	# 	geom_density_2d(data=forPlot[forPlot$model == 'Upscaling',], aes(x=k600_m_dy, y=CO2_ppm, color='Upscaling', linewidth=..level..), alpha=0, linetype='solid', size=1.5, bins=5, contour_var='density')+  		
+  	# 	geom_segment(x = 775, y = 500, xend = 875, yend = 500,color='black',size=2.5,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
+  	# 	geom_segment(x = 10, y = 4200, xend = 10, yend = 4700,color='black',size=2.5,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
+  	# 	scale_color_manual(name='',values=cols, guide=guide_legend(override.aes=list(linetype=c('solid','solid', 'solid'))))+
+  	# 	scale_fill_brewer(name=expression(bold(FCO[2])),palette='RdYlBu', direction=-1)+
+  	# 	labs(tag='B')+
+  	# 	theme(legend.position='none', #c(0.75, 0.8),
+  	# 			legend.text=element_text(size=24),
+  	# 			legend.title=element_text(size=26),)+
+    # 	theme(axis.title = element_text(face = "bold", size = 24),
+    # 		  axis.text = element_text(size = 22),
+    #     	  plot.tag = element_text(size=26,
+    #         	                  face='bold'),
+    #     	legend.background = element_rect(fill=alpha('white', 0.5)))+
+    # 	xlab(expression(bold(k[600]~(m/dy))))+
+    # 	#ylab('') +
+    # 	ylab(expression(bold(CO[2]~(ppm)))) +
+    # 	guides(linewidth='none', color='none')
 
   #   glorichPlotTransport <- glorichPlotTransport +
   #  	 	patchwork::inset_element(map_world, right = 1.0, bottom = 0.65, left = 0.45, top = 0.95)
 
     #plot upscaling distribution vs. in situ data------------------------------------------
-  	glorichPlotUpscaling <- ggplot(forPlot)+ #seems to be a bug in geom_density_2d so I can't bin by color and get correct results (it's clearly making densities using other points...)
-  	    geom_tile(data=tx, aes(x=k, y=co2, fill=fco2_col), alpha=0.5, show.legend= T) +
-  	    geom_contour(data=tx100, aes(y=co2, x=k,  z=fco2), binwidth = 10, linetype=3, colour="grey10")+
-  	   	geom_contour(data=tx, aes(y=co2, x=k,  z=fco2), binwidth = 50, linetype=2, colour="grey10")+
-  		geom_density_2d(data=forPlot[forPlot$model == 'In situ data',], aes(x=k600_m_dy, y=CO2_ppm, color='In situ data', linewidth=..level..), linetype='solid', size=1.5, bins=5, contour_var='density')+
-		geom_density_2d(data=forPlot[forPlot$model == 'Transport',], aes(x=k600_m_dy, y=CO2_ppm, color='Transport', linewidth=..level..), alpha=0, linetype='solid', size=1.5, bins=5, contour_var='density')+  		
+  	glorichPlot <- ggplot(forPlot)+ #seems to be a bug in geom_density_2d so I can't bin by color and get correct results (it's clearly making densities using other points...)
+  	    geom_tile(data=tx, aes(x=k, y=co2, fill=fco2_col), alpha=0.7, show.legend= T) +
+  	#    geom_contour(data=tx100, aes(y=co2, x=k,  z=fco2), binwidth = 20, linetype=3, colour="grey10")+
+  	#   	geom_contour(data=tx, aes(y=co2, x=k,  z=fco2), binwidth = 100, linetype=2, colour="grey10")+
+  		geom_density_2d(data=forPlot[forPlot$model == 'In situ data',], aes(x=k600_m_dy, y=CO2_ppm, color='In situ data', linewidth=..level..), linetype='dashed', size=1.5, bins=5, contour_var='density')+
+		geom_density_2d(data=forPlot[forPlot$model == 'Transport',], aes(x=k600_m_dy, y=CO2_ppm, color='Transport', linewidth=..level..), linetype='solid', size=1.5, bins=5, contour_var='density')+  		
   		geom_density_2d(data=forPlot[forPlot$model == 'Upscaling',], aes(x=k600_m_dy, y=CO2_ppm, color='Upscaling', linewidth=..level..), linetype='solid', size=1.5, bins=5, contour_var='density')+  		
-  		geom_segment(x = 775, y = 500, xend = 875, yend = 500,color='black',size=2.5,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
-  		geom_segment(x = 10, y = 4200, xend = 10, yend = 4700,color='black',size=2.5,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
-  		scale_color_manual(name='Distribution',values=cols, guide=guide_legend(override.aes=list(linetype=c('solid','solid', 'solid'), linewidth=3, fill='white')))+
-  		scale_fill_brewer(name=expression(atop(bold(FCO[2]~(Kg-C/m^2/yr)), (at~20~degrees))),palette='RdYlBu', direction=-1)+
-  		labs(tag='A')+ 		
-  		theme(legend.position=c(0.75, 0.85),
-  				legend.text=element_text(size=24),
-  				legend.background = element_rect(fill=alpha('white', 0.5)),
-  				legend.key.width = unit(1.5,"cm"))+
+  	#	geom_segment(x = 775, y = 500, xend = 875, yend = 500,color='black',size=2.5,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
+  #		geom_segment(x = 10, y = 4200, xend = 10, yend = 4700,color='black',size=2.5,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
+  		scale_color_manual(name=expression(bold(Distribution)),values=cols, guide=guide_legend(keywidth=unit(1.5, 'cm'), override.aes=list(linetype=c('dashed','solid', 'solid'), linewidth=5, fill='grey')))+
+  		scale_fill_grey(name=expression(atop(bold(FCO[2]~(Kg-C/m^2/yr)), (at~20~degrees))), start=0.95, end=0.2)+
+  		labs(tag='A')+
+		theme(legend.position=c(0.75, 0.75),
+			  legend.box.just = "right",
+  	 		  legend.text=element_text(size=24),
+  	 		  legend.title=element_text(size=26),
+			  legend.background = element_rect(fill=alpha('white', 0.7)))+
     	theme(axis.title = element_text(face = "bold", size = 24),
     		  axis.text = element_text(size = 22),
         	  plot.tag = element_text(size=26,
             	                  face='bold'))+
     	xlab('')+
-    	#xlab(expression(bold(k[600]~(m/dy))))+
+    	xlab(expression(bold(k[600]~(m/dy))))+
     	ylab(expression(bold(CO[2]~(ppm)))) +
     	guides(linewidth='none')
 
-    #plot just in situ data------------------------------------------------
-    # fco2Plot <- ggplot(forPlot) +
-    #   geom_tile(data=tx, aes(x=k, y=co2, fill=fco2_col), show.legend= T) +
-    #   geom_contour(data=tx100, aes(y=co2, x=k,  z=fco2), binwidth = 10, linetype=3, colour="grey10")+
-  	#   geom_contour(data=tx, aes(y=co2, x=k,  z=fco2), binwidth = 50, linetype=2, colour="grey10")+
-	#   geom_density_2d(data=forPlot[forPlot$model == 'In situ data',], aes(x=k600_m_dy, y=CO2_ppm,  color='In situ data', linewidth=..level..), linetype='solid', size=1.5, bins=5, contour_var='density')+
-  	#   geom_density_2d(data=forPlot[forPlot$model == 'Transport',], aes(x=k600_m_dy, y=CO2_ppm,  color='Transport', linewidth=..level..), alpha=0, linetype='solid', size=1.5, bins=5, contour_var='density')+
-  	#   geom_density_2d(data=forPlot[forPlot$model == 'Upscaling',], aes(x=k600_m_dy, y=CO2_ppm,  color='Upscaling', linewidth=..level..), alpha=0, linetype='solid', size=1.5, bins=5, contour_var='density')+  		
-  	#   geom_segment(x = 775, y = 500, xend = 875, yend = 500,color='black',size=2.5,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
-  	#   geom_segment(x = 10, y = 4200, xend = 10, yend = 4700,color='black',size=2.5,arrow = grid::arrow(length = unit(0.06, "npc"), ends = "last"))+
-  	#   scale_colour_manual(name='',values=cols, guide=guide_legend(override.aes=list(linetype=c('solid','solid', 'solid'))))+
-  	#   scale_fill_brewer(name=expression(bold(FCO[2])),palette='RdYlBu', direction=-1)+
-  	#   labs(tag='C')+
-  	#   theme(legend.position=c(0.8, 0.75),
-  	# 		legend.text=element_text(size=24),
-  	# 		legend.title=element_text(size=26),
-  	# 		legend.key.size = unit(1, 'cm'))+
-    #   theme(axis.title = element_text(face = "bold", size = 24),
-    # 		  axis.text = element_text(size = 22),
-    #     	  plot.tag = element_text(size=26,
-    #         	                  face='bold'),
-    #     	  legend.background = element_rect(fill=alpha('white', 0.5)))+
-    #   xlab(expression(bold(k[600]~(m/dy))))+
-    #   ylab(expression(bold(CO[2]~(ppm)))) +
-    #   guides(linewidth='none', color='none')
+   #  glorichPlot <- glorichPlot +
+    #	 	patchwork::inset_element(map_world, right = 1.0, bottom = 0.65, left = 0.45, top = 0.95)
+		
 
     ##EXTRACT SHARED LEGEND-----------------
-    comboLegend <- cowplot::get_legend(glorichPlotUpscaling +
-                                labs(tag = '')+
-                                theme(legend.position = c(0.5, 0.5),
-                                      legend.text = element_text(size=24),
-                                      legend.title = element_text(size=26, face='bold'),
-                                      legend.box="vertical",
-                                      legend.margin=margin()))
+    # comboLegend <- cowplot::get_legend(glorichPlot +
+    #                             labs(tag = '')+
+    #                             theme(legend.position = c(0.5, 0.5),
+    #                                   legend.text = element_text(size=24),
+    #                                   legend.title = element_text(size=26, face='bold'),
+    #                                   legend.box="vertical",
+    #                                   legend.margin=margin()))
 
   	#COMBO PLOT---------------------------------------------
   	design <- "
-  		AC
-  		AD
-  		BD
-  		BE
+  		AAAB
+  		AAAC
   	"
   	# design <- "
   	# 	AB
   	# 	CD
   	# "
 
-  	comboPlot <- patchwork::wrap_plots(A=glorichPlotUpscaling + theme(legend.position='none'), B=glorichPlotTransport, C=map_world,D=bars, E=comboLegend,design=design) #C=fco2Plot
+  	comboPlot <- patchwork::wrap_plots(A=glorichPlot, B=map_world, C=bars,design=design) #C=fco2Plot
 
-  	ggsave('cache/figures/modelsCompare.jpg', comboPlot, width=18, height=18)
+  	ggsave('cache/figures/modelsCompare.jpg', comboPlot, width=18, height=14)
   	return('see cache/figures/modelsCompare.jpg')
 }
 
@@ -957,15 +935,18 @@ sourcesMap <- function(path_to_data, results, combined_sources_by_order){
 
   ####OURCES BY ORDER-------------------
   combined_results_by_order <- combined_sources_by_order %>%
+  	dplyr::filter(is.na(percGW_reach_median)==0 & is.finite(percGW_reach_median)==1) %>% #remove Great Lakes
+	#dplyr::mutate(StreamOrde = factor(StreamOrde))%>%
+	#dplyr::mutate(StreamOrde = ifelse(StreamOrde %in% c('9', '10', '11'), '9+', StreamOrde)) %>%
    	tidyr::gather(key=key, value=value, c('percGW_reach_median', 'percBZ_reach_median', 'percWC_reach_median'))
 
    #PLOT
-   plotSources_by_order <- ggplot(combined_results_by_order, aes(fill=key, x=factor(StreamOrde), y=value*100)) +
+   plotSources_by_order <- ggplot(combined_results_by_order, aes(fill=key, x=StreamOrde, y=value*100)) +
      geom_boxplot(color='black', size=1.2)+
      xlab('Stream Order') +
      ylab('Median % of emissions')+
      scale_fill_manual(name='',
-     									 labels=c('Hyporheic zone respiration', 'Groundwater', 'Net water-column respiration'),
+     				   labels=c('Hyporheic zone respiration', 'Groundwater', 'Net water-column respiration'),
                        values=c('#edae49', '#d1495b', '#00798c'))+
      ylim(0,100)+
      labs(tag='D')+
@@ -1662,9 +1643,9 @@ compareAgainstLumped <- function(path_to_data, results){
                     	                            title.position = "bottom"))+
     	theme(axis.title = element_text(size=26, face='bold'),axis.text = element_text(family="Futura-Medium", size=20))+ #axis text settings
     	theme(legend.position = 'bottom',
-        	  legend.key.size = unit(2, 'cm'))+ #legend position settings
+			  legend.key.size=unit(2, 'cm'))+ #legend position settings
     	theme(text = element_text(family = "Futura-Medium"), #legend text settings
-        	  legend.title = element_text(face = "bold", size = 18),
+        	  legend.title = element_text(size = 20),
           	legend.text = element_text(family = "Futura-Medium", size = 18),
           	plot.tag = element_text(size=26,
             	                      face='bold'))+
@@ -1719,7 +1700,7 @@ sources_by_order_regional <- function(combined_results_by_order){
    	tidyr::gather(key=key, value=value, c('percGW_reach_median', 'percBZ_reach_median', 'percWC_reach_median'))
 
   #PLOT
-  plotSources_by_orderEast <- ggplot(eastDF, aes(fill=key, x=factor(StreamOrde), y=value*100)) +
+  plotSources_by_orderEast <- ggplot(eastDF, aes(fill=key, x=StreamOrde, y=value*100)) +
     geom_boxplot(color='black', size=1.2)+
     xlab('') +
     ylab('Median % of emissions')+
@@ -1742,7 +1723,7 @@ sources_by_order_regional <- function(combined_results_by_order){
    	tidyr::gather(key=key, value=value, c('percGW_reach_median', 'percBZ_reach_median', 'percWC_reach_median'))
 
    #PLOT
-   plotSources_by_orderWest <- ggplot(westDF, aes(fill=key, x=factor(StreamOrde), y=value*100)) +
+   plotSources_by_orderWest <- ggplot(westDF, aes(fill=key, x=StreamOrde, y=value*100)) +
      geom_boxplot(color='black', size=1.2)+
      xlab('Stream Order') +
      ylab('Median % of emissions')+

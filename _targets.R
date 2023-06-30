@@ -1437,7 +1437,7 @@ list(
                                        mapped_lvl17$emissions,
                                        mapped_lvl18$emissions,                                       
                                        mapped_1710a$emissions,
-                                       mapped_1710b$emissions), deployment='main'),
+                                       mapped_1710b$emissions), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_emissions, fixCombo0427(combined_emissions_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
 
 
@@ -1471,7 +1471,7 @@ list(
                                        mapped_lvl17$glorich,
                                        mapped_lvl18$glorich,                                       
                                        mapped_1710a$glorich,
-                                       mapped_1710b$glorich), deployment='main'),
+                                       mapped_1710b$glorich), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_glorich, fixCombo0427(combined_glorich_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
 
 
@@ -1505,7 +1505,7 @@ list(
                                        mapped_lvl17$basinProperties,
                                        mapped_lvl18$basinProperties,                                       
                                        mapped_1710a$basinProperties,
-                                       mapped_1710b$basinProperties), deployment='main'),
+                                       mapped_1710b$basinProperties), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_basinProperties, fixCombo0427(combined_basinProperties_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
 
 
@@ -1539,7 +1539,7 @@ list(
                                        mapped_lvl17$basinLakeProperties,
                                        mapped_lvl18$basinLakeProperties,                                       
                                        mapped_1710a$basinLakeProperties,
-                                       mapped_1710b$basinLakeProperties), deployment='main'),
+                                       mapped_1710b$basinLakeProperties), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_basinLakeProperties, fixCombo0427(combined_basinLakeProperties_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
 
 
@@ -1603,7 +1603,7 @@ list(
                                        mapped_lvl17$randomSample,
                                        mapped_lvl18$randomSample,                                       
                                        mapped_1710a$randomSample,
-                                       mapped_1710b$randomSample), deployment='main'),
+                                       mapped_1710b$randomSample), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_randomSample, fixCombo0427(combined_randomSample_init)),#double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
 
 

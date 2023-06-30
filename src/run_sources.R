@@ -247,6 +247,16 @@ getSourcesByBasin <- function(model, results, calibratedParameters, Cgw_ppm, emi
 getResultsByOrder <- function(nhd_df) {
   #percents by order----------------------
   results_by_order <- nhd_df %>%
+    # dplyr::mutate(Q_bin = dplyr::case_when(
+    #                   Q_cms <= 0.001 ~ '0.001',
+    #                   Q_cms <= 0.01 ~ '0.01',
+    #                   Q_cms <= 0.1 ~ '0.1',
+    #                   Q_cms <= 1 ~ '1',
+    #                   Q_cms <= 10 ~ '10',
+    #                   Q_cms <= 100 ~ '100',
+    #                   TRUE ~ '100+')) %>%
+    # dplyr::group_by(Q_bin) %>%
+    dplyr::mutate(StreamOrde = ifelse(StreamOrde >= 7, '7+', as.character(StreamOrde))) %>%
     dplyr::group_by(StreamOrde) %>%
     dplyr::summarise(percGW_reach_median = median(GWcontrib_TgC_yr/(GWcontrib_TgC_yr+Fbenthic_TgC_yr+Fwccontrib_TgC_yr), na.rm=T),
                      percBZ_reach_median = median(Fbenthic_TgC_yr/(GWcontrib_TgC_yr+Fbenthic_TgC_yr+Fwccontrib_TgC_yr), na.rm=T),

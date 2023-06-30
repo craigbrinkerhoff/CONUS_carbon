@@ -736,14 +736,15 @@ saveIntermediateResults <- function(object, ...){
 #'
 #' @name fixCombo0427
 #'
-#' @param combined_emissions: any combined target df (misleading name...)
+#' @param in_df: any combined target df (misleading name...)
 #'
 #' @import dplyr
 #'
 #' @return combined df with only one 0427
-fixCombo0427 <- function(combined_emissions){
-  out <- dplyr::distinct(combined_emissions, .keep_all=TRUE)
-
+fixCombo0427 <- function(in_df){
+  
+  out <- dplyr::filter(in_df, substr(method, nchar(method)-1, nchar(method)) != '_1')
+  
   return(out)
 }
 
