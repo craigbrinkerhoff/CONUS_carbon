@@ -8,7 +8,7 @@
 
 
 
-#' parse CO2 emission sources per reach (using network topology)
+#' estimate CO2 emission sources by reach (reach-scale)
 #'
 #' @name getSourcesByRiver
 #'
@@ -17,13 +17,14 @@
 #' @param Cgw_ppm: groundwater CO2 parameter
 #' @param calibratedParameters: calibration results object for x basin
 #' @param emergenceQ: emergent Q parameter
+#' @param huc4: basin id
 #'
 #' @import dplyr
 #' @import sf
 #'
 #' @return df of sources per reach
 getSourcesByRiver <- function(hydrography, model, Cgw_ppm, calibratedParameters, emergenceQ,huc4){
-  #great lakes fix
+  #handle HUC4s with fake shoreline rivers
   if(huc4 %in% c('0402', '0405', '0406', '0407', '0408', '0411', '0412','0401','0410','0414','0403','0404')) {
     fix <- readr::read_csv(paste0('data/fix_',huc4,'.csv'))
 
@@ -32,11 +33,14 @@ getSourcesByRiver <- function(hydrography, model, Cgw_ppm, calibratedParameters,
     hydrography <- hydrography[hydrography$GL_pass == '1',]
   }
 
+  #to match our model runs' hydrography
   hydrography <- dplyr::filter(hydrography, HydroSeq != 0)
 
+  #wrangle into a usuable form
   model <- dplyr::select(model, c('NHDPlusID', 'FCO2_gC_m2_yr', 'CO2_ppm'))
   hydrography <- dplyr::left_join(hydrography, model, by='NHDPlusID')
 
+  #calculate sources in vector to speed it way up
   GWcontrib_TgC_yr <- NA
   Fwccontrib_TgC_yr <- NA
   CO2imported_TgC_yr <- NA
@@ -44,6 +48,7 @@ getSourcesByRiver <- function(hydrography, model, Cgw_ppm, calibratedParameters,
   CO2emitted_TgC_yr <- NA
   Fbenthic_TgC_yr <- NA
 
+  #populate vector
   #hydrography/hydrology
   Q_vec <- hydrography$Q_cms
   CO2_vec <- hydrography$CO2_ppm
@@ -54,17 +59,20 @@ getSourcesByRiver <- function(hydrography, model, Cgw_ppm, calibratedParameters,
   k_bz_vec <- hydrography$k_bz
   D_vec <- hydrography$D
 
+  #calibrated parameters
   Fwc_ppm_s <-  ifelse(hydrography$waterbody == 'River', calibratedParameters$Fwc_riv, calibratedParameters$Fwc_lake) #ppm/s
   Cbz_ppm <-   ifelse(hydrography$waterbody == 'River', calibratedParameters$Cbz_riv, calibratedParameters$Cbz_lake) #ppm/s
 
   #if negative, i.e. mineralization sink, just set to zero for these realtive calcs
   Fwc_ppm_s <- ifelse(Fwc_ppm_s < 0,0,Fwc_ppm_s)
 
+  #network topology
   StartFlag_vec <- hydrography$StartFlag
   Divergence_vec <- hydrography$Divergence
   ToNode_vec <- hydrography$ToNode
   FromNode_vec <- hydrography$FromNode
 
+  #loop through reaches -> find upstream reaches -> calclate CO2 sources
   for (i in 1:nrow(hydrography)) {
     #get imported CO2 from upstream
     ### HEADWATER/DIVERGENT REACH FLAG
@@ -74,6 +82,8 @@ getSourcesByRiver <- function(hydrography, model, Cgw_ppm, calibratedParameters,
       lateralQ <- Q_vec[i] -  sum(upstreamQ_cms,na.rm=T)
       Cgw_ppm_here <- Cgw_ppm*2 #see model.R
     }
+
+    #ALL OTHER RIVERS
     else{
       upstreamCO2_ppm <- CO2_vec[which(ToNode_vec == FromNode_vec[i])]
       upstreamQ_cms <- Q_vec[which(ToNode_vec == FromNode_vec[i])]
@@ -84,6 +94,7 @@ getSourcesByRiver <- function(hydrography, model, Cgw_ppm, calibratedParameters,
       Cgw_ppm_here <- Cgw_ppm
     }
 
+    #CALCULATE SOURCES. SEE METHOD FOR EQUATIONS
     GWcontrib_TgC_yr[i] <- (Cgw_ppm_here*henry_vec[i]*1e-6)*(1/0.001)*12.01*lateralQ*(60*60*24*365) * 1e-12#Tg-C/yr
     CO2emitted_TgC_yr[i] <- FCO2_gC_m2_yr_vec[i]*SA_m2_vec[i]*1e-12#Tg-C/yr
     CO2exported_TgC_yr[i] <- (CO2_vec[i]*henry_vec[i]*1e-6)*(1/0.001)*12.01*Q_vec[i]*(60*60*24*365) * 1e-12#Tg-C/yr
@@ -92,7 +103,7 @@ getSourcesByRiver <- function(hydrography, model, Cgw_ppm, calibratedParameters,
     Fbenthic_TgC_yr[i] <-(k_bz_vec[i]*D_vec[i]*Cbz_ppm[i]*henry_vec[i]*1e-6)*(1/0.001)*12.01*SA_m2_vec[i]*(60*60*24*365) * 1e-12#Tg-C/yr
   }
 
-
+  #append back to df
   hydrography$GWcontrib_TgC_yr <- GWcontrib_TgC_yr
   hydrography$Fwccontrib_TgC_yr <- Fwccontrib_TgC_yr
   hydrography$CO2imported_TgC_yr <- CO2imported_TgC_yr
@@ -100,8 +111,8 @@ getSourcesByRiver <- function(hydrography, model, Cgw_ppm, calibratedParameters,
   hydrography$CO2emitted_TgC_yr <- CO2emitted_TgC_yr
   hydrography$Fbenthic_TgC_yr <- Fbenthic_TgC_yr
 
-
   out <- dplyr::select(hydrography, c('NHDPlusID', 'StreamOrde','Q_cms','GWcontrib_TgC_yr', 'CO2emitted_TgC_yr', 'CO2exported_TgC_yr', 'CO2imported_TgC_yr', 'Fwccontrib_TgC_yr', 'Fbenthic_TgC_yr'))
+
   return(out)
 }
 
@@ -114,7 +125,7 @@ getSourcesByRiver <- function(hydrography, model, Cgw_ppm, calibratedParameters,
 
 
 
-#' Calculate CO2 emission sources by basin (basin scale)
+#' Calculate CO2 emission sources by basin (basin-scale)
 #'
 #' @name getSources
 #'
@@ -137,9 +148,10 @@ getSourcesByBasin <- function(model, results, calibratedParameters, Cgw_ppm, emi
                     'contribGW_TgC_yr'=NA)
   }
 
+  #ALL OTHER RIVERS--------------------------------------------
   else{
-
-  #HANDLE HUC4s WITH FAKE SHORELINES-----------------------------------------
+  
+  #handle HUC4s with fake shoreline rivers
     remove_Q <- 0 #for those great lakes basins
   if(huc4 %in% c('0402', '0405', '0406', '0407', '0408', '0411', '0412','0401','0410','0414','0403','0404')) {
       fix <- readr::read_csv(paste0('data/fix_',huc4,'.csv'))
@@ -147,9 +159,6 @@ getSourcesByBasin <- function(model, results, calibratedParameters, Cgw_ppm, emi
       model <- dplyr::left_join(model, fix, by='NHDPlusID')
 
       model <- model[model$GL_pass == '1',]
-      
-     # remove <- model[model$GL_pass == '0',]
-     # remove_Q <- max(remove$Q_cms, na.rm=T)
     }
 
     
@@ -167,21 +176,22 @@ getSourcesByBasin <- function(model, results, calibratedParameters, Cgw_ppm, emi
 
       upstreamDF <- dplyr::left_join(upstreamDF, henry, by = c('exported_ToNode'='FromNode'))
  
+      #calculate basin-scale CO2 imported and exported
       upstreamDF$exported_CO2_gC_m3 <- ((upstreamDF$exported_CO2_ppm*upstreamDF$henry)/1000000)*(1/0.001)*12.01 #g-C/m3
       upstreamDF$exported_CO2_TgC_yr <- upstreamDF$exported_CO2_gC_m3 * 1e-12 *  upstreamDF$exported_Q_cms * (60*60*24*365) #Tg-C/yr
       upstreamCarbon <- sum(upstreamDF$exported_CO2_TgC_yr,na.rm=T)
     }
 
-    #Get % GW and %CO2 exported downstream---------------------------------------------------------------------------
     #read in TerminalPa b/c i forgot to add it to hydrography table...
     huc2 <- substr(huc4, 1, 2)
-    huc4n <- ifelse(nchar(huc4) > 4, substr(huc4, 1, 4), huc4) #handle 1710a and 1710b (left joiin below takes care of this)
+    huc4n <- ifelse(nchar(huc4) > 4, substr(huc4, 1, 4), huc4) #handle 1710a and 1710b
 
+    #CALCULATE BASIN GW CO2 CONTRIBUTION--------------------------------------------
     dsnPath <- paste0(path_to_data, '/HUC2_', huc2, '/NHDPLUS_H_', huc4n, '_HU4_GDB/NHDPLUS_H_', huc4n, '_HU4_GDB.gdb')
     NHD_HR_VAA <- sf::st_read(dsn = dsnPath, layer = "NHDPlusFlowlineVAA", quiet=TRUE) #additional 'value-added' attributes
     NHD_HR_VAA <- dplyr::select(NHD_HR_VAA, c('NHDPlusID', 'TerminalPa'))
 
-    #get total exported Q to apply Cgw to
+    #get total exported Q
     results <- dplyr::select(results, c('NHDPlusID', 'CO2_ppm'))
     exportedQ <- model %>%
       dplyr::left_join(NHD_HR_VAA, by='NHDPlusID') %>%
@@ -192,7 +202,7 @@ getSourcesByBasin <- function(model, results, calibratedParameters, Cgw_ppm, emi
       dplyr::mutate(exported_CO2_gC_m3 = ((CO2_ppm*henry)/1000000)*(1/0.001)*12.01) %>%
       dplyr::mutate(exported_CO2_TgC_yr = exported_CO2_gC_m3 * 1e-12 *  Q_cms * (60*60*24*365))
 
-    #Get total Cgw contribution to basin
+    #Get total Cgw contribution to basin using median water temp
     henry <- median(model$henry, na.rm=T)
     Q_fin <- sum(exportedQ$Q_cms) - upstreamQ
     Q_fin <- ifelse(Q_fin < 0, 0, Q_fin) #if losing basins/t no net gw introduced, just set to 0 water entering network
@@ -200,7 +210,7 @@ getSourcesByBasin <- function(model, results, calibratedParameters, Cgw_ppm, emi
 
     exportedCO2 <- sum(exportedQ$exported_CO2_TgC_yr, na.rm=T)
     
-    #GET WC RESPIRATION--------------------------------------------------------------------
+    #CALCULATE BASIN WC RESPIRATION CONTRIBUTION--------------------------------------------------------------------
     model$respiration_gC_m3_s <-  ((ifelse(model$waterbody == 'River', calibratedParameters$Fwc_riv, calibratedParameters$Fwc_lake)*model$henry)/1000000)*(1/0.001)*12.01 #gC/m3/s
     model$respiration_TgC_yr <- model$respiration_gC_m3_s * ifelse(model$waterbody == 'River', model$W*model$D*model$LengthKM*1000, model$frac_lakeVol_m3) * (60*60*24*365) * 1e-12 #TgC/yr
 
@@ -219,9 +229,6 @@ getSourcesByBasin <- function(model, results, calibratedParameters, Cgw_ppm, emi
 
     #if negative, i.e. CO2 sink through photosynthesis, just set to zero for these relative calcs
     out$contribWC_TgC_yr <- ifelse(out$contribWC_TgC_yr < 0,0,out$contribWC_TgC_yr)
-
-    #get benthic contribution via mass balance (can't actually solve at basin scale because every river is parameterized differently)
-    out$contribBZ_TgC_yr_massBal <- (out$emissions_TgC_yr + out$exported_TgC_yr) - (out$contribGW_TgC_yr + out$contribWC_TgC_yr + out$contribUP_TgC_yr)
   }
   return(out)
 }
@@ -247,16 +254,7 @@ getSourcesByBasin <- function(model, results, calibratedParameters, Cgw_ppm, emi
 getResultsByOrder <- function(nhd_df) {
   #percents by order----------------------
   results_by_order <- nhd_df %>%
-    # dplyr::mutate(Q_bin = dplyr::case_when(
-    #                   Q_cms <= 0.001 ~ '0.001',
-    #                   Q_cms <= 0.01 ~ '0.01',
-    #                   Q_cms <= 0.1 ~ '0.1',
-    #                   Q_cms <= 1 ~ '1',
-    #                   Q_cms <= 10 ~ '10',
-    #                   Q_cms <= 100 ~ '100',
-    #                   TRUE ~ '100+')) %>%
-    # dplyr::group_by(Q_bin) %>%
-    dplyr::mutate(StreamOrde = ifelse(StreamOrde >= 7, '7+', as.character(StreamOrde))) %>%
+    dplyr::mutate(StreamOrde = ifelse(StreamOrde >= 7, '7+', as.character(StreamOrde))) %>% #so few basins populate these stream orders, we just lump them all together as representative of 'big rivers'
     dplyr::group_by(StreamOrde) %>%
     dplyr::summarise(percGW_reach_median = median(GWcontrib_TgC_yr/(GWcontrib_TgC_yr+Fbenthic_TgC_yr+Fwccontrib_TgC_yr), na.rm=T),
                      percBZ_reach_median = median(Fbenthic_TgC_yr/(GWcontrib_TgC_yr+Fbenthic_TgC_yr+Fwccontrib_TgC_yr), na.rm=T),

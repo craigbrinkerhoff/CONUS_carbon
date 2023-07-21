@@ -1,7 +1,8 @@
+##########################
 ## Craig Brinkerhoff
 ## Winter 2023
 ## Functions for getting mean annual flow and flow frequency at USGS streamgages along the NHD
-
+##########################
 
 
 #' Returns set of USGS gages that are joined to the NHD-HR a priori (that meet USGS QA/QC requirements)
@@ -27,6 +28,7 @@ getNHDGages <- function(path_to_data, codes_huc02){
   }
   codes <- codes[-1]
 
+  #loop through basins, grabbing all of the gauge IDs
   assessmentDF <- data.frame()
   for (i in codes){
     m <- substr(i, 1,2)
@@ -40,10 +42,12 @@ getNHDGages <- function(path_to_data, codes_huc02){
     assessmentDF <- rbind(assessmentDF, temp)
   }
 
+  #convert to metric
   assessmentDF$QBMA <- assessmentDF$QBMA * 0.0283 #cfs to cms
   assessmentDF$QEMA <- assessmentDF$QEMA * 0.0283 #cfs to cms
   assessmentDF$GageQMA <- assessmentDF$GageQMA * 0.0283 #cfs to cms
 
+  #output
   return(assessmentDF)
 }
 
@@ -66,6 +70,7 @@ getNHDGages <- function(path_to_data, codes_huc02){
 #'
 #' @return df of USGS gaueg IDs + long term mean annual flow data + % of annual record with no flow (river runs dry)
 getGageData <- function(path_to_data, nhdGages, codes_huc02){
+  #LOOP THROUGH HUC2S, QUERY GAUGE RECORDS, CALCULATE MEAN ANNUAL FLOW-----------------------------------------
   for(m in codes_huc02){
     #NOTE::::: will be longer than the final sites b/c some of them don't have 20 yrs of data  within the bounds.
         #This function only finds gages that intersect our time domain, but not necessarily 20 yrs of data within the domain.
@@ -92,7 +97,8 @@ getGageData <- function(path_to_data, nhdGages, codes_huc02){
     ##########CALCUALTE MEAN ANNUAL FLOW
     results <- data.frame()
     k <- 1
-    if(!file.exists(paste0('cache/gageDataTemp/trainingData_', m, '.rds'))){ #check if site has already been run
+    if(!file.exists(paste0('cache/gageDataTemp/trainingData_', m, '.rds'))){ #check if region has already been run
+      #loop through gauges within region
       for(i in sites){
         #GRAB GAUGE DATA
         gageQ <- tryCatch(dataRetrieval::readNWISstat(siteNumbers = i, #check if site mets our date requirements
@@ -111,7 +117,7 @@ getGageData <- function(path_to_data, nhdGages, codes_huc02){
         gageQ$Q_cms <- gageQ$mean_va*0.0283 #cfs to cms
         gageQ$Q_cms <- round(gageQ$Q_cms, 3) #round to 1 decimal to handle low-flow errors following Zipper et al 2021
 
-        #ACTUALLY CALCULATE MEAN ANNUAL FLOW
+        #CALCULATE MEAN ANNUAL FLOW
         gageQ <- select(gageQ, c('site_no', 'Q_cms', 'month_nu')) %>%
           mutate(Q_MA = mean(gageQ$Q_cms, na.rm=T),
                  date=1:nrow(gageQ),
@@ -124,6 +130,8 @@ getGageData <- function(path_to_data, nhdGages, codes_huc02){
 
         results <- rbind(results, temp)
       }
+    
+    #prep for output
     results <- select(results, c('gageID', 'Q_MA')) %>%
       distinct(.keep_all = TRUE)
 
@@ -133,7 +141,7 @@ getGageData <- function(path_to_data, nhdGages, codes_huc02){
    }
   }
 
-  #concatenate all into single target object (janky but works)
+  #concatenate all into single df (janky but works)
   results_all <- data.frame()
   for(i in codes_huc02){
     temp_d <- tryCatch(read_rds(paste0('cache/gageDataTemp/trainingData_', i, '.rds')),error=function(k){'none'})

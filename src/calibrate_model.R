@@ -1,7 +1,8 @@
+##########################
 ##Calibration functions for CO2 transport model
 ##Craig Brinkerhoff
-##Fall 2022
-
+##Spring 2023
+##########################
 
 #' Wrapper to perform calibration via a genetic algorithm
 #'
@@ -9,10 +10,11 @@
 #'
 #' @param hydrography: prepped and cleaned NHD basin hydrography
 #' @param huc4: basin id
-#' @param glorich_data: obsered CO2 concentrations per region used to upscale
+#' @param glorich_data: observed CO2 concentrations per region used to upscale
 #' @param Cgw: groundwater CO2 parameter [ppm]
-#' @param emergenceQ: emergent Q from Allen et al. 2018 [m3/s]
-#' @param upstreamDF: oupstram reaches for basin to basin routing
+#' @param Catm: atmospheric CO2 constant [ppm]
+#' @param emergenceQ: emergent discharge [m3/s]
+#' @param upstreamDF: upstream reaches for basin to basin routing
 #' @param lowerCBZ_riv: lower river benthic CO2 parameter bound (for calibration) [ppm]
 #' @param lowerCBZ_lake: lower lake benthic CO2 parameter bound (for calibration) [ppm]
 #' @param lowerFWC_riv: lower river water-column respiration CO2 parameter bound (for calibration) [ppm/s]
@@ -21,11 +23,11 @@
 #' @param upperCBZ_lake: upper lake benthic CO2 parameter bound (for calibration) [ppm]
 #' @param upperFWC_riv: upper river water-column respiration CO2 parameter bound (for calibration) [ppm/s]
 #' @param upperFWC_lake: upper lake water-column respiration CO2 parameter bound (for calibration) [ppm/s]
-#' @param myPopSize: size of each population in the genetic algorithm [# models per generation]
+#' @param myPopSize: size of each population per genetic algorithm generation [# models per generation]
 #' @param mymaxIter: stopping criterion for max number of generations to evolve
 #' @param myRun: stopping criterion for number of generations with identical performance before stopping
 #' @param mymaxFitness: stopping criterion for upper bound on fitness function [1/ppm]
-#' @param mutationRate: probably of mutation in GA parent chromosome
+#' @param mutationRate: probability of mutation in GA parent chromosome
 #' @param cores: number of cores to run each generation in parallel (i.e. number of population members that are run in parrallel)
 #'
 #' @import ga
@@ -46,7 +48,7 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
                 'plot'=NA)
   }
 
-  #normal basins
+  #other basins
   else{
     #handle negative respiration in Great Lakes and Great basin
     lowerFWC_lake <- ifelse(substr(huc4,1,2) %in% c('04','16'), -0.00001, lowerFWC_lake)#NEGATIVE IS FOR GREAT BASIN/GREAT LAKES, WHERE WE LET PHOTOSYNTHESIS OCCUR)
@@ -86,7 +88,7 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
       ylab('Cost Function [ppm]') +
       xlab('Species generation')
 
-      #save calibrated parameter values, summary plot (and the entire GA object if that's your jam)
+      #save calibrated parameter values, summary plot (and the entire GA object if that's more your jam)
       out <- list('Cbz_riv'=calibrateParams@solution[1],
                   'Cbz_lake'=calibrateParams@solution[2],
                   'Fwc_riv'=calibrateParams@solution[3],
@@ -105,27 +107,27 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
 
 
 
-#' Runs the actual model calibration, called by the genetic algorithm
+#' Run the actual model calibration, called by the genetic algorithm
 #'
 #' @name calibrateModel
 #'
 #' @param par: vector string of terms to calibrate (see GA function call below and GA package documentation)
 #' @param hydrography: prepped and cleaned NHD basin hydrography
+#' @param glorich_data: df of raymond CO2 values to calibrate to
 #' @param huc4: basin id
 #' @param Cgw: groundwater CO2 parameter [ppm]
 #' @param Catm: atmospheric CO2 constant [ppm]
 #' @param emergenceQ: emergent Q constant [m3/s]
-#' @param upstreamDF: data frame of 'exporting CO2 reaches' for basins from previous level
+#' @param upstreamDF: upstream reaches for basin to basin routing
 #'
 #' @import dplyr
 #'
-#' @return cost function value, evaluate given a set of parameter values
+#' @return cost function value, evaluated given a set of parameter values
 calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emergenceQ, upstreamDF) {
   #for parallel runs
   source('src/utils.R')
   source('src/model.R')
 
-  #HUC2 <- substr(network_name, 5,nchar(network_name)) #grab HUC2 code onlY
   riverCO2 <- glorich_data[glorich_data$HUC4 == huc4,]$River #[ppm]
   lakeCO2 <- glorich_data[glorich_data$HUC4 == huc4,]$Lake #[ppm]
 
@@ -188,7 +190,7 @@ calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emer
   cost <- sum(c(abs(lakesVSrivers[lakesVSrivers$waterbody == 'Lake/Reservoir',]$medianPCO2 - lakeCO2), abs(lakesVSrivers[lakesVSrivers$waterbody == 'River',]$medianPCO2 - riverCO2)))
   out <- 1/cost #take reciprocal of function to convert to a maximization problem
 
-  return(out) #because the GA package maximizes the cost function
+  return(out)
 }
 
 
@@ -197,7 +199,7 @@ calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emer
 
 
 
-#' To grab calibrated parameters from .futures logs for basins that finish calibrating after master process is (erroneously) dropped by Unity....
+#' To grab calibrated parameters from .futures logs for basins that finish calibrating after master process is (erroneously) dropped by our HPC.... curses!
 #'
 #' @name grabCalibratedParameters_from_logs
 #'
@@ -207,8 +209,7 @@ calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emer
 #'
 #' @return cost function value, evaluate given a set of parameter values
 grabCalibratedParameters_from_logs <- function(huc4){
-  #2/9/23 jobs that finished with no master worker to send them back. They be orphan jobs!!!!!
-  dirs <- list.dirs('/nas/cee-water/cjgleason/craig/CONUS_carbon/cache/20230203_172811-fxvFGQ') #pasted in the cache from the .futures logs just in case futures tries to delete something (I doubt it but still)
+  dirs <- list.dirs('/nas/cee-water/cjgleason/craig/CONUS_carbon/cache/20230203_172811-fxvFGQ') #temp files are pasted here for easier indexing (and to have a second copy since these are worth their weight in gold...)
   string <- dirs[grepl(huc4, dirs, fixed=T)][6] #results folder
   
   log <- readr::read_rds(paste0(string, '/1.rds'))

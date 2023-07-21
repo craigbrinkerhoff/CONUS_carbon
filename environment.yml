@@ -12,7 +12,7 @@ dependencies:
   - bwidget=1.9.14=ha770c72_1
   - bzip2=1.0.8=h7f98852_4
   - c-ares=1.18.1=h7f98852_0
-  - ca-certificates=2022.12.7=ha878542_0
+  - ca-certificates=2023.5.7=hbcca054_0
   - cairo=1.16.0=ha61ee94_1014
   - cfitsio=4.1.0=hd9d235c_0
   - curl=7.83.1=h2283fc2_0
@@ -96,7 +96,7 @@ dependencies:
   - nspr=4.35=h27087fc_0
   - nss=3.82=he02c5a1_0
   - openjpeg=2.4.0=hb52868f_1
-  - openssl=3.1.0=hd590300_3
+  - openssl=3.1.1=hd590300_1
   - pandoc=2.19.2=h32600fe_1
   - pango=1.50.12=hd33c08f_1
   - pcre=8.45=h9c3ff4c_0
@@ -212,6 +212,7 @@ dependencies:
   - r-rcpparmadillo=0.11.4.3.1=r41h358215d_0
   - r-rcppparallel=5.1.6=r41h38f115c_0
   - r-readr=2.1.2=r41h03ef668_0
+  - r-reshape2=1.4.4=r41h7525677_2
   - r-rgooglemaps=1.4.5.3=r41hc72bb7e_2
   - r-rjson=0.2.21=r41h7525677_2
   - r-rlang=1.0.6=r41h7525677_1

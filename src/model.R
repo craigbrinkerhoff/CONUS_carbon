@@ -29,17 +29,17 @@
 #'
 #' @return returns CO2 concentration [ppm]
 CO2_MODEL <- function(hrt, Q, C_gw, C_atm, C_bz, k_co2, k_bz, F_wc, fromNode, divergence, startflag, waterbody, toNode_vec, CO2_vec, Q_vec, emergenceQ) {
-  ### HEADWATER/DIVERGENT REACH FLAG
+  ### HEADWATER/DIVERGENT REACHES
   if (startflag == 1 || divergence == 2){ #if headwater or divergent stream, just set to groundwater value and emergent streamflow
     CO2_last <- C_gw
     lastQ <- ifelse(emergenceQ >= Q, 0, emergenceQ) #only use emergenceQ if headwater is 'big enough'
   }
 
-  ### AVERAGING OF UPSTREAM INPUTS FOR ALL OTHER REACHES --> lastQ and CO2_last
+  ### ALL OTHER STREAMS
   else {
     upstreamIndexes <- which(toNode_vec == fromNode) #get directly upstream reaches
-    CO2_last <- weighted.mean(CO2_vec[upstreamIndexes], Q_vec[upstreamIndexes], na.rm=TRUE) #weight incoming values by Q, because bigger streams will input more water into given reach than smaller tribs
-    lastQ <- sum(Q_vec[upstreamIndexes], na.rm=TRUE)
+    CO2_last <- weighted.mean(CO2_vec[upstreamIndexes], Q_vec[upstreamIndexes], na.rm=TRUE) #weight inflowing CO2 by river discharge
+    lastQ <- sum(Q_vec[upstreamIndexes], na.rm=TRUE) #sum all inflowing water because mass conservation
 
     #account for emerging streams not identified with startFlag. These are rivers whose upstream reach has Q=0 but isn't flagged by NHD
     if (all(is.na(Q_vec[upstreamIndexes]))==1) {
@@ -49,12 +49,11 @@ CO2_MODEL <- function(hrt, Q, C_gw, C_atm, C_bz, k_co2, k_bz, F_wc, fromNode, di
     }
   }
 
-  #FOR LOSING STREAMS AND THOSE SMALLER THEN EMERGENT Q, WE SET LASTQ TO ZERO SO THIS TERM CANCELS OUT.
-    #The NHD Q values account for evap losses and so can be losing streams sometimes (though very rarely). Likewise, many streams streams have a mean annual Q < emergent Q, so we treat them as super small and have next to no groundwater CO2 loaded
+  #FOR LOSING STREAMS, WE SET LASTQ TO ZERO SO THIS TERM CANCELS OUT.
   lastQ <- ifelse(Q < lastQ, Q, lastQ)
 
-  ### CALCULATE CO2 CONCENTRATION BASED ON BACKWARDS DIFFERENCE METHOD OF REACTIVE TRANSPORT MODEL. THIS IS DIFFERENT IN RIVERS OR LAKE/RESERVOIRS TO KEEP UNITS CONSISTENT
-  if(waterbody == 'GreatLake'){ #special add-on for 'GreatLake' basins. We don't run the model and assume atmospheric when leaving the lake (so set all these reaches to 400ppm and don't run model but do export downstream)
+  ### CALCULATE CO2 CONCENTRATION BASED ON BACKWARDS DIFFERENCE METHOD OF TRANSPORT MODEL.
+  if(waterbody == 'GreatLake'){ #skip Great Lakes, assume lake goes to atmospheric
     CO2 <- C_atm
     return(CO2)
   } else{ #normal rivers, lakes, reservoirs
