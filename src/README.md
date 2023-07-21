@@ -1,0 +1,1 @@
+This folder contains the R scripts (and functions) to run the pipeline. All function calls are made in *_targets.R*.
