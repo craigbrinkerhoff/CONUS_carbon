@@ -17,10 +17,10 @@ source('src/figures.R')
 source('src/run_sources.R')
 
 #parallelization and pipeline settings
-plan(batchtools_slurm, template = "slurm_future.tmpl") #for parallelization via futures transient workers
+plan(batchtools_slurm, template = "slurm_future.tmpl")
 options(future.wait.interval = 5.0)
 tar_option_set(packages = c('tidyr', 'plyr', 'dplyr', 'readr', 'cowplot', 'colorspace', 'ggplot2', 'GA', 'lubridate', 'Metrics', 'roxygen2', 'doParallel', 'terra', 'sf')) #required packages
-tar_option_set(format = "qs") #qs compressed/serialized r objects. Much faster read/write than rds (uncompressed)
+tar_option_set(format = "qs") #qs compressed/serialized r objects
 tar_option_set(resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = 1))))) #default num_cores setting (is changed for calibration later)
 cores_req <- 25 #cores requested for calibration (overrides the default set right above this)
 
@@ -28,17 +28,17 @@ cores_req <- 25 #cores requested for calibration (overrides the default set righ
 
 #### PIPELINE PARAMETERS------------------------------------------------------------------
 #meta parameters
-path_to_data <- '/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data' #path to data repo (separate from code repo)
-glorich_data <- readr::read_csv('data/HUC4_calibration.csv') #glorish CO2 values for each HUC4 basin (for calibration)
-raymond_coscat_lookup <- readr::read_csv('data/raymond_coscat.csv') #raymond co2 data
+path_to_data <- '/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data' #path to data repo
+glorich_data <- readr::read_csv('data/HUC4_calibration.csv') #regional CO2 values for calibrating each HUC4 basin
+raymond_coscat_lookup <- readr::read_csv('data/raymond_coscat.csv') #raymond co2 data by HUC2 region
 lookUpTable <- readr::read_csv('data/HUC4_lookup.csv') #basin routing lookup table
 
 #constant parameters
 C_atmosphere <- 400 #[ppm]
-emergenceQ <- 0.000105 #[m3/s]: Allen etal 2018 width of 30cm plugged into our HG equation for width --> smallest headwater Q
-C_groundwater <- 16000  #[ppm]: held constant and not calibrated
+emergenceQ <- 0.000105 #[m3/s]
+C_groundwater <- 16000  #[ppm]
 
-#calibrated parameters (these are all set to be 2 orders of magnitude wide)
+#calibrated parameters
 lowerCBZ_riv <- 0 #[ppm]
 lowerCBZ_lake <- 0 #[ppm]
 lowerFWC_riv <- 0 #[ppm/s]
@@ -51,10 +51,10 @@ upperFWC_lake <- 1e-2 #[ppm/s]
 
 #GA meta-parameters
 myPopSize <- 25 #population size within each generation
-mymaxIter <- 500 # maximum generations before termination
+mymaxIter <- 500 # maximum number generations before termination
 myRun <- 50 #calibration will be terminated if no improvement over this many generations
 maxFitness <- 1/10 #upper bound on fitness function before terminating calibration [1/ppm]
-mutationRate <- 0.10 # default in GA package 0.25 #mutation probability to avoid getting trapped in local maxima
+mutationRate <- 0.10 # mutation probability to avoid getting trapped in local maxima
 cores <- 25 #how many cores to run GA in parallel on (also need to set in the slurm.tmpl file FYI...)
 
 
@@ -75,16 +75,16 @@ mapped_lvlTerminal <- tar_map(
                                                               upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
                                                               myPopSize, mymaxIter, myRun, maxFitness, mutationRate, cores),
                                               cue = tar_cue(mode = "never"),
-                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #specify cores wildcard for calibration
+                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))),
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, NA),cue = tar_cue(mode = "never")), #run calibrated version of model
        tar_target(written, writeToFile(final, huc4)), #write final model to file
-       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from final calibrated model
+       tar_target(emissions, calcEmissions(final, huc4)), #calc carbon emissions from model
        tar_target(cal_uncertainty, emissions_uncertainty(calibratedParameters, final,huc4)), #calc emissions uncertainty due to calibration
-       tar_target(map, indvRiverMaps(final, huc4)), #build river network map (for combined map)
+       tar_target(map, indvRiverMaps(final, huc4)), #build river network map
        tar_target(basinProperties, calcBasinProperties(final, huc4)), #gather basin properties of interest
        tar_target(basinLakeProperties, calcBasinLakeProperties(final, huc4)), #gather basin lake properties of interest
        tar_target(randomSample, getRandomSample(final, raymond_coscat_lookup, huc4)), #grab random sample for figure 2
-       tar_target(glorich, getGlorichUS(path_to_data,huc4)), #snap glorich data to hydrography for figure 2
+       tar_target(glorich, getGlorichUS(path_to_data,huc4)), #snap in situ data to hydrography for figure 2
        tar_target(sources_basin, getSourcesByBasin(hydrography, final, calibratedParameters,C_groundwater, emissions, huc4, path_to_data, NA)), #calculate basin-scale CO2 sources
        tar_target(sources, getSourcesByRiver(hydrography, final, C_groundwater, calibratedParameters, emergenceQ,huc4)), #calculate reach-scale CO2 sources
        tar_target(sources_by_order, getResultsByOrder(sources)) #summarise reach-scale CO2 sources by stream order
@@ -115,7 +115,7 @@ mapped_lvlTerminal_bugFix <- tar_map(
 )
 
 
-#Headwater basins that export into the next level of basins
+# all other headwater basins
 mapped_lvl0 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -145,7 +145,7 @@ mapped_lvl0 <- tar_map(
        tar_target(sources_by_order, getResultsByOrder(sources))
 )
 
-# level 0 basins that need to be restarted due to HPC issue
+# all other headwater basins that need to be restarted due to HPC issue
 mapped_lvl0_bugFix <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -170,7 +170,7 @@ mapped_lvl0_bugFix <- tar_map(
        tar_target(sources_by_order, getResultsByOrder(sources))
 )
 
-#level 1 downstream basins
+#level 1 basins
 mapped_lvl1 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -225,7 +225,7 @@ mapped_lvl1_bugFix <- tar_map(
        tar_target(sources_by_order, getResultsByOrder(sources))
 )
 
-#level 2 downstream basins
+#level 2 basins
 mapped_lvl2 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -281,7 +281,7 @@ mapped_lvl2_bugFix <- tar_map(
 )
 
 
-#level 3 downstream basins
+#level 3 basins
 mapped_lvl3 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -337,7 +337,7 @@ mapped_lvl3_bugFix <- tar_map(
 )
 
 
-#level 4 downstream basins
+#level 4 basins
 mapped_lvl4 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -368,7 +368,7 @@ mapped_lvl4 <- tar_map(
 
 
 
-#level 5 downstream basins
+#level 5 basins
 mapped_lvl5 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -429,7 +429,7 @@ mapped_lvl5_bugFix <- tar_map(
 
 
 
-#level 6 downstream basins
+#level 6 basins
 mapped_lvl6 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -489,7 +489,7 @@ mapped_lvl6_bugFix <- tar_map(
 
 
 
-#level 7 downstream basins
+#level 7 basins
 mapped_lvl7 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -518,7 +518,7 @@ mapped_lvl7 <- tar_map(
        tar_target(sources_by_order, getResultsByOrder(sources))
 )
 
-#level 8 downstream basins
+#level 8 basins
 mapped_lvl8 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -548,7 +548,7 @@ mapped_lvl8 <- tar_map(
 )
 
 
-#level 9 downstream basins
+#level 9 basins
 mapped_lvl9 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -578,7 +578,7 @@ mapped_lvl9 <- tar_map(
 )
 
 
-#level 10 downstream basins
+#level 10 basins
 mapped_lvl10 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -608,7 +608,7 @@ mapped_lvl10 <- tar_map(
 )
 
 
-#level 11 downstream basins
+#level 11 basins
 mapped_lvl11 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -638,7 +638,7 @@ mapped_lvl11 <- tar_map(
 )
 
 
-#level 12 downstream basins
+#level 12 basins
 mapped_lvl12 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -652,7 +652,7 @@ mapped_lvl12 <- tar_map(
       #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
       #                                                        myPopSize, mymaxIter, myRun, maxFitness, mutationRate, cores),
       #                                        resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))),
-       tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)), #SINGLE BASIN, SO NO NEED FOR BUG FIX STUFF, JUST CALL THIS VERSION OF THE TARGET TO GRAB THE CALIBRATED PARAMETERS
+       tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)), #SINGLE BASIN: USE CALL THIS VERSION OF THE TARGET TO GRAB THE CACHED CALIBRATED PARAMETERS IF NECESSARY
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl11)),
        tar_target(written, writeToFile(final, huc4)),
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)),
@@ -669,7 +669,7 @@ mapped_lvl12 <- tar_map(
 )
 
 
-#level 13 downstream basins
+#level 13 basins
 mapped_lvl13 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -699,7 +699,7 @@ mapped_lvl13 <- tar_map(
 )
 
 
-#level 14 downstream basins
+#level 14 basins
 mapped_lvl14 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -713,7 +713,7 @@ mapped_lvl14 <- tar_map(
        #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
        #                                                        myPopSize, mymaxIter, myRun, maxFitness, mutationRate, cores),
        #                                        resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))),
-       tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)), #SINGLE BASIN, SO NO NEED FOR BUG FIX STUFF, JUST CALL THIS VERSION OF THE TARGET TO GRAB THE CALIBRATED PARAMETERS      
+       tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)), #SINGLE BASIN: USE CALL THIS VERSION OF THE TARGET TO GRAB THE CACHED CALIBRATED PARAMETERS IF NECESSARY   
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl13)),
        tar_target(written, writeToFile(final, huc4)),
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)),
@@ -730,7 +730,7 @@ mapped_lvl14 <- tar_map(
 )
 
 
-#level 15 downstream basins
+#level 15 basins
 mapped_lvl15 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -744,7 +744,7 @@ mapped_lvl15 <- tar_map(
        #                                                        upperCBZ_riv, upperCBZ_lake, upperFWC_riv, upperFWC_lake,
        #                                                        myPopSize, mymaxIter, myRun, maxFitness, mutationRate, cores),
        #                                        resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))),
-       tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)), #SINGLE BASIN, SO NO NEED FOR BUG FIX STUFF, JUST CALL THIS VERSION OF THE TARGET TO GRAB THE CALIBRATED PARAMETERS
+       tar_target(calibratedParameters, grabCalibratedParameters_from_logs(huc4)), #SINGLE BASIN: USE CALL THIS VERSION OF THE TARGET TO GRAB THE CACHED CALIBRATED PARAMETERS IF NECESSARY
        tar_target(final, runModel(hydrography, calibratedParameters, C_groundwater, C_atmosphere, huc4, emergenceQ, exportedCO2_lvl14)),
        tar_target(written, writeToFile(final, huc4)),
        tar_target(exportedCO2, getExported(final, huc4, lookUpTable,Catm)),
@@ -760,7 +760,7 @@ mapped_lvl15 <- tar_map(
        tar_target(sources_by_order, getResultsByOrder(sources))
 )
 
-#level 16 downstream basins
+#level 16 basins
 mapped_lvl16 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -790,7 +790,7 @@ mapped_lvl16 <- tar_map(
 )
 
 
-#level 17 downstream basins
+#level 17 basins
 mapped_lvl17 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -820,7 +820,7 @@ mapped_lvl17 <- tar_map(
 )
 
 
-#level 18 downstream basins
+#level 18 basins
 mapped_lvl18 <- tar_map(
        unlist=FALSE,
        values = tibble(
@@ -908,7 +908,7 @@ mapped_1710b <- tar_map(
 
 #### ACTUAL PIPELINE----------------------------------
 list(
-  #level terminal restart basins
+  #### level terminal restart basins
   mapped_lvlTerminal_bugFix,
 
   #### level 0 terminal basins
@@ -1254,11 +1254,11 @@ list(
 
   #### 1710 basin (split in two)
   tar_target(hydrography_1710, setupHydrography(path_to_data, '1710'),
-                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))), #prep hydrography for routing
+                                              resources = tar_resources(future = tar_resources_future(plan = tweak(batchtools_slurm,template = "slurm_future.tmpl",resources = list(num_cores = cores_req))))),
   mapped_1710a,
   mapped_1710b,
  
-  #### RUN LUMPED MODELS AND COMPARE AGAINST OUR MODEL (AND UNCERTAINTY)----------------------------------------------------
+  #### RUN LUMPED MODELS AND COMPARE AGAINST OUR MODEL (AND ESTIMATE UNCERTAINTY)----------------------------------------------------
   tar_target(lumped_01, runLumpedModels('01', raymond_coscat_lookup, list(hydrography_0101, hydrography_0102, hydrography_0103, hydrography_0104, hydrography_0105, hydrography_0106, hydrography_0107, hydrography_0108, hydrography_0109, hydrography_0110),
                                                                                           list(final_0101, final_0102, final_0103, final_0104, final_0105, final_0106, final_0107, final_0108, final_0109, final_0110),
                                                                                           list(emissions_0101, emissions_0102, emissions_0103, emissions_0104, emissions_0105, emissions_0106, emissions_0107, emissions_0108, emissions_0109, emissions_0110),
@@ -1271,7 +1271,6 @@ list(
                                                                                           list(final_0301, final_0302, final_0303, final_0304, final_0305, final_0306, final_0307, final_0308, final_0309, final_0310, final_0311, final_0312, final_0313, final_0314, final_0315, final_0316, final_0317, final_0318),
                                                                                           list(emissions_0301, emissions_0302, emissions_0303, emissions_0304, emissions_0305, emissions_0306, emissions_0307, emissions_0308, emissions_0309, emissions_0310, emissions_0311, emissions_0312, emissions_0313, emissions_0314, emissions_0315, emissions_0316, emissions_0317, emissions_0318),
                                                                                           list(cal_uncertainty_0301, cal_uncertainty_0302, cal_uncertainty_0303, cal_uncertainty_0304, cal_uncertainty_0305, cal_uncertainty_0306, cal_uncertainty_0307, cal_uncertainty_0308, cal_uncertainty_0309, cal_uncertainty_0310, cal_uncertainty_0311, cal_uncertainty_0312, cal_uncertainty_0313, cal_uncertainty_0314, cal_uncertainty_0315, cal_uncertainty_0316, cal_uncertainty_0317, cal_uncertainty_0318))),
-  #ignore 0427_1 as its identical to 0427 and exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2)
   tar_target(lumped_04, runLumpedModels('04', raymond_coscat_lookup, list(hydrography_0401,hydrography_0402, hydrography_0403, hydrography_0404, hydrography_0405, hydrography_0406, hydrography_0407, hydrography_0408, hydrography_0409, hydrography_0410, hydrography_0411, hydrography_0412, hydrography_0413, hydrography_0414, hydrography_0418, hydrography_0419, hydrography_0420, hydrography_0424,
                                                                                             hydrography_0426, hydrography_0427, hydrography_0428, hydrography_0429, hydrography_0430),
                                                                                           list(final_0401,final_0402, final_0403, final_0404, final_0405, final_0406, final_0407, final_0408, final_0409, final_0410, final_0411, final_0412, final_0413, final_0414, final_0418, final_0419, final_0420, final_0424,
@@ -1371,10 +1370,10 @@ list(
                                        mapped_lvl17$cal_uncertainty,
                                        mapped_lvl18$cal_uncertainty,
                                        mapped_1710a$cal_uncertainty,
-                                       mapped_1710b$cal_uncertainty), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'), #double counts 0427 b/c of 0427_1: it exists only because the basin actually exports into two downstream basins (preserved only for exportedCO2). Fixed below.
+                                       mapped_1710b$cal_uncertainty), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_uncertainty, fixCombo0427(combined_uncertainty_init)),
 
-  #combine all basin-scale CO2 sources targets
+  #combine all basin-scale CO2 source targets
   tar_combine(combined_sources_basin_init, list(mapped_lvlTerminal$sources_basin,
                                        mapped_lvlTerminal_bugFix$sources_basin,
                                        mapped_lvl0$sources_basin,
@@ -1406,8 +1405,7 @@ list(
                                        mapped_1710b$sources_basin), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_sources_basin, fixCombo0427(combined_sources_basin_init)),
 
-
-  #combine all model emissions targets
+  #combine all model emission targets
   tar_combine(combined_emissions_init, list(mapped_lvlTerminal$emissions,
                                        mapped_lvlTerminal_bugFix$emissions,
                                        mapped_lvl0$emissions,
@@ -1439,9 +1437,7 @@ list(
                                        mapped_1710b$emissions), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_emissions, fixCombo0427(combined_emissions_init)),
 
-
-
-  #combine all model glorich targets
+  #combine all model snapped in situ data targets
   tar_combine(combined_glorich_init, list(mapped_lvlTerminal$glorich,
                                        mapped_lvlTerminal_bugFix$glorich,
                                        mapped_lvl0$glorich,
@@ -1472,8 +1468,6 @@ list(
                                        mapped_1710a$glorich,
                                        mapped_1710b$glorich), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_glorich, fixCombo0427(combined_glorich_init)),
-
-
 
   #combine all by-basin property targets
   tar_combine(combined_basinProperties_init, list(mapped_lvlTerminal$basinProperties,
@@ -1509,7 +1503,7 @@ list(
 
 
 
-  #combine all mby-basin lake property targets
+  #combine all by-basin lake property targets
   tar_combine(combined_basinLakeProperties_init, list(mapped_lvlTerminal$basinLakeProperties,
                                        mapped_lvlTerminal_bugFix$basinLakeProperties,
                                        mapped_lvl0$basinLakeProperties,
@@ -1540,7 +1534,6 @@ list(
                                        mapped_1710a$basinLakeProperties,
                                        mapped_1710b$basinLakeProperties), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_basinLakeProperties, fixCombo0427(combined_basinLakeProperties_init)),
-
 
   #combine all basin maps
   tar_combine(combined_rivermaps, list(mapped_lvlTerminal$map,
@@ -1605,7 +1598,6 @@ list(
                                        mapped_1710b$randomSample), command = dplyr::bind_rows(!!!.x, .id = "method"), deployment='main'),
   tar_target(combined_randomSample, fixCombo0427(combined_randomSample_init)),
 
-
   #combine all model calibration outputs
   tar_combine(combined_calibrationOutput, list(mapped_lvlTerminal$calibratedParameters,
                                        mapped_lvlTerminal_bugFix$calibratedParameters,
@@ -1637,7 +1629,7 @@ list(
                                        mapped_1710a$calibratedParameters,
                                        mapped_1710b$calibratedParameters), deployment='main', command = list(!!!.x)),
 
-  #combine all reach-scale CO2 sources, pre-summarized by stream order
+  #combine all reach-scale CO2 sources, summarized by stream order
   tar_combine(combined_sources_by_order_init, list(mapped_lvlTerminal$sources_by_order,
                                        mapped_lvlTerminal_bugFix$sources_by_order,
                                        mapped_lvl0$sources_by_order,

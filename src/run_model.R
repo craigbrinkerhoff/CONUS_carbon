@@ -1,20 +1,20 @@
 ##########################
-#Runs calibrated CO2 transport model
-#Craig Brinkerhoff
-#Fall 2022
+## Run calibrated CO2 transport model
+## Craig Brinkerhoff
+## Fall 2022
 ##########################
 
 
 
-#' Runs final calibrated version of model
+#' Run final calibrated version of model
 #'
 #' @name runModel
 #'
-#' @param hydrography: river network to run model on
+#' @param hydrography: river network routing file
 #' @param calibrationResults: list of calibrated parameters
 #' @param Cgw: groundwater CO2 parameter [ppm]
 #' @param Catm: atmospheric CO2 constant [ppm]
-#' @param huc4: basin id
+#' @param huc4: basin ID
 #' @param emergenceQ: emergent Q constant [m3/s]
 #' @param upstreamDF: upstream reaches for basin to basin routing
 #'
@@ -65,7 +65,7 @@ runModel <- function(hydrography, calibrationResults, Cgw, Catm, huc4, emergence
     #results vector
     CO2_vec <- rep(NA, length(Q_vec)) #[ppm]
 
-    #Append required upstream IDs and CO2s from previous HUC4s to this dataset. Because the indexing is relative, we can just add them to the end of the vectors and then remove later when routing is done
+    #Append upstream IDs and imported CO2s from upstream basins to this basin. Because the indexing is relative, we can just add them to the end of the vectors and then remove later when routing is done!
     if(is.na(upstreamDF) == 0){
       upstreamDF <- dplyr::filter(upstreamDF, downstreamBasin == huc4)
 
@@ -89,10 +89,10 @@ runModel <- function(hydrography, calibrationResults, Cgw, Catm, huc4, emergence
       CO2_vec <- CO2_vec[1:nrow(hydrography)]
     }
 
-    #add results to river network
+    #add results back to the hydrography
     hydrography$CO2_ppm <- CO2_vec #[ppm]
 
-    #prep output
+    #prep all other results, adding them back to the hydrography
     hydrography$HRT_s <- hydrography$HRT #[s]
     hydrography$k_co2_m_s <- hydrography$k_co2 * hydrography$D #[m/s]
     hydrography$k600_m_s <- hydrography$k_co2_m_s * (600/(1911-118.11*hydrography$temp_c+3.453*hydrography$temp_c^2-0.0413*hydrography$temp_c^3))^-0.5 #[m/s] convert back to a k600 just to have
@@ -106,5 +106,7 @@ runModel <- function(hydrography, calibrationResults, Cgw, Catm, huc4, emergence
 
     out <- dplyr::select(hydrography, c('NHDPlusID', 'WBArea_Permanent_Identifier', 'ToNode', 'FromNode','conus', 'CO2_ppm', 'StreamOrde', 'k_co2_m_s', 'k600_m_s', 'LengthKM', 'Q_m3_s', 'W_m', 'lakeSA_m2', 'waterbody', 'V_m_s', 'Slope', 'Water_temp_c', 'henry', 'FCO2_gC_m2_yr'))  #write to file
   }
+
+  #return calbirated model simulation
   return(out)
 }

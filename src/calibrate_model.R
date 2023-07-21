@@ -1,16 +1,16 @@
 ##########################
-##Calibration functions for CO2 transport model
-##Craig Brinkerhoff
-##Spring 2023
+## Calibration functions for CO2 transport model
+## Craig Brinkerhoff
+## Spring 2023
 ##########################
 
 #' Wrapper to perform calibration via a genetic algorithm
 #'
 #' @name calibrateModelWrapper
 #'
-#' @param hydrography: prepped and cleaned NHD basin hydrography
+#' @param hydrography: NHD basin hydrography routing file
 #' @param huc4: basin id
-#' @param glorich_data: observed CO2 concentrations per region used to upscale
+#' @param glorich_data: df of regional CO2 following Raymond 2013 method
 #' @param Cgw: groundwater CO2 parameter [ppm]
 #' @param Catm: atmospheric CO2 constant [ppm]
 #' @param emergenceQ: emergent discharge [m3/s]
@@ -48,12 +48,12 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
                 'plot'=NA)
   }
 
-  #other basins
+  #run other basins
   else{
-    #handle negative respiration in Great Lakes and Great basin
-    lowerFWC_lake <- ifelse(substr(huc4,1,2) %in% c('04','16'), -0.00001, lowerFWC_lake)#NEGATIVE IS FOR GREAT BASIN/GREAT LAKES, WHERE WE LET PHOTOSYNTHESIS OCCUR)
-    upperFWC_lake <- ifelse(substr(huc4,1,2) %in% c('04','16'), 0, upperFWC_lake)#NEGATIVE IS FOR GREAT BASIN/GREAT LAKES, WHERE WE LET PHOTOSYNTHESIS OCCUR)
-  
+    #handle negative respiration in Great Lakes and Great basin, where we let photosynthesis occur
+    lowerFWC_lake <- ifelse(substr(huc4,1,2) %in% c('04','16'), -0.00001, lowerFWC_lake)
+    upperFWC_lake <- ifelse(substr(huc4,1,2) %in% c('04','16'), 0, upperFWC_lake)
+
     start <- Sys.time()
     
     #run genetic algorithm
@@ -70,7 +70,7 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
                             pmutation = mutationRate,
                             optim=TRUE, #L-BFGS-B optimization
                             keepBest=TRUE,
-                            postFitness = saveIntermediateResults, #for saving intermediate solutions in case of catastrophe
+                            postFitness = saveIntermediateResults, #for saving intermediate solutions in case of catastrophe (see src/utils.R)
                             seed = 12) #reproducibility
     
     end <- Sys.time()
@@ -80,6 +80,7 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
     forPlot$generation <- 1:nrow(forPlot)
     forPlot <- tidyr::gather(forPlot, key=key, value=value, 'mean', 'max')
 
+    #built plot
     calibrationPlot <- ggplot(forPlot, aes(x=generation, y=1/value, color=key, group=key)) +
       geom_point(size=4) +
       geom_line(size=1) +
@@ -111,10 +112,10 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
 #'
 #' @name calibrateModel
 #'
-#' @param par: vector string of terms to calibrate (see GA function call below and GA package documentation)
+#' @param par: vector of terms to calibrate (see GA function call below and GA package documentation)
 #' @param hydrography: prepped and cleaned NHD basin hydrography
-#' @param glorich_data: df of raymond CO2 values to calibrate to
-#' @param huc4: basin id
+#' @param huc4: basin ID
+#' @param glorich_data: df of regional CO2 following Raymond 2013 method
 #' @param Cgw: groundwater CO2 parameter [ppm]
 #' @param Catm: atmospheric CO2 constant [ppm]
 #' @param emergenceQ: emergent Q constant [m3/s]
@@ -124,10 +125,11 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
 #'
 #' @return cost function value, evaluated given a set of parameter values
 calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emergenceQ, upstreamDF) {
-  #for parallel runs
+  #for parallel runs, load functions each time
   source('src/utils.R')
   source('src/model.R')
 
+  #set up regional CO2 values to calibrate to
   riverCO2 <- glorich_data[glorich_data$HUC4 == huc4,]$River #[ppm]
   lakeCO2 <- glorich_data[glorich_data$HUC4 == huc4,]$Lake #[ppm]
 
@@ -135,7 +137,7 @@ calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emer
   hydrography <- dplyr::filter(hydrography, HydroSeq != 0)
   hydrography <- hydrography[order(-hydrography$HydroSeq),] #sort descending
 
-  #vectorize hydrography to help with speed
+  #vectorize to help with speed
   StartFlag_vec <- as.vector(hydrography$StartFlag)
   Divergence_vec <- as.vector(hydrography$Divergence)
   fromNode_vec <- as.vector(hydrography$FromNode)
@@ -154,7 +156,7 @@ calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emer
   #results vector
   CO2_vec <- rep(NA, length(Q_vec)) #[ppm]
 
-  #Append required upstream IDs and CO2s from previous HUC4s to this dataset. Because the indexing is relative, we can just add them to the end of the vectors and then remove later when routing is done
+  #Append upstream IDs and imported CO2s from upstream basins to this basin. Because the indexing is relative, we can just add them to the end of the vectors and then remove later when routing is done!
   if(is.na(upstreamDF) == 0){
     upstreamDF <- dplyr::filter(upstreamDF, downstreamBasin == huc4)
 
@@ -180,16 +182,17 @@ calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emer
     CO2_vec <- CO2_vec[1:nrow(hydrography)]
   }
 
-  #add results to river network
+  #add results back to the hydrography
   hydrography$CO2_ppm <- CO2_vec #[ppm]
 
-  ###########EVALUATE COST FUNCTION
+  ###########EVALUATE FITNESS
   lakesVSrivers <- dplyr::group_by(hydrography, waterbody) %>%
       dplyr::summarise(medianPCO2 = median(CO2_ppm, na.rm=T))
 
   cost <- sum(c(abs(lakesVSrivers[lakesVSrivers$waterbody == 'Lake/Reservoir',]$medianPCO2 - lakeCO2), abs(lakesVSrivers[lakesVSrivers$waterbody == 'River',]$medianPCO2 - riverCO2)))
   out <- 1/cost #take reciprocal of function to convert to a maximization problem
 
+  #return fitness
   return(out)
 }
 
@@ -199,7 +202,7 @@ calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emer
 
 
 
-#' To grab calibrated parameters from .futures logs for basins that finish calibrating after master process is (erroneously) dropped by our HPC.... curses!
+#' Grab calibrated parameters from .futures logs. This is necessary for basins that finish calibrating after connection to the master job is (erroneously) cut by our HPC.... curses!
 #'
 #' @name grabCalibratedParameters_from_logs
 #'

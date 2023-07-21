@@ -1,15 +1,15 @@
-##########################
-#preps hydrography for routing
-#Craig Brinkerhoff
-#Fall 2022
-##########################
+######################################
+## Prep hydrography for routing
+## Craig Brinkerhoff
+## Fall 2022
+####################################
 
 
-#' Preps, builds, and cleans nhd into a usable routing file
+#' Prep, build, and clean the NHD-HR hydrography into a usable routing file
 #'
 #' @name setupHydrography
 #'
-#' @param path_to_data: path to NHD geodatabases
+#' @param path_to_data: path to DATA REPO
 #' @param huc4: basin id
 #'
 #' @import sf
@@ -27,34 +27,36 @@ setupHydrography <- function(path_to_data, huc4){
 
   huc2 <- substr(huc4, 1, 2)
 
-  #set up path to basin files
+  #SETUP PATH TO BASIN FOLDER WITHIN THE DATA REPO-------------------------------
   dsnPath <- paste0(path_to_data, '/HUC2_', huc2, '/NHDPLUS_H_', huc4, '_HU4_GDB/NHDPLUS_H_', huc4, '_HU4_GDB.gdb')
 
-  #read in river network, depending on indiana-effect or not
+  #READ IN HYDROGRAPHY------------------------------
+  #Indiana
   if(huc4 %in% indiana_hucs) {
     nhd <- sf::st_read(paste0(path_to_data, '/HUC2_', huc2, '/indiana/indiana_fixed_', huc4, '.shp'))
     nhd <- sf::st_zm(nhd)
     colnames(nhd)[10] <- 'WBArea_Permanent_Identifier'
     nhd$NHDPlusID <- round(nhd$NHDPlusID, 0) #some of these have digits for some reason......
   }
+  #all other basins
   else{
     nhd <- sf::st_read(dsn=dsnPath, layer='NHDFlowline', quiet=TRUE)
     nhd <- sf::st_zm(nhd)
     nhd <- fixGeometries(nhd)
   }
 
-  #read in lakes
+  #lakes
   lakes <- sf::st_read(dsn=dsnPath, layer='NHDWaterbody', quiet=TRUE)
   lakes <- sf::st_zm(lakes)
 
-  #WRANGLING OF THE VARIOUS ATA ATTRIBUTES FOR HYDROGRAPHY-------------------------------------------------
+  #WRANGLING OF THE VARIOUS ATTRIBUTE DATA FOR HYDROGRAPHY-------------------------------------------------
   lakes <- as.data.frame(lakes) %>%
     dplyr::filter(FType %in% c(390, 436)) #lakes/reservoirs only
   colnames(lakes)[6] <- 'LakeAreaSqKm'
   NHD_HR_EROM <- sf::st_read(dsn = dsnPath, layer = "NHDPlusEROMMA", quiet=TRUE) #mean annual flow table
   NHD_HR_VAA <- sf::st_read(dsn = dsnPath, layer = "NHDPlusFlowlineVAA", quiet=TRUE) #additional 'value-added' attributes
 
-  #get mean annual temperature (direct column indexing because of typos in USGS tables...)
+  #WRANGLE MEAN MONTHLY AIR TEMPERATURE (direct column indexing because of typos in USGS tables...)---------------------------------------------------------
   #jan
   NHD_HR_temp_01 <- sf::st_read(dsn = dsnPath, layer = "NHDPlusIncrTempMM01", quiet=TRUE) #additional 'value-added' attributes
   temp <- data.frame('NHDPlusID'=NHD_HR_temp_01[,1],
@@ -137,12 +139,13 @@ setupHydrography <- function(path_to_data, huc4){
     temp$temp_c_12 <- NHD_HR_temp / 100
   }
 
+  #take the mean
   temp$airTemp_mean_c <- rowMeans(temp[,2:ncol(temp)], na.rm=T)
   temp <- dplyr::select(temp, c('NHDPlusID', 'airTemp_mean_c'))
 
   nhd <- left_join(nhd, lakes, by=c('WBArea_Permanent_Identifier'='Permanent_Identifier'))
 
-  #some manual rewriting b/c these columns get doubled from previous joins where data was needed for specific GIS tasks...
+  #some manual rewriting b/c column names are duplicated across attribute tables and river vs lake hydrography
   if(huc4 %in% indiana_hucs){
     colnames(nhd)[17] <- 'NHDPlusID'
     nhd$NHDPlusID <- round(nhd$NHDPlusID, 0) #some of these have digits for some reason......
@@ -180,20 +183,18 @@ setupHydrography <- function(path_to_data, huc4){
   #ASSIGN WATERBODY TYPE--------------------------------------------------------
   nhd$waterbody <- ifelse(is.na(nhd$WBArea_Permanent_Identifier)==0 & is.na(nhd$LakeAreaSqKm) == 0 & nhd$LakeAreaSqKm > 0, 'Lake/Reservoir', 'River')
 
-  #FIX ROUTING ERRORS IN THE NHD THAT PRODUCE ERRONOUSLY HIGH CO2 IN MAINSTEMS
+  #FIX THREE IDENTIFIED ROUTING ID ERRORS---------------------------------------------
   if(huc4 == '0514'){nhd[nhd$NHDPlusID == 24000100384878,]$StreamOrde <- 8}   #fix erronous 'divergent' reach in the Ohio mainstem (mathing Indiana file upstream)
   if(huc4 == '0514'){nhd[nhd$NHDPlusID == 24000100569580,]$ToNode <- 22000100085737} #from/to node ID typo (from Ohio River to Missouri River) so I manually fix it
   if(huc4 == '0706'){nhd[nhd$NHDPlusID == 22000400022387,]$StreamOrde <- 7} #error in stream order calcualtion because reach is miss-assigned as stream order 0 (on divergent path) which isn't true. Easiest to just skip over the reach because it's just a connector into the Misssissippi River (from Wisconsin river)
 
-  #only keep non-divergent, physically possible reaches
-  nhd <- dplyr::filter(nhd, StreamOrde > 0 & is.na(HydroSeq)==0 & FlowDir == 1)
-
   #FINAL HYDROGRAPHY SETUP------------------------------------------------
+  nhd <- dplyr::filter(nhd, StreamOrde > 0 & is.na(HydroSeq)==0 & FlowDir == 1)
   nhd <- dplyr::filter(nhd, Q_cms > 0) #remove streams with no mean annual flow
   nhd$waterbody <- as.character(nhd$waterbody)
   nhd$lakeVol_m3 <- 0.533 * (nhd$LakeAreaSqKm*1e6)^1.204 #calculate lake volume (Cael et al. 2016)
 
-  #FIX NA OR 0 SLOPES (when appropriate, use average slope of directly upstream reaches)-----------------------------------------------
+  #FIX NA OR 0 SLOPES (when appropriate, use average slope of directly upstream and downstream reaches)-----------------------------------------------
   slope_vec <- as.vector(nhd$Slope)
   toNode_vec <- as.vector(nhd$ToNode)
   fromNode_vec <- as.vector(nhd$FromNode)
@@ -202,7 +203,7 @@ setupHydrography <- function(path_to_data, huc4){
     nhd[k,]$Slope <- fixBadSlopes(nhd[k,]$Slope, slope_vec, nhd[k,]$FromNode, fromNode_vec, nhd[k,]$ToNode, toNode_vec)
   }
 
-  #FIX MISSING AIR  TEMPS BY GRABBING THE ONE DIRECTLY UPSTREAM--------------------------------------------------------
+  #FIX MISSING AIR TEMPS (when appropriate, use average temp of the directly upstrea reaches)--------------------------------------------------------
   temp_vec <- as.vector(nhd$airTemp_mean_c)
   badTemps <- which(is.na(temp_vec))
   for(k in badTemps){
@@ -217,11 +218,11 @@ setupHydrography <- function(path_to_data, huc4){
     dplyr::group_by(WBArea_Permanent_Identifier) %>%
     dplyr::summarise(sumThroughFlow = sum(LengthKM))
   nhd <- dplyr::left_join(nhd, sumThroughFlow, by='WBArea_Permanent_Identifier')
-  nhd$lakePercent <- nhd$LengthKM / nhd$sumThroughFlow #fraction of lake assigned to each throughflow line
-  nhd$frac_lakeVol_m3 <- nhd$lakeVol_m3 * nhd$lakePercent
-  nhd$frac_lakeSurfaceArea_m2 <- nhd$LakeAreaSqKm * nhd$lakePercent * 1e6
+  nhd$lakePercent <- nhd$LengthKM / nhd$sumThroughFlow #fraction of lake assigned to each throughflow line is used to split the lake up
+  nhd$frac_lakeVol_m3 <- nhd$lakeVol_m3 * nhd$lakePercent #[m3]
+  nhd$frac_lakeSurfaceArea_m2 <- nhd$LakeAreaSqKm * nhd$lakePercent * 1e6 #[m2]
 
-  #CALCULATE TONS OF VARIABLES-------------------------------------------------------------
+  #CALCULATE TONS OF NVARIABLES FOR THE MODEL-------------------------------------------------------------
   #hydraulic geometry parameters
   depAHG <- readr::read_rds('/nas/cee-water/cjgleason/craig/RSK600/cache/depAHG.rds') #these are hard coded here. the models are available at the ref in the paper
   widAHG <- readr::read_rds('/nas/cee-water/cjgleason/craig/RSK600/cache/widAHG.rds')
@@ -231,22 +232,22 @@ setupHydrography <- function(path_to_data, huc4){
   nhd$f <- depAHG$coefficients[2]
 
   #get w, d, v differentially by river vs lake/reservoir
-  nhd$D <- mapply(depth_func, nhd$waterbody, nhd$Q_cms, nhd$frac_lakeVol_m3, nhd$frac_lakeSurfaceArea_m2, nhd$c, nhd$f)
-  nhd$W <- mapply(width_func, nhd$waterbody, nhd$Q_cms, nhd$a, nhd$b)
-  nhd$V <- mapply(velocity_func, nhd$waterbody, nhd$Q_cms, nhd$W, nhd$D)
+  nhd$D <- mapply(depth_func, nhd$waterbody, nhd$Q_cms, nhd$frac_lakeVol_m3, nhd$frac_lakeSurfaceArea_m2, nhd$c, nhd$f) #[m]
+  nhd$W <- mapply(width_func, nhd$waterbody, nhd$Q_cms, nhd$a, nhd$b) #[m]
+  nhd$V <- mapply(velocity_func, nhd$waterbody, nhd$Q_cms, nhd$W, nhd$D) #[m/s]
 
   #temperature
-  nhd$temp_c <- 3.941 + 0.818*nhd$airTemp_mean_c #convert air temp to water temp following Lauerwald etal 2015: r2 0.88
+  nhd$temp_c <- 3.941 + 0.818*nhd$airTemp_mean_c #[c] #convert air temp to water temp following Lauerwald etal 2015: r2 0.88
 
-  #Calculate residence time [seconds]
-  nhd$HRT <- mapply(restimeWater, nhd$frac_lakeVol_m3, nhd$LengthKM, nhd$V, nhd$Q_cms, nhd$waterbody)
+  #hydraulic residence time [seconds]
+  nhd$HRT <- mapply(restimeWater, nhd$frac_lakeVol_m3, nhd$LengthKM, nhd$V, nhd$Q_cms, nhd$waterbody) #[s]
 
-  #temperature dependent Henry's constant. Used to calculate ppm for Wc respiration rates
-  nhd$henry <- mapply(henry_func, nhd$temp_c)
+  #Henry's constant.
+  nhd$henry <- mapply(henry_func, nhd$temp_c) #[mol/atm*L]
 
-  #get mass transfer or respiration rate parameters for reaches
-  nhd$k_co2 <- mapply(kco2_func, nhd$V, nhd$Slope, nhd$D, nhd$temp_c, nhd$frac_lakeSurfaceArea_m2, nhd$waterbody)
-  nhd$k_bz <- mapply(kbz_func, nhd$Slope, nhd$D, nhd$waterbody, nhd$temp_c)
+  #gas exchange rate constants
+  nhd$k_co2 <- mapply(kco2_func, nhd$V, nhd$Slope, nhd$D, nhd$temp_c, nhd$frac_lakeSurfaceArea_m2, nhd$waterbody) #[1/s]
+  nhd$k_bz <- mapply(kbz_func, nhd$Slope, nhd$D, nhd$waterbody, nhd$temp_c) #[1/s]
 
   nhd <- as.data.frame(nhd)
 
@@ -257,6 +258,7 @@ setupHydrography <- function(path_to_data, huc4){
   nhd <- dplyr::select(nhd, c('NHDPlusID', 'NHDPlusID', 'WBArea_Permanent_Identifier', 'conus', 'FromNode', 'ToNode', 'HydroSeq', 'StartFlag', 'Divergence', 'waterbody', 'StreamOrde', 'LengthKM', 'Slope', 'Q_cms', 'frac_lakeSurfaceArea_m2',
                             'frac_lakeVol_m3', 'CatchmentAreaSqKm', 'temp_c', 'HRT', 'henry', 'k_co2', 'k_bz', 'W', 'D', 'V'))
 
+  #RETURN ROUTING TABLE---------------------------------------------------
   return(nhd)
 }
 
@@ -266,7 +268,7 @@ setupHydrography <- function(path_to_data, huc4){
 
 
 
-#' Splits 1710 hydrography into two for compute. These are coastal streams N and S of Colombia River mouth, so we split by the Colombia to make compute easier
+#' Split 1710 hydrography into two for treating as seperate basins. These are coastal streams N and S of Colombia River mouth, so together there are millions of streams and it makes compute difficult. So we split the basin along the Colombia to make compute easier, but also give the basins more physical meaning
 #'
 #' @name split1710
 #'
