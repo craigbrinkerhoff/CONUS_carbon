@@ -12,7 +12,7 @@ This code is setup for an HPC cluster using a nested parallelization scheme that
 
 - The actual call to run the pipeline is done in *src/run_targets.R* so make sure you check there as well for different commands to run in serial or parallel (and for the latter, the number of workers requested).
 
-- We use a conda environment to run the entire project. The environment recipe is available in *environment.yml*. Note that you need to manually install `dataRetrieval` package (v. 2.7.12) as its not available on conda-forge. You also need to manually install `ggsn` package (v. 0.5.0) as it's not available on conda-forge.
+- We use a conda environment to run the entire project. The environment recipe is available in *environment.yml*. Note that you need to manually install `dataRetrieval` package (v. 2.7.12) as its not available on conda-forge. You also need to manually install `ggsn` package (v. 0.5.0).
 
 - While the necessary hardcoded file paths *should* only be in *_targets.R*, there is an assumed data repo structure. Check functions in *src/analysis.R* for examples. There is one hardcoded file path (to the hydraulic geometry models- see Brinkerhoff et al. 2022 in the paper).
 
