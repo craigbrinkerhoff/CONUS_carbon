@@ -1154,16 +1154,43 @@ mainMapFunction1 <- function(mapList){
 	theme_set(theme_classic())
 
 	# READ IN CONUS BOUNDARY--------------------------------------
-  	states <- sf::st_read(paste0(path_to_data, '/other_shapefiles/cb_2018_us_state_5m.shp'))
-  	states <- dplyr::filter(states, !(NAME %in% c('Alaska',
-                                                'American Samoa',
-                                                'Commonwealth of the Northern Mariana Islands',
-                                                'Guam',
-                                                'District of Columbia',
-                                                'Puerto Rico',
-                                                'United States Virgin Islands',
-                                                'Hawaii'))) #remove non CONUS states/territories
-  	states <- sf::st_union(states)
+  	# states <- sf::st_read(paste0(path_to_data, '/other_shapefiles/cb_2018_us_state_5m.shp'))
+  	# states <- dplyr::filter(states, !(NAME %in% c('Alaska',
+    #                                             'American Samoa',
+    #                                             'Commonwealth of the Northern Mariana Islands',
+    #                                             'Guam',
+    #                                             'District of Columbia',
+    #                                             'Puerto Rico',
+    #                                             'United States Virgin Islands',
+    #                                             'Hawaii'))) #remove non CONUS states/territories
+												
+  	# states <- sf::st_union(states)
+
+	sf::sf_use_s2(FALSE)
+
+	states <- sf::st_read('/nas/cee-water/cjgleason/craig/canada_shapefile/na_shp_fin.shp')
+	#states <- dplyr::filter(states, name %in% c('Mexico', 'Canada', 'United States of America'))
+	#states <- sf::st_cast(states, "POLYGON")
+
+
+	#Canada boundary
+	# canada <- sf::st_read('/nas/cee-water/cjgleason/craig/canada_shapefile/lpr_000b16a_e.shp')
+	# canada <- sf::st_make_valid(canada)
+	# canada <- sf::st_transform(canada, crs=4326)
+	# canada <- sf::st_union(canada)
+	# # canada <- sf::st_crop(canada, xmin = -140, xmax = -60,
+    # #                          ymin = 30, ymax = 55)
+
+	# #Mexico boundary
+	# Mexico <- sf::st_read('/nas/cee-water/cjgleason/craig/canada_shapefile/mex_admbnda_adm0_govmex_20210618.shp')
+	# Mexico <- sf::st_make_valid(Mexico)
+	# Mexico <- sf::st_transform(Mexico, crs=4326)
+	# Mexico <- sf::st_union(Mexico)
+	# # Mexico <- sf::st_crop(Mexico, xmin = -140, xmax = -60,
+    # #                          ymin = 25, ymax = 55)
+
+	# boundaries_1 <- rbind(states, canada)
+	# boundaries <- rbind(boundaries_1, Mexico)
 
   	#BIG MAIN MAP------------------------------------------
 	#unfortuantely, list of sf objects must each be manually specified to do this. Objects are by basin to do the shapefile prep in parallel
@@ -1417,10 +1444,10 @@ mainMapFunction1 <- function(mapList){
     			alpha=0)
 
 	#WRITE TO FILE---------------------------------------------------------
-	ggsave(filename="cache/figures/mainMap_1.jpg",plot=bigMap,width=20,height=15)
+	ggsave(filename="cache/figures/mainMap_1_jt.jpg",plot=bigMap,width=20,height=15)
 	
 	#RETURN FILEPATH-------------------------------------------
-	return('see cache/figures/')
+	return('see cache/figures/_jt2')
 }
 
 
@@ -1624,7 +1651,7 @@ mainMapFunction2 <- function(map_0205, map_0206,map_0207,map_0208,map_0502, map_
   	comboPlot <- patchwork::wrap_plots(B=inset4 + colScale + fillScale, C=inset3 + colScale + fillScale, D=inset2 + colScale, E=inset1 + colScale, design=design)
 
 	#WRITE TO FILE---------------------------------------------------
-	ggsave(filename="cache/figures/mainMap_2.jpg",plot=comboPlot,width=20,height=5)
+	ggsave(filename="cache/figures/mainMap_2_jt.jpg",plot=comboPlot,width=20,height=5)
 	
 	#RETURN FILEPATH--------------------------------------------------------------------
 	return('see cache/figures/')

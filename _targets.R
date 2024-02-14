@@ -1672,6 +1672,8 @@ list(
                                           list(lumped_01, lumped_02, lumped_03, lumped_04, lumped_05, lumped_06, lumped_07, lumped_08, lumped_09, lumped_10, lumped_11, lumped_12, lumped_13, lumped_14, lumped_15, lumped_16, lumped_17, lumped_18))),
 
   ###### GENERATE PAPER FIGURES
+  tar_target(figMainMap1_jt, mainMapFunction1(combined_rivermaps)),
+  tar_target(figMainMap2_jt, mainMapFunction2(map_0205, map_0206,map_0207,map_0208,map_0502, map_0503, map_0501, map_0505)),
   tar_target(figMainMap1, mainMapFunction1(combined_rivermaps)),
   tar_target(figMainMap2, mainMapFunction2(map_0205, map_0206,map_0207,map_0208,map_0502, map_0503, map_0501, map_0505)),
   tar_target(figSources, sourcesMap(path_to_data, shapefile_huc4, combined_sources_by_order)),
