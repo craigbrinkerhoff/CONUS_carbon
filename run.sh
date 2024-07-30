@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name='carbon_master'
-#SBATCH -c 48  # Number of Cores per Task
+#SBATCH -c 10  # Number of Cores per Task
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=cbrinkerhoff@umass.edu
 #SBATCH -p ceewater_cjgleason-cpu

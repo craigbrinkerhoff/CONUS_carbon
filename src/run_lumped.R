@@ -16,7 +16,7 @@
 #' @param glorich_data: observed CO2 concentrations per region (HUC2) used to upscale
 #' @param hydrographyList: list of regional (HUC2) river networks to do upscaling on
 #' @param co2List: list of calibrated model runs by basin in the region
-#' @param cemission_list: list of model co2 fluxes by basin in the region
+#' @param emissions_list: list of model co2 fluxes by basin in the region
 #' @param emissions_uncertainty_list: list of transport model uncertanties by basin in the region
 #'
 #' @import dplyr
@@ -62,7 +62,7 @@ runLumpedModels <- function(HUC2, glorich_data,hydrographyList,co2List,emissions
   widAHG <- readr::read_rds('/nas/cee-water/cjgleason/craig/RSK600/cache/widAHG.rds')
   rivers_by_order <- network %>%
     dplyr::group_by(StreamOrde) %>%
-    dplyr::summarise(kco2_m_s = mean(k_co2*D, na.rm=T), #m/s
+    dplyr::summarise(kco2_m_s = mean(k_co2*D, na.rm=T), #[m/s]
                      SA_m2 = sum(LengthKM*W*1000, na.rm=T))
 
   #get regional k co2
@@ -82,8 +82,8 @@ runLumpedModels <- function(HUC2, glorich_data,hydrographyList,co2List,emissions
         dplyr::mutate(k600_m_dy = ifelse(area_skm < 0.1, 0.54, #[m/dy] Read etal 2012
                        ifelse(area_skm < 1, 1.16,
                            ifelse(area_skm < 10, 1.32, 1.9)))) %>%
-    dplyr::mutate(kco2_m_dy = k600_m_dy/(600/sc)^-0.5) %>% #m/dy
-    dplyr::mutate(kco2_m_s = (kco2_m_dy)/(24*60*60))  #m/s
+    dplyr::mutate(kco2_m_dy = k600_m_dy/(600/sc)^-0.5) %>% #[m/dy]
+    dplyr::mutate(kco2_m_s = (kco2_m_dy)/(24*60*60))  #[m/s]
 
   #get regional fco2
   lakes_by_order$lakes_FCO2_lumped <- ((lakeCO2-400)*henry*1e-6)*lakes_by_order$kco2_m_s*(1/0.001)*12.01*(60*60*24*365) #[g-C/m2/yr]

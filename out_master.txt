@@ -32,213 +32,693 @@ dbl (2): ...1, level
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-✔ skip target hydrography_1401
-✔ skip target hydrography_1402
-✔ skip target hydrography_1403
-✔ skip target hydrography_1404
-✔ skip target hydrography_1405
-✔ skip target hydrography_1406
-✔ skip target hydrography_1407
-✔ skip target hydrography_1408
-✔ skip target hydrography_0601
+✔ skip target hydrography_1108
+✔ skip target calibratedParameters_1108
+✔ skip target final_1108
+✔ skip target hydrography_1109
+✔ skip target hydrography_1210
+✔ skip target calibratedParameters_1210
+✔ skip target final_1210
+✔ skip target hydrography_1211
+✔ skip target calibratedParameters_1211
+✔ skip target final_1211
+• start target pseudoValidation_1210
+• start target pseudoValidation_1211
+✔ skip target calibratedParameters_0601
 ✔ skip target hydrography_0602
 ✔ skip target hydrography_0603
 ✔ skip target hydrography_0604
+✔ skip target hydrography_1201
+✔ skip target calibratedParameters_1201
+✔ skip target final_1201
+• start target pseudoValidation_1201
+✔ skip target exportedCO2_1201
+✔ skip target hydrography_1202
+✔ skip target calibratedParameters_1202
+✔ skip target final_1202
+• start target pseudoValidation_1202
+✔ skip target exportedCO2_1202
+✔ skip target hydrography_1203
+✔ skip target calibratedParameters_1203
+✔ skip target final_1203
+• start target pseudoValidation_1203
+✔ skip target exportedCO2_1203
+✔ skip target hydrography_1204
+✔ skip target hydrography_1205
+✔ skip target calibratedParameters_1205
+✔ skip target final_1205
+• start target pseudoValidation_1205
+✔ skip target exportedCO2_1205
+✔ skip target hydrography_1206
+✔ skip target hydrography_1207
+✔ skip target hydrography_1208
+✔ skip target calibratedParameters_1208
+✔ skip target final_1208
+• start target pseudoValidation_1208
+✔ skip target exportedCO2_1208
+✔ skip target hydrography_1209
+• start target pseudoValidation_1108
+✔ skip target hydrography_0501
+✔ skip target calibratedParameters_0501
+✔ skip target hydrography_0502
+✔ skip target calibratedParameters_0502
+✔ skip target hydrography_0503
+✔ skip target exportedCO2_1108
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_12/NHDPLUS_H_1210_HU4_GDB/NHDPLUS_H_1210_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 104977 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -99.68691 ymin: 27.82518 xmax: -95.96899 ymax: 30.2598
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1210 [26.036 seconds]
+✔ skip target hydrography_0504
+✔ skip target calibratedParameters_0504
+✔ skip target hydrography_0505
+✔ skip target calibratedParameters_0505
+✔ skip target hydrography_0506
+✔ skip target calibratedParameters_0506
+✔ skip target hydrography_0507
+✔ skip target calibratedParameters_0507
+✔ skip target hydrography_0508
+✔ skip target calibratedParameters_0508
+✔ skip target hydrography_0509
+✔ skip target hydrography_1301
+✔ skip target calibratedParameters_1301
+✔ skip target final_1301
+✔ skip target hydrography_1302
+✔ skip target hydrography_1303
+✔ skip target calibratedParameters_1304
+✔ skip target hydrography_1304
+✔ skip target hydrography_1305
+✔ skip target calibratedParameters_1305
+✔ skip target final_1305
+✔ skip target hydrography_1306
+✔ skip target calibratedParameters_1306
+✔ skip target final_1306
+✔ skip target hydrography_1307
+✔ skip target hydrography_1308
+✔ skip target hydrography_1309
+✔ skip target final_0501
+• start target pseudoValidation_0501
+✔ skip target final_0502
+• start target pseudoValidation_0502
+✔ skip target final_0504
+• start target pseudoValidation_0504
+✔ skip target final_0505
+• start target pseudoValidation_0505
+✔ skip target final_0506
+• start target pseudoValidation_0506
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_12/NHDPLUS_H_1205_HU4_GDB/NHDPLUS_H_1205_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 28354 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -103.8424 ymin: 32.72906 xmax: -99.9155 ymax: 34.66107
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1205 [12.601 seconds]
+✔ skip target final_0507
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_12/NHDPLUS_H_1208_HU4_GDB/NHDPLUS_H_1208_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 21698 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -103.8313 ymin: 31.64899 xmax: -100.1419 ymax: 33.58088
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1208 [11.661 seconds]
+• start target pseudoValidation_0507
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1108_HU4_GDB/NHDPLUS_H_1108_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 48271 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -105.5506 ymin: 34.82075 xmax: -103.0142 ymax: 37.05773
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1108 [15.634 seconds]
+✔ skip target final_0508
+• start target pseudoValidation_0508
+✔ skip target hydrography_0510
+✔ skip target calibratedParameters_0510
+✔ skip target hydrography_0511
+✔ skip target calibratedParameters_0511
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_12/NHDPLUS_H_1201_HU4_GDB/NHDPLUS_H_1201_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 101720 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -96.39112 ymin: 29.8936 xmax: -93.14789 ymax: 33.32111
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1201 [27.07 seconds]
+✔ skip target hydrography_0512
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_12/NHDPLUS_H_1202_HU4_GDB/NHDPLUS_H_1202_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 81641 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -95.92266 ymin: 29.95123 xmax: -93.83656 ymax: 32.53821
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1202 [21.972 seconds]
+✔ skip target calibratedParameters_0512
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_12/NHDPLUS_H_1203_HU4_GDB/NHDPLUS_H_1203_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 153909 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -98.7328 ymin: 29.7541 xmax: -94.54405 ymax: 33.732
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1203 [36.782 seconds]
+✔ skip target hydrography_0513
+✔ skip target calibratedParameters_0513
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0502_HU4_GDB/NHDPLUS_H_0502_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 34582 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -80.62082 ymin: 38.39719 xmax: -78.8934 ymax: 40.49143
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0502 [15.914 seconds]
+✔ skip target final_0510
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0504_HU4_GDB/NHDPLUS_H_0504_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 41649 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -82.77205 ymin: 39.38033 xmax: -80.89738 ymax: 41.14259
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0504 [17.507 seconds]
+• start target pseudoValidation_0510
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0505_HU4_GDB/NHDPLUS_H_0505_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 66495 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -82.14457 ymin: 36.12057 xmax: -79.62164 ymax: 38.8479
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0505 [22.352 seconds]
+✔ skip target hydrography_0514
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0506_HU4_GDB/NHDPLUS_H_0506_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 24579 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -83.93222 ymin: 38.70903 xmax: -82.4353 ymax: 40.78761
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0506 [12.053 seconds]
+✔ skip target final_0511
+• start target pseudoValidation_0511
+✔ skip target final_0512
+• start target pseudoValidation_0512
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_12/NHDPLUS_H_1211_HU4_GDB/NHDPLUS_H_1211_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 108920 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -100.5589 ymin: 25.85505 xmax: -97.04458 ymax: 30.11735
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1211 [29.647 seconds]
+✔ skip target final_0513
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0501_HU4_GDB/NHDPLUS_H_0501_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 58276 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -80.3704 ymin: 39.92081 xmax: -77.84609 ymax: 42.44447
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0501 [20.378 seconds]
+• start target pseudoValidation_0513
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0507_HU4_GDB/NHDPLUS_H_0507_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 34385 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -83.09599 ymin: 36.94452 xmax: -81.1591 ymax: 38.51325
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0507 [14.957 seconds]
+✔ skip target hydrography_1002
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0508_HU4_GDB/NHDPLUS_H_0508_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 100884 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -85.385 ymin: 39.10524 xmax: -83.5619 ymax: 40.636
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0508 [23.082 seconds]
+✔ skip target calibratedParameters_1002
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0510_HU4_GDB/NHDPLUS_H_0510_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 74582 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -85.20382 ymin: 36.89254 xmax: -82.64901 ymax: 39.09232
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0510 [22.712 seconds]
+✔ skip target hydrography_1003
+✔ skip target hydrography_1004
+✔ skip target hydrography_1005
+✔ skip target calibratedParameters_1005
+✔ skip target hydrography_1006
+✔ skip target hydrography_1007
+✔ skip target calibratedParameters_1007
+✔ skip target hydrography_1008
+✔ skip target calibratedParameters_1008
+✔ skip target hydrography_1009
+✔ skip target calibratedParameters_1009
+✔ skip target hydrography_1030
+✔ skip target final_1002
+✔ skip target exportedCO2_1002
+✔ skip target hydrography_0801
+✔ skip target final_1005
+✔ skip target exportedCO2_1005
+✔ skip target calibratedParameters_0802
+✔ skip target calibratedParameters_0803
+✔ skip target final_1007
+✔ skip target exportedCO2_1007
+✔ skip target final_1008
+✔ skip target exportedCO2_1008
+✔ skip target hydrography_0804
+✔ skip target final_1009
+✔ skip target exportedCO2_1009
+✔ skip target hydrography_0805
+✔ skip target calibratedParameters_0805
+✔ skip target hydrography_0806
+✔ skip target hydrography_0807
+✔ skip target hydrography_0808
+✔ skip target hydrography_1010
+✔ skip target hydrography_0809
+✔ skip target hydrography_1011
+✔ skip target calibratedParameters_1012
+✔ skip target calibratedParameters_1013
+✔ skip target calibratedParameters_1014
+✔ skip target hydrography_1401
+✔ skip target hydrography_1015
+✔ skip target calibratedParameters_1015
+✔ skip target hydrography_1402
+✔ skip target calibratedParameters_1402
+✔ skip target final_1402
+• start target pseudoValidation_1402
+✔ skip target hydrography_1016
+✔ skip target calibratedParameters_1016
+✔ skip target hydrography_1017
+✔ skip target hydrography_1403
+✔ skip target hydrography_1404
+✔ skip target calibratedParameters_1404
+✔ skip target final_1404
+• start target pseudoValidation_1404
+✔ skip target hydrography_1018
+✔ skip target calibratedParameters_1018
+✔ skip target hydrography_1405
+✔ skip target calibratedParameters_1405
+✔ skip target final_1405
+• start target pseudoValidation_1405
+✔ skip target calibratedParameters_1019
+✔ skip target hydrography_1406
+✔ skip target hydrography_1407
+✔ skip target hydrography_1408
+✔ skip target calibratedParameters_1408
+✔ skip target final_1408
+• start target pseudoValidation_1408
+✔ skip target hydrography_1020
+✔ skip target hydrography_1021
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0511_HU4_GDB/NHDPLUS_H_0511_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 49913 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -87.69105 ymin: 36.45707 xmax: -84.63254 ymax: 37.92652
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0511 [16.962 seconds]
+✔ skip target calibratedParameters_1021
+✔ skip target hydrography_1022
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0513_HU4_GDB/NHDPLUS_H_0513_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 82549 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -88.39566 ymin: 35.31712 xmax: -82.72094 ymax: 37.53684
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0513 [23.782 seconds]
+✔ skip target calibratedParameters_1022
+✔ skip target hydrography_1023
+✔ skip target hydrography_1024
+✔ skip target final_1021
+✔ skip target exportedCO2_1021
+✔ skip target hydrography_1025
+✔ skip target calibratedParameters_1025
+✔ skip target final_1022
+✔ skip target exportedCO2_1022
+✔ skip target hydrography_1026
+✔ skip target calibratedParameters_1026
+✔ skip target hydrography_1027
+✔ skip target hydrography_1028
+✔ skip target calibratedParameters_1028
+✔ skip target final_1025
+✔ skip target exportedCO2_1025
+✔ skip target hydrography_1029
+✔ skip target calibratedParameters_1029
+✔ skip target final_1026
+✔ skip target exportedCO2_1026
+✔ skip target final_1028
+✔ skip target exportedCO2_1028
+✔ skip target final_1029
+✔ skip target exportedCO2_1029
+✔ skip target final_0805
+• start target pseudoValidation_0805
+✔ skip target final_1015
+✔ skip target exportedCO2_1015
+✔ skip target final_1016
+✔ skip target exportedCO2_1016
+✔ skip target final_1018
+✔ skip target exportedCO2_1018
+✔ skip target calibratedParameters_0427_1
+• start target pseudoValidation_1301
+• start target pseudoValidation_1305
+• start target pseudoValidation_1306
+✔ skip target hydrography_0701
+✔ skip target hydrography_0702
+✔ skip target calibratedParameters_0702
+✔ skip target hydrography_0703
+✔ skip target calibratedParameters_0703
+✔ skip target hydrography_0704
+✔ skip target hydrography_0705
+✔ skip target calibratedParameters_0705
+✔ skip target hydrography_0706
+✔ skip target hydrography_0707
+✔ skip target calibratedParameters_0707
+✔ skip target hydrography_0708
+✔ skip target hydrography_0709
+✔ skip target calibratedParameters_0709
 ✔ skip target hydrography_1501
 ✔ skip target hydrography_1502
+✔ skip target calibratedParameters_1502
+✔ skip target final_1502
 ✔ skip target hydrography_1503
 ✔ skip target hydrography_1504
+✔ skip target calibratedParameters_1504
+✔ skip target final_1504
 ✔ skip target hydrography_1505
 ✔ skip target hydrography_1506
+✔ skip target calibratedParameters_1506
+✔ skip target final_1506
 ✔ skip target hydrography_1507
 ✔ skip target hydrography_1508
+✔ skip target calibratedParameters_1508
+✔ skip target final_1508
+✔ skip target final_0702
+• start target pseudoValidation_0702
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_14/NHDPLUS_H_1402_HU4_GDB/NHDPLUS_H_1402_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 71269 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -108.7735 ymin: 37.83728 xmax: -106.2394 ymax: 39.25757
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1402 [21.935 seconds]
+✔ skip target final_0703
+• start target pseudoValidation_0703
+✔ skip target final_0705
+• start target pseudoValidation_0705
+✔ skip target final_0707
+• start target pseudoValidation_0707
+✔ skip target final_0709
+• start target pseudoValidation_0709
+✔ skip target hydrography_0710
+✔ skip target calibratedParameters_0710
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_14/NHDPLUS_H_1404_HU4_GDB/NHDPLUS_H_1404_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 103219 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -110.9212 ymin: 40.5287 xmax: -107.0863 ymax: 43.45149
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1404 [30.45 seconds]
+✔ skip target hydrography_0711
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_14/NHDPLUS_H_1405_HU4_GDB/NHDPLUS_H_1405_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 111410 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -109.679 ymin: 39.44465 xmax: -106.5934 ymax: 41.63074
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1405 [35.43 seconds]
+✔ skip target hydrography_0712
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_14/NHDPLUS_H_1408_HU4_GDB/NHDPLUS_H_1408_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 176328 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -110.9019 ymin: 35.56232 xmax: -106.6 ymax: 37.96939
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1408 [46.489 seconds]
+✔ skip target calibratedParameters_0712
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_08/NHDPLUS_H_0805_HU4_GDB/NHDPLUS_H_0805_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 40942 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -92.14403 ymin: 31.61379 xmax: -90.9259 ymax: 34.16215
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0805 [16.647 seconds]
+✔ skip target hydrography_0713
+✔ skip target calibratedParameters_0714
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_13/NHDPLUS_H_1305_HU4_GDB/NHDPLUS_H_1305_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 48834 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -106.7436 ymin: 30.06779 xmax: -104.1389 ymax: 35.27711
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1305 [19.041 seconds]
+✔ skip target final_0710
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_13/NHDPLUS_H_1306_HU4_GDB/NHDPLUS_H_1306_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 69731 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -105.8471 ymin: 31.91776 xmax: -103.5052 ymax: 35.97627
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1306 [22.781 seconds]
+• start target pseudoValidation_0710
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0702_HU4_GDB/NHDPLUS_H_0702_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 36301 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -97.35545 ymin: 43.23146 xmax: -93.11167 ymax: 46.32354
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0702 [16.802 seconds]
+✔ skip target final_0712
+• start target pseudoValidation_0712
 ✔ skip target hydrography_0901
 ✔ skip target hydrography_0902
 ✔ skip target hydrography_0903
 ✔ skip target hydrography_0904
-✔ skip target hydrography_0510
-✔ skip target hydrography_0420
-✔ skip target hydrography_0511
-✔ skip target hydrography_0512
-✔ skip target hydrography_0513
-✔ skip target hydrography_0514
-✔ skip target hydrography_0424
-✔ skip target hydrography_0426
-✔ skip target hydrography_0427
-✔ skip target hydrography_0428
-✔ skip target hydrography_0429
-✔ skip target hydrography_0410
-✔ skip target hydrography_0411
-✔ skip target hydrography_0412
-✔ skip target hydrography_0413
-✔ skip target hydrography_0414
-✔ skip target hydrography_0418
-✔ skip target hydrography_0419
-✔ skip target hydrography_1301
-✔ skip target hydrography_1302
-✔ skip target hydrography_1303
-✔ skip target calibratedParameters_1304
-✔ skip target hydrography_1305
-✔ skip target hydrography_1306
-✔ skip target hydrography_1307
-✔ skip target hydrography_1308
-✔ skip target hydrography_1309
-✔ skip target hydrography_0430
-✔ skip target hydrography_0501
-✔ skip target hydrography_0502
-✔ skip target hydrography_0503
-✔ skip target hydrography_0504
-✔ skip target hydrography_0505
-✔ skip target hydrography_0506
-✔ skip target hydrography_0507
-✔ skip target hydrography_0508
-✔ skip target hydrography_0509
-✔ skip target hydrography_0401
-✔ skip target hydrography_0402
-✔ skip target hydrography_0403
-✔ skip target hydrography_0404
-✔ skip target hydrography_0405
-✔ skip target hydrography_0406
-✔ skip target hydrography_0407
-✔ skip target hydrography_0408
-✔ skip target hydrography_0409
-✔ skip target hydrography_1304
-✔ skip target hydrography_1010
-✔ skip target hydrography_1011
-✔ skip target calibratedParameters_1012
-✔ skip target hydrography_1012
-✔ skip target calibratedParameters_1013
-✔ skip target hydrography_1013
-✔ skip target calibratedParameters_1014
-✔ skip target hydrography_1014
-✔ skip target hydrography_1015
-✔ skip target hydrography_1016
-✔ skip target hydrography_1017
-✔ skip target hydrography_1018
-✔ skip target calibratedParameters_1019
-✔ skip target hydrography_1019
-✔ skip target hydrography_1020
-✔ skip target hydrography_1021
-✔ skip target hydrography_1022
-✔ skip target hydrography_1023
-✔ skip target hydrography_1024
-✔ skip target hydrography_1025
-✔ skip target hydrography_1026
-✔ skip target hydrography_1027
-✔ skip target hydrography_1028
-✔ skip target hydrography_1029
-✔ skip target hydrography_1030
-✔ skip target hydrography_0310
-✔ skip target hydrography_0311
-✔ skip target hydrography_0312
-✔ skip target hydrography_1002
-✔ skip target hydrography_0313
-✔ skip target hydrography_1003
-✔ skip target hydrography_0314
-✔ skip target hydrography_1004
-✔ skip target hydrography_0315
-✔ skip target hydrography_1005
-✔ skip target hydrography_0316
-✔ skip target hydrography_1006
-✔ skip target hydrography_0317
-✔ skip target hydrography_1007
-✔ skip target hydrography_0318
-✔ skip target hydrography_1008
-✔ skip target hydrography_1009
-✔ skip target hydrography_1210
-✔ skip target hydrography_1211
-✔ skip target hydrography_0301
-✔ skip target hydrography_0302
-✔ skip target hydrography_0303
-✔ skip target hydrography_0304
-✔ skip target hydrography_0305
-✔ skip target hydrography_0306
-✔ skip target hydrography_0307
-✔ skip target hydrography_0308
-✔ skip target hydrography_0309
-✔ skip target hydrography_1201
-✔ skip target hydrography_1202
-✔ skip target hydrography_1203
-✔ skip target hydrography_1204
-✔ skip target hydrography_1205
-✔ skip target hydrography_1206
-✔ skip target hydrography_1207
-✔ skip target hydrography_1208
-✔ skip target hydrography_1209
-✔ skip target hydrography_1110
-✔ skip target hydrography_1111
-✔ skip target hydrography_1112
-✔ skip target hydrography_1113
-✔ skip target calibratedParameters_1114
-✔ skip target hydrography_1114
-✔ skip target calibratedParameters_0427_1
-✔ skip target hydrography_0427_1
-✔ skip target hydrography_1101
-✔ skip target hydrography_1102
-✔ skip target hydrography_1103
-✔ skip target hydrography_1104
-✔ skip target hydrography_1105
-✔ skip target hydrography_1106
-✔ skip target hydrography_1107
-✔ skip target hydrography_1108
-✔ skip target hydrography_1109
-✔ skip target hydrography_0202
-✔ skip target hydrography_0203
-✔ skip target hydrography_0204
-✔ skip target hydrography_0205
-✔ skip target hydrography_0206
-✔ skip target hydrography_0207
-✔ skip target hydrography_0208
-✔ skip target calibratedParameters_1710b
-✔ skip target hydrography_0110
-✔ skip target hydrography_0101
-✔ skip target hydrography_0102
-✔ skip target hydrography_0103
-✔ skip target hydrography_0104
-✔ skip target hydrography_0105
-✔ skip target hydrography_0106
-✔ skip target hydrography_0107
-✔ skip target hydrography_0108
-✔ skip target hydrography_0109
-✔ skip target calibratedParameters_0601
-✔ skip target hydrography_0801
-✔ skip target calibratedParameters_0802
-✔ skip target calibratedParameters_0803
-✔ skip target hydrography_0804
-✔ skip target hydrography_0805
-✔ skip target hydrography_0806
-✔ skip target hydrography_0807
-✔ skip target hydrography_0808
-✔ skip target hydrography_0809
 ✔ skip target hydrography_1601
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_13/NHDPLUS_H_1301_HU4_GDB/NHDPLUS_H_1301_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 84712 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -107.5554 ymin: 36.76837 xmax: -105.1355 ymax: 38.45324
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1301 [25.171 seconds]
+✔ skip target calibratedParameters_1601
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0703_HU4_GDB/NHDPLUS_H_0703_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 17248 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -93.60202 ymin: 44.74622 xmax: -90.98071 ymax: 46.70477
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0703 [11.297 seconds]
+✔ skip target final_1601
+• start target pseudoValidation_1601
 ✔ skip target hydrography_1602
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0709_HU4_GDB/NHDPLUS_H_0709_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 34532 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -90.70902 ymin: 41.23086 xmax: -88.18656 ymax: 43.7763
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0709 [16.588 seconds]
 ✔ skip target hydrography_1603
+✔ skip target calibratedParameters_1603
+✔ skip target final_1603
+• start target pseudoValidation_1603
 ✔ skip target hydrography_1604
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0705_HU4_GDB/NHDPLUS_H_0705_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 27374 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -92.33755 ymin: 44.41019 xmax: -89.4349 ymax: 46.29927
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0705 [14.111 seconds]
+✔ skip target calibratedParameters_1604
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0707_HU4_GDB/NHDPLUS_H_0707_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 43702 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -91.15076 ymin: 42.95434 xmax: -88.93311 ymax: 46.18406
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0707 [18.868 seconds]
+✔ skip target final_1604
+• start target pseudoValidation_1604
 ✔ skip target hydrography_1605
 ✔ skip target hydrography_1606
-✔ skip target hydrography_0701
-✔ skip target hydrography_0702
-✔ skip target hydrography_0703
-✔ skip target hydrography_0704
-✔ skip target hydrography_0705
-✔ skip target hydrography_0706
-✔ skip target hydrography_0707
-✔ skip target hydrography_0708
-✔ skip target hydrography_0709
+✔ skip target calibratedParameters_1606
+✔ skip target final_1606
+• start target pseudoValidation_1606
+✔ skip target hydrography_0802
+✔ skip target hydrography_0803
 ✔ skip target calibratedParameters_1711
 ✔ skip target hydrography_1711
+✔ skip target final_1711
 ✔ skip target hydrography_1712
-✔ skip target hydrography_0710
-✔ skip target hydrography_0711
-✔ skip target hydrography_0712
-✔ skip target hydrography_0713
-✔ skip target calibratedParameters_0714
+✔ skip target calibratedParameters_1712
+✔ skip target final_1712
+• start target pseudoValidation_1502
+• start target pseudoValidation_1504
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_16/NHDPLUS_H_1603_HU4_GDB/NHDPLUS_H_1603_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 58566 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -114.2141 ymin: 37.40809 xmax: -111.3041 ymax: 40.00865
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1603 [21.324 seconds]
+• start target pseudoValidation_1506
+• start target pseudoValidation_1508
 ✔ skip target calibratedParameters_1701
 ✔ skip target hydrography_1701
+✔ skip target final_1701
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0710_HU4_GDB/NHDPLUS_H_0710_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 46333 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -96.10252 ymin: 40.3756 xmax: -91.42104 ymax: 44.2452
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0710 [21.184 seconds]
 ✔ skip target calibratedParameters_1702
 ✔ skip target hydrography_1702
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_16/NHDPLUS_H_1601_HU4_GDB/NHDPLUS_H_1601_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 39087 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -112.5478 ymin: 40.71525 xmax: -110.6023 ymax: 42.79047
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1601 [17.485 seconds]
 ✔ skip target hydrography_1703
+✔ skip target calibratedParameters_1703
+✔ skip target final_1703
 ✔ skip target hydrography_1704
+✔ skip target calibratedParameters_1704
+✔ skip target final_1704
 ✔ skip target hydrography_1705
 ✔ skip target calibratedParameters_1706
 ✔ skip target hydrography_1706
@@ -246,185 +726,591 @@ dbl (2): ...1, level
 ✔ skip target hydrography_1708
 ✔ skip target calibratedParameters_1709
 ✔ skip target hydrography_1709
+✔ skip target final_1709
+✔ skip target hydrography_0714
 ✔ skip target hydrography_1810
-✔ skip target calibratedParameters_0305
+✔ skip target calibratedParameters_1810
+✔ skip target final_1810
+• start target pseudoValidation_1810
 ✔ skip target calibratedParameters_1801
 ✔ skip target hydrography_1801
+✔ skip target final_1801
+• start target pseudoValidation_1801
 ✔ skip target calibratedParameters_1802
 ✔ skip target hydrography_1802
+✔ skip target final_1802
+• start target pseudoValidation_1802
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0712_HU4_GDB/NHDPLUS_H_0712_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 249122 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -89.08534 ymin: 40.40031 xmax: -85.89414 ymax: 43.20311
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0712 [54.519 seconds]
 ✔ skip target hydrography_1803
+✔ skip target calibratedParameters_1803
+✔ skip target final_1803
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_15/NHDPLUS_H_1502_HU4_GDB/NHDPLUS_H_1502_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 98774 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -111.9592 ymin: 33.87876 xmax: -108.0441 ymax: 36.79204
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1502 [30.451 seconds]
+• start target pseudoValidation_1803
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_15/NHDPLUS_H_1504_HU4_GDB/NHDPLUS_H_1504_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 83552 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -110.798 ymin: 31.45003 xmax: -107.7875 ymax: 34.075
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1504 [30.464 seconds]
 ✔ skip target calibratedParameters_1804
 ✔ skip target hydrography_1804
 ✔ skip target hydrography_1805
-✔ skip target hydrography_1806
-✔ skip target hydrography_1807
-✔ skip target hydrography_1808
-✔ skip target hydrography_1809
-✔ skip target calibratedParameters_0427
-✔ skip target hydrography_1710
-✔ skip target hydrography_0714
-✔ skip target hydrography_0802
-✔ skip target hydrography_0803
-✔ skip target calibratedParameters_1402
-✔ skip target calibratedParameters_1404
-✔ skip target calibratedParameters_1405
-✔ skip target calibratedParameters_1408
-✔ skip target calibratedParameters_1502
-✔ skip target calibratedParameters_1504
-✔ skip target calibratedParameters_1506
-✔ skip target calibratedParameters_1508
-✔ skip target calibratedParameters_0901
-✔ skip target calibratedParameters_0902
-✔ skip target calibratedParameters_0903
-✔ skip target calibratedParameters_0904
-✔ skip target calibratedParameters_0510
-✔ skip target calibratedParameters_0511
-✔ skip target calibratedParameters_0512
-✔ skip target calibratedParameters_0513
-✔ skip target calibratedParameters_0410
-✔ skip target calibratedParameters_0411
-✔ skip target calibratedParameters_0412
-✔ skip target calibratedParameters_0413
-✔ skip target calibratedParameters_0414
-✔ skip target calibratedParameters_1301
-✔ skip target calibratedParameters_1305
-✔ skip target calibratedParameters_1306
-✔ skip target calibratedParameters_0501
-✔ skip target calibratedParameters_0502
-✔ skip target calibratedParameters_0504
-✔ skip target calibratedParameters_0505
-✔ skip target calibratedParameters_0506
-✔ skip target calibratedParameters_0507
-✔ skip target calibratedParameters_0508
-✔ skip target calibratedParameters_0401
-✔ skip target calibratedParameters_0402
-✔ skip target calibratedParameters_0403
-✔ skip target calibratedParameters_0404
-✔ skip target calibratedParameters_0405
-✔ skip target calibratedParameters_0406
-✔ skip target calibratedParameters_0407
-✔ skip target calibratedParameters_0408
-✔ skip target final_1012
-✔ skip target calibratedParameters_1015
-✔ skip target calibratedParameters_1016
-✔ skip target calibratedParameters_1018
-✔ skip target final_1019
-✔ skip target calibratedParameters_1021
-✔ skip target calibratedParameters_1022
-✔ skip target calibratedParameters_1025
-✔ skip target calibratedParameters_1026
-✔ skip target calibratedParameters_1028
-✔ skip target calibratedParameters_1029
-✔ skip target calibratedParameters_0310
-✔ skip target calibratedParameters_0311
-✔ skip target calibratedParameters_0312
-✔ skip target calibratedParameters_1002
-✔ skip target calibratedParameters_0313
-✔ skip target calibratedParameters_0314
-✔ skip target calibratedParameters_0315
-✔ skip target calibratedParameters_1005
-✔ skip target calibratedParameters_0317
-✔ skip target calibratedParameters_1007
-✔ skip target calibratedParameters_0318
-✔ skip target calibratedParameters_1008
-✔ skip target calibratedParameters_1009
-✔ skip target calibratedParameters_1210
-✔ skip target calibratedParameters_1211
-✔ skip target calibratedParameters_0301
-✔ skip target calibratedParameters_0302
-✔ skip target calibratedParameters_0303
-✔ skip target calibratedParameters_0304
-✔ skip target calibratedParameters_0306
-✔ skip target calibratedParameters_0307
-✔ skip target calibratedParameters_0308
-✔ skip target calibratedParameters_0309
-✔ skip target calibratedParameters_1201
-✔ skip target calibratedParameters_1202
-✔ skip target calibratedParameters_1203
-✔ skip target calibratedParameters_1205
-✔ skip target calibratedParameters_1208
-✔ skip target calibratedParameters_1110
-✔ skip target calibratedParameters_1112
-✔ skip target calibratedParameters_1101
-✔ skip target calibratedParameters_1102
-✔ skip target calibratedParameters_1104
-✔ skip target calibratedParameters_1107
-✔ skip target calibratedParameters_1108
-✔ skip target calibratedParameters_0202
-✔ skip target calibratedParameters_0204
-✔ skip target calibratedParameters_0205
-✔ skip target calibratedParameters_0207
-✔ skip target calibratedParameters_0110
-✔ skip target calibratedParameters_0101
-✔ skip target calibratedParameters_0102
-✔ skip target calibratedParameters_0103
-✔ skip target calibratedParameters_0104
-✔ skip target calibratedParameters_0106
-✔ skip target calibratedParameters_0107
-✔ skip target calibratedParameters_0108
-✔ skip target calibratedParameters_0109
-✔ skip target final_0601
-✔ skip target calibratedParameters_0805
-✔ skip target calibratedParameters_1601
-✔ skip target calibratedParameters_1603
-✔ skip target calibratedParameters_1604
-✔ skip target calibratedParameters_1606
-✔ skip target calibratedParameters_0702
-✔ skip target calibratedParameters_0703
-✔ skip target calibratedParameters_0705
-✔ skip target calibratedParameters_0707
-✔ skip target calibratedParameters_0709
-✔ skip target final_1711
-✔ skip target calibratedParameters_1712
-✔ skip target calibratedParameters_0710
-✔ skip target calibratedParameters_0712
-✔ skip target final_1701
-✔ skip target calibratedParameters_1703
-✔ skip target calibratedParameters_1704
-✔ skip target final_1709
-✔ skip target calibratedParameters_1810
-✔ skip target final_0305
-✔ skip target final_1801
-✔ skip target final_1802
-✔ skip target calibratedParameters_1803
 ✔ skip target calibratedParameters_1805
+✔ skip target final_1805
+• start target pseudoValidation_1805
+✔ skip target hydrography_1806
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_16/NHDPLUS_H_1604_HU4_GDB/NHDPLUS_H_1604_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 141821 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -120.2348 ymin: 38.74212 xmax: -114.7244 ymax: 42.34276
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1604 [41.363 seconds]
 ✔ skip target calibratedParameters_1806
+✔ skip target final_1806
+• start target pseudoValidation_1806
+✔ skip target hydrography_1807
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_18/NHDPLUS_H_1810_HU4_GDB/NHDPLUS_H_1810_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 41174 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -117.1892 ymin: 32.30314 xmax: -114.6265 ymax: 35.26155
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1810 [18.405 seconds]
 ✔ skip target calibratedParameters_1807
+✔ skip target final_1807
+• start target pseudoValidation_1807
+✔ skip target hydrography_1808
 ✔ skip target calibratedParameters_1808
+✔ skip target final_1808
+• start target pseudoValidation_1808
+✔ skip target hydrography_0202
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_15/NHDPLUS_H_1506_HU4_GDB/NHDPLUS_H_1506_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 56296 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -113.2096 ymin: 33.27069 xmax: -109.1776 ymax: 35.8601
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1506 [20.678 seconds]
+✔ skip target calibratedParameters_0202
+✔ skip target hydrography_1809
 ✔ skip target calibratedParameters_1809
+✔ skip target final_1809
+• start target pseudoValidation_1809
+✔ skip target hydrography_0203
+✔ skip target hydrography_0204
+✔ skip target calibratedParameters_0204
+✔ skip target hydrography_0205
+✔ skip target calibratedParameters_0205
+✔ skip target hydrography_0206
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_15/NHDPLUS_H_1508_HU4_GDB/NHDPLUS_H_1508_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 122810 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -114.0722 ymin: 29.83866 xmax: -108.7466 ymax: 32.5501
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1508 [39.113 seconds]
+✔ skip target hydrography_0207
+✔ skip target calibratedParameters_0207
+✔ skip target hydrography_0208
+✔ skip target hydrography_0110
+✔ skip target calibratedParameters_0110
+✔ skip target final_0110
+✔ skip target hydrography_0601
+✔ skip target final_0601
+• start target pseudoValidation_0601
+• start target pseudoValidation_1701
+• start target pseudoValidation_1703
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_16/NHDPLUS_H_1606_HU4_GDB/NHDPLUS_H_1606_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 263867 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -118.8491 ymin: 35.20833 xmax: -114.1504 ymax: 41.24632
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1606 [1.323 minutes]
+• start target pseudoValidation_1704
+• start target pseudoValidation_1709
+✔ skip target hydrography_0101
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_18/NHDPLUS_H_1803_HU4_GDB/NHDPLUS_H_1803_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 105430 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -120.6802 ymin: 34.77824 xmax: -117.985 ymax: 37.20792
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1803 [30.727 seconds]
+✔ skip target calibratedParameters_0101
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_18/NHDPLUS_H_1805_HU4_GDB/NHDPLUS_H_1805_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 47293 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -123.1086 ymin: 36.9494 xmax: -121.3785 ymax: 38.66404
+z_range:       zmin: -0.0002 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1805 [18.758 seconds]
+✔ skip target final_0101
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_18/NHDPLUS_H_1806_HU4_GDB/NHDPLUS_H_1806_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 166606 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -122.1994 ymin: 33.89419 xmax: -119.1326 ymax: 37.25816
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1806 [47.378 seconds]
+✔ skip target hydrography_0102
+✔ skip target calibratedParameters_0102
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_18/NHDPLUS_H_1808_HU4_GDB/NHDPLUS_H_1808_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 22496 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -121.22 ymin: 39.57467 xmax: -119.7337 ymax: 41.97095
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1808 [12.33 seconds]
+✔ skip target final_0102
+✔ skip target hydrography_0103
+✔ skip target calibratedParameters_0103
+✔ skip target final_0103
+✔ skip target hydrography_0104
+✔ skip target calibratedParameters_0104
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_18/NHDPLUS_H_1801_HU4_GDB/NHDPLUS_H_1801_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 341762 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -124.4217 ymin: 38.29819 xmax: -120.5703 ymax: 43.33625
+z_range:       zmin: 0 zmax: 1612
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1801 [1.401 minutes]
+✔ skip target final_0104
+✔ skip target hydrography_0105
+✔ skip target hydrography_0106
+✔ skip target calibratedParameters_0106
+✔ skip target final_0106
+✔ skip target hydrography_0107
+✔ skip target calibratedParameters_0107
+✔ skip target final_0107
+✔ skip target hydrography_0108
+✔ skip target calibratedParameters_0108
+✔ skip target final_0108
+✔ skip target hydrography_0109
+✔ skip target calibratedParameters_0109
+✔ skip target final_0109
+• start target pseudoValidation_1711
+• start target pseudoValidation_1712
+✔ skip target hydrography_1710
+✔ skip target final_0202
+✔ skip target final_0204
+✔ skip target final_0205
+✔ skip target final_0207
+✔ skip target exportedCO2_0805
+✔ skip target hydrography_0401
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_18/NHDPLUS_H_1809_HU4_GDB/NHDPLUS_H_1809_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 133619 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -119.3119 ymin: 34.19606 xmax: -115.3836 ymax: 38.31499
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1809 [39.414 seconds]
+✔ skip target calibratedParameters_0401
+✔ skip target hydrography_0402
+✔ skip target calibratedParameters_0402
+✔ skip target hydrography_0403
+✔ skip target calibratedParameters_0403
+✔ skip target hydrography_0404
+✔ skip target calibratedParameters_0404
+✔ skip target hydrography_0405
+✔ skip target calibratedParameters_0405
+✔ skip target hydrography_0406
+✔ skip target calibratedParameters_0406
+✔ skip target hydrography_0407
+✔ skip target calibratedParameters_0407
+✔ skip target hydrography_0408
+✔ skip target calibratedParameters_0408
+✔ skip target hydrography_0409
+✔ skip target hydrography_0430
+✔ skip target hydrography_0310
+✔ skip target calibratedParameters_0310
+✔ skip target final_0310
+• start target pseudoValidation_0310
+✔ skip target hydrography_0311
+✔ skip target calibratedParameters_0311
+✔ skip target final_0311
+• start target pseudoValidation_0311
+✔ skip target hydrography_0312
+✔ skip target calibratedParameters_0312
+✔ skip target final_0312
+• start target pseudoValidation_0312
+✔ skip target hydrography_0313
+✔ skip target calibratedParameters_0313
+✔ skip target final_0313
+• start target pseudoValidation_0313
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_18/NHDPLUS_H_1807_HU4_GDB/NHDPLUS_H_1807_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 225480 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -119.5791 ymin: 32.13998 xmax: -115.8985 ymax: 34.81991
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1807 [1.02 minutes]
+✔ skip target hydrography_0314
+✔ skip target calibratedParameters_0314
+✔ skip target final_0314
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_17/NHDPLUS_H_1703_HU4_GDB/NHDPLUS_H_1703_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 63359 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -121.5116 ymin: 45.98464 xmax: -119.2033 ymax: 47.59541
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1703 [22.112 seconds]
+• start target pseudoValidation_0314
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_17/NHDPLUS_H_1704_HU4_GDB/NHDPLUS_H_1704_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 128209 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -115.3494 ymin: 41.4377 xmax: -109.7665 ymax: 44.74924
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1704 [39.35 seconds]
+✔ skip target hydrography_0315
+✔ skip target calibratedParameters_0315
+✔ skip target final_0315
+• start target pseudoValidation_0315
+✔ skip target hydrography_0316
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0311_HU4_GDB/NHDPLUS_H_0311_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 76598 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -84.02266 ymin: 28.99881 xmax: -82.01575 ymax: 32.05735
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0311 [20.089 seconds]
+✔ skip target hydrography_0317
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0312_HU4_GDB/NHDPLUS_H_0312_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 23450 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -84.97909 ymin: 29.89336 xmax: -83.77007 ymax: 31.4868
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0312 [11.335 seconds]
+✔ skip target calibratedParameters_0317
+✔ skip target final_0317
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0512_HU4_GDB/NHDPLUS_H_0512_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 1532101 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -88.90083 ymin: 37.79343 xmax: -84.4097 ymax: 41.35401
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0512 [5.841 minutes]
+• start target pseudoValidation_0317
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_18/NHDPLUS_H_1802_HU4_GDB/NHDPLUS_H_1802_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 474166 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -123.095 ymin: 38.02775 xmax: -119.9847 ymax: 42.42752
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1802 [2.01 minutes]
+✔ skip target hydrography_0318
+✔ skip target calibratedParameters_0318
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_17/NHDPLUS_H_1701_HU4_GDB/NHDPLUS_H_1701_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 339214 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -118.3415 ymin: 45.46189 xmax: -112.3003 ymax: 51.31684
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1701 [1.37 minutes]
+✔ skip target final_0318
+• start target pseudoValidation_0318
+✔ skip target hydrography_0410
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_17/NHDPLUS_H_1712_HU4_GDB/NHDPLUS_H_1712_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 49796 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -121.5553 ymin: 41.58921 xmax: -117.9764 ymax: 44.29275
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1712 [19.954 seconds]
+✔ skip target calibratedParameters_0410
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0310_HU4_GDB/NHDPLUS_H_0310_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 96077 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -82.85192 ymin: 26.42189 xmax: -81.499 ymax: 29.17675
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0310 [24.054 seconds]
+✔ skip target hydrography_0411
+✔ skip target calibratedParameters_0411
+✔ skip target hydrography_0412
+✔ skip target calibratedParameters_0412
+✔ skip target hydrography_0413
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_06/NHDPLUS_H_0601_HU4_GDB/NHDPLUS_H_0601_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 269324 features and 18 fields
+Geometry type: GEOMETRY
+Dimension:     XYZM
+Bounding box:  xmin: -85.18812 ymin: 34.9063 xmax: -81.26736 ymax: 37.23677
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0601 [1.924 minutes]
+✔ skip target calibratedParameters_0413
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_17/NHDPLUS_H_1709_HU4_GDB/NHDPLUS_H_1709_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 276664 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -123.7562 ymin: 43.35873 xmax: -121.6657 ymax: 45.9396
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1709 [1.187 minutes]
+✔ skip target hydrography_0414
+✔ skip target calibratedParameters_0414
+✔ skip target hydrography_0418
+✔ skip target hydrography_0419
+✔ skip target hydrography_0420
+✔ skip target hydrography_0424
+✔ skip target hydrography_0426
+✔ skip target calibratedParameters_0427
+✔ skip target hydrography_0428
+✔ skip target hydrography_0429
 ✔ skip target hydrography_1710a
+✔ skip target calibratedParameters_1710a
+✔ skip target final_1710a
+• start target pseudoValidation_1710a
+✔ skip target calibratedParameters_1710b
 ✔ skip target hydrography_1710b
-✔ skip target final_1402
-✔ skip target final_1404
-✔ skip target final_1405
-✔ skip target final_1408
-✔ skip target final_1502
-✔ skip target final_1504
-✔ skip target final_1506
-✔ skip target final_1508
-✔ skip target final_0901
-✔ skip target final_0902
-✔ skip target final_0903
-✔ skip target final_0904
-✔ skip target final_0510
-✔ skip target final_0511
-✔ skip target final_0512
-✔ skip target final_0513
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0313_HU4_GDB/NHDPLUS_H_0313_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 106235 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -85.58447 ymin: 29.58705 xmax: -83.41287 ymax: 34.82447
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0313 [29.201 seconds]
+✔ skip target final_1710b
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0314_HU4_GDB/NHDPLUS_H_0314_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 113421 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -88.02812 ymin: 29.6568 xmax: -85.20375 ymax: 32.1464
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0314 [28.788 seconds]
+• start target pseudoValidation_1710b
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0315_HU4_GDB/NHDPLUS_H_0315_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 163574 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -87.94267 ymin: 31.02617 xmax: -84.00093 ymax: 35.14747
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0315 [44.293 seconds]
+✔ skip target hydrography_0301
+✔ skip target calibratedParameters_0301
+✔ skip target final_0301
+• start target pseudoValidation_0301
+✔ skip target hydrography_0302
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_17/NHDPLUS_H_1711_HU4_GDB/NHDPLUS_H_1711_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 302569 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -124.8712 ymin: 46.5939 xmax: -120.6703 ymax: 49.31073
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1711 [1.082 minutes]
+✔ skip target calibratedParameters_0302
+✔ skip target final_0302
+• start target pseudoValidation_0302
+✔ skip target hydrography_0303
+✔ skip target calibratedParameters_0303
+✔ skip target final_0303
+• start target pseudoValidation_0303
+✔ skip target hydrography_0304
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0318_HU4_GDB/NHDPLUS_H_0318_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 102988 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -90.61879 ymin: 30.15024 xmax: -88.77986 ymax: 33.38953
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0318 [33.187 seconds]
+✔ skip target calibratedParameters_0304
+✔ skip target final_0304
+• start target pseudoValidation_0304
+✔ skip target calibratedParameters_0305
+✔ skip target hydrography_0305
+✔ skip target final_0305
+• start target pseudoValidation_0305
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0317_HU4_GDB/NHDPLUS_H_0317_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 157163 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -89.84779 ymin: 30.17534 xmax: -88.05126 ymax: 32.73894
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0317 [37.08 seconds]
+✔ skip target hydrography_0306
+• built target pseudoValidation_1710a [7.058 seconds]
+✔ skip target calibratedParameters_0306
+• built target pseudoValidation_1710b [6.918 seconds]
+✔ skip target final_0306
+• start target pseudoValidation_0306
+✔ skip target hydrography_0307
+✔ skip target calibratedParameters_0307
+✔ skip target final_0307
+• start target pseudoValidation_0307
+✔ skip target hydrography_0308
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0301_HU4_GDB/NHDPLUS_H_0301_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 151155 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -80.5129 ymin: 35.1908 xmax: -75.45995 ymax: 37.5152
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0301 [34.072 seconds]
+✔ skip target calibratedParameters_0308
+✔ skip target final_0308
+• start target pseudoValidation_0308
+✔ skip target hydrography_0309
+✔ skip target calibratedParameters_0309
+✔ skip target final_0309
+• start target pseudoValidation_0309
+✔ skip target exportedCO2_0702
+✔ skip target exportedCO2_0703
+✔ skip target exportedCO2_0705
+✔ skip target exportedCO2_0707
+✔ skip target exportedCO2_0709
+✔ skip target exportedCO2_0710
+✔ skip target exportedCO2_0712
 ✔ skip target final_0410
 ✔ skip target final_0411
 ✔ skip target final_0412
 ✔ skip target final_0413
 ✔ skip target final_0414
-✔ skip target final_1301
-✔ skip target final_1305
-✔ skip target final_1306
-✔ skip target final_0501
-✔ skip target final_0502
-✔ skip target final_0504
-✔ skip target final_0505
-✔ skip target final_0506
-✔ skip target final_0507
-✔ skip target final_0508
+✔ skip target hydrography_0427
 ✔ skip target final_0401
 ✔ skip target final_0402
 ✔ skip target final_0403
@@ -433,651 +1319,2030 @@ dbl (2): ...1, level
 ✔ skip target final_0406
 ✔ skip target final_0407
 ✔ skip target final_0408
-✔ skip target exportedCO2_1012
-✔ skip target map_1012
-✔ skip target final_1015
-✔ skip target final_1016
-✔ skip target final_1018
-✔ skip target exportedCO2_1019
-✔ skip target map_1019
-✔ skip target final_1021
-✔ skip target final_1022
-✔ skip target final_1025
-✔ skip target final_1026
-✔ skip target final_1028
-✔ skip target final_1029
-✔ skip target final_0310
-✔ skip target final_0311
-✔ skip target final_0312
-✔ skip target final_1002
-✔ skip target final_0313
-✔ skip target final_0314
-✔ skip target final_0315
-✔ skip target final_1005
-✔ skip target final_0317
-✔ skip target final_1007
-✔ skip target final_0318
-✔ skip target final_1008
-✔ skip target final_1009
-✔ skip target final_1210
-✔ skip target final_1211
-✔ skip target final_0301
-✔ skip target final_0302
-✔ skip target final_0303
-✔ skip target final_0304
-✔ skip target final_0306
-✔ skip target final_0307
-✔ skip target final_0308
-✔ skip target final_0309
-✔ skip target final_1201
-✔ skip target final_1202
-✔ skip target final_1203
-✔ skip target final_1205
-✔ skip target final_1208
-✔ skip target final_1110
-✔ skip target final_1112
-✔ skip target final_1101
-✔ skip target final_1102
-✔ skip target final_1104
-✔ skip target final_1107
-✔ skip target final_1108
-✔ skip target final_0202
-✔ skip target final_0204
-✔ skip target final_0205
-✔ skip target final_0207
-✔ skip target final_0110
-✔ skip target final_0101
-✔ skip target final_0102
-✔ skip target final_0103
-✔ skip target final_0104
-✔ skip target final_0106
-✔ skip target final_0107
-✔ skip target final_0108
-✔ skip target final_0109
 ✔ skip target exportedCO2_0601
-✔ skip target map_0601
-✔ skip target final_0805
-✔ skip target final_1601
-✔ skip target final_1603
-✔ skip target final_1604
-✔ skip target final_1606
-✔ skip target final_0702
-✔ skip target final_0703
-✔ skip target final_0705
-✔ skip target final_0707
-✔ skip target final_0709
-✔ skip target exportedCO2_1711
-✔ skip target map_1711
-✔ skip target final_1712
-✔ skip target final_0710
-✔ skip target final_0712
-✔ skip target exportedCO2_1701
-✔ skip target map_1701
-✔ skip target final_1703
-✔ skip target final_1704
-✔ skip target exportedCO2_1709
-✔ skip target map_1709
-✔ skip target final_1810
-✔ skip target exportedCO2_0305
-✔ skip target map_0305
+✔ skip target hydrography_0427_1
 ✔ skip target exportedCO2_1801
-✔ skip target map_1801
-✔ skip target map_1802
-✔ skip target final_1803
-✔ skip target final_1805
-✔ skip target final_1806
-✔ skip target final_1807
-✔ skip target final_1808
-✔ skip target final_1809
-✔ skip target calibratedParameters_1710a
-✔ skip target final_1710b
-✔ skip target exportedCO2_1402
-✔ skip target map_1402
-✔ skip target exportedCO2_1404
-✔ skip target map_1404
-✔ skip target exportedCO2_1405
-✔ skip target map_1405
-✔ skip target exportedCO2_1408
-✔ skip target map_1408
-✔ skip target exportedCO2_1502
-✔ skip target map_1502
-✔ skip target exportedCO2_1504
-✔ skip target map_1504
-✔ skip target exportedCO2_1506
-✔ skip target map_1506
-✔ skip target map_1508
-✔ skip target map_0901
-✔ skip target map_0902
-✔ skip target map_0903
-✔ skip target map_0904
-✔ skip target exportedCO2_0510
-✔ skip target map_0510
-✔ skip target exportedCO2_0511
-✔ skip target map_0511
-✔ skip target exportedCO2_0512
-✔ skip target map_0512
-✔ skip target exportedCO2_0513
-✔ skip target map_0513
-✔ skip target exportedCO2_0410
-✔ skip target map_0410
-✔ skip target exportedCO2_0411
-✔ skip target map_0411
-✔ skip target exportedCO2_0412
-✔ skip target map_0412
-✔ skip target exportedCO2_0413
-✔ skip target map_0413
-✔ skip target exportedCO2_0414
-✔ skip target map_0414
-✔ skip target exportedCO2_1301
-✔ skip target map_1301
-✔ skip target map_1305
-✔ skip target exportedCO2_1306
-✔ skip target map_1306
-✔ skip target exportedCO2_0501
-✔ skip target map_0501
-✔ skip target exportedCO2_0502
-✔ skip target map_0502
-✔ skip target exportedCO2_0504
-✔ skip target map_0504
-✔ skip target exportedCO2_0505
-✔ skip target map_0505
-✔ skip target exportedCO2_0506
-✔ skip target map_0506
-✔ skip target exportedCO2_0507
-✔ skip target map_0507
-✔ skip target exportedCO2_0508
-✔ skip target map_0508
-✔ skip target exportedCO2_0401
-✔ skip target map_0401
-✔ skip target exportedCO2_0402
-✔ skip target map_0402
-✔ skip target exportedCO2_0403
-✔ skip target map_0403
-✔ skip target exportedCO2_0404
-✔ skip target map_0404
-✔ skip target exportedCO2_0405
-✔ skip target map_0405
-✔ skip target exportedCO2_0406
-✔ skip target map_0406
-✔ skip target exportedCO2_0407
-✔ skip target map_0407
-✔ skip target exportedCO2_0408
-✔ skip target map_0408
-✔ skip target exportedCO2_1015
-✔ skip target map_1015
-✔ skip target exportedCO2_1016
-✔ skip target map_1016
-✔ skip target exportedCO2_1018
-✔ skip target map_1018
-✔ skip target exportedCO2_1021
-✔ skip target map_1021
-✔ skip target exportedCO2_1022
-✔ skip target map_1022
-✔ skip target exportedCO2_1025
-✔ skip target map_1025
-✔ skip target exportedCO2_1026
-✔ skip target map_1026
-✔ skip target exportedCO2_1028
-✔ skip target map_1028
-✔ skip target exportedCO2_1029
-✔ skip target map_1029
-✔ skip target map_0310
-✔ skip target map_0311
-✔ skip target map_0312
-✔ skip target exportedCO2_1002
-✔ skip target map_1002
-✔ skip target map_0313
-✔ skip target map_0314
-✔ skip target exportedCO2_0315
-✔ skip target map_0315
-✔ skip target exportedCO2_1005
-✔ skip target map_1005
-✔ skip target map_0317
-✔ skip target exportedCO2_1007
-✔ skip target map_1007
-✔ skip target map_0318
-✔ skip target exportedCO2_1008
-✔ skip target map_1008
-✔ skip target exportedCO2_1009
-✔ skip target map_1009
-✔ skip target map_1210
-✔ skip target map_1211
-✔ skip target map_0301
-✔ skip target map_0302
-✔ skip target map_0303
-✔ skip target map_0304
-✔ skip target map_0306
-✔ skip target map_0307
-✔ skip target map_0308
-✔ skip target map_0309
-✔ skip target exportedCO2_1201
-✔ skip target map_1201
-✔ skip target exportedCO2_1202
-✔ skip target map_1202
-✔ skip target exportedCO2_1203
-✔ skip target map_1203
-✔ skip target exportedCO2_1205
-✔ skip target map_1205
-✔ skip target exportedCO2_1208
-✔ skip target map_1208
-✔ skip target exportedCO2_1110
-✔ skip target map_1110
-✔ skip target exportedCO2_1112
-✔ skip target map_1112
-✔ skip target exportedCO2_1101
-✔ skip target map_1101
-✔ skip target exportedCO2_1102
-✔ skip target map_1102
-✔ skip target exportedCO2_1104
-✔ skip target map_1104
-✔ skip target exportedCO2_1107
-✔ skip target map_1107
-✔ skip target exportedCO2_1108
-✔ skip target map_1108
-✔ skip target exportedCO2_0202
-✔ skip target map_0202
-✔ skip target map_0204
-✔ skip target exportedCO2_0205
-✔ skip target map_0205
-✔ skip target exportedCO2_0207
-✔ skip target map_0207
-✔ skip target map_0110
-✔ skip target map_0101
-✔ skip target exportedCO2_0102
-✔ skip target map_0102
-✔ skip target exportedCO2_0103
-✔ skip target map_0103
-✔ skip target exportedCO2_0104
-✔ skip target map_0104
-✔ skip target map_0106
-✔ skip target map_0107
-✔ skip target map_0108
-✔ skip target map_0109
-✔ skip target exportedCO2_0805
-✔ skip target map_0805
-✔ skip target exportedCO2_1601
-✔ skip target map_1601
-✔ skip target map_1603
-✔ skip target exportedCO2_1604
-✔ skip target map_1604
-✔ skip target map_1606
-✔ skip target exportedCO2_0702
-✔ skip target map_0702
-✔ skip target exportedCO2_0703
-✔ skip target map_0703
-✔ skip target exportedCO2_0705
-✔ skip target map_0705
-✔ skip target exportedCO2_0707
-✔ skip target map_0707
-✔ skip target exportedCO2_0709
-✔ skip target map_0709
-✔ skip target map_1712
-✔ skip target exportedCO2_0710
-✔ skip target map_0710
-✔ skip target exportedCO2_0712
-✔ skip target map_0712
-✔ skip target exportedCO2_1703
-✔ skip target map_1703
-✔ skip target exportedCO2_1704
-✔ skip target map_1704
-✔ skip target map_1810
 ✔ skip target exportedCO2_1803
-✔ skip target map_1803
-✔ skip target map_1805
-✔ skip target map_1806
-✔ skip target map_1807
-✔ skip target map_1808
-✔ skip target map_1809
-✔ skip target final_1710a
-✔ skip target map_1710b
+✔ skip target exportedCO2_0501
+✔ skip target exportedCO2_0502
+✔ skip target exportedCO2_0504
+✔ skip target exportedCO2_0505
+✔ skip target exportedCO2_0506
+✔ skip target exportedCO2_0507
+✔ skip target exportedCO2_0508
+✔ skip target exportedCO2_1701
+✔ skip target exportedCO2_1703
+✔ skip target exportedCO2_1704
+✔ skip target exportedCO2_1709
+✔ skip target exportedCO2_0510
+✔ skip target exportedCO2_0511
+✔ skip target exportedCO2_0512
+✔ skip target exportedCO2_0513
+✔ skip target exportedCO2_1711
+• start target pseudoValidation_0101
+• start target pseudoValidation_0102
+• start target pseudoValidation_0103
+• start target pseudoValidation_0104
+• start target pseudoValidation_0106
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0302_HU4_GDB/NHDPLUS_H_0302_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 123395 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -79.22356 ymin: 33.84234 xmax: -75.48283 ymax: 36.44617
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0302 [28.458 seconds]
+• start target pseudoValidation_0107
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0303_HU4_GDB/NHDPLUS_H_0303_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 89678 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -80.06746 ymin: 33.85333 xmax: -77.50821 ymax: 36.36822
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0303 [24.783 seconds]
+• start target pseudoValidation_0108
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0304_HU4_GDB/NHDPLUS_H_0304_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 180427 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -81.65708 ymin: 33.16809 xmax: -78.07838 ymax: 36.67023
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0304 [47.927 seconds]
+• start target pseudoValidation_0109
+• start target pseudoValidation_0110
+• start target pseudoValidation_0202
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0307_HU4_GDB/NHDPLUS_H_0307_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 124097 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -84.43102 ymin: 30.09094 xmax: -81.27036 ymax: 34.38647
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0307 [33.934 seconds]
+• start target pseudoValidation_0204
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0308_HU4_GDB/NHDPLUS_H_0308_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 64247 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -82.56813 ymin: 27.41107 xmax: -80.28506 ymax: 30.50524
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0308 [17.154 seconds]
+• start target pseudoValidation_0205
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0309_HU4_GDB/NHDPLUS_H_0309_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 125290 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -82.16569 ymin: 24.52108 xmax: -80.03097 ymax: 28.54866
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0309 [24.741 seconds]
+• start target pseudoValidation_0207
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_01/NHDPLUS_H_0101_HU4_GDB/NHDPLUS_H_0101_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 39136 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -70.42975 ymin: 45.71836 xmax: -66.6063 ymax: 48.08636
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0101 [17.231 seconds]
+• start target pseudoValidation_0401
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_01/NHDPLUS_H_0102_HU4_GDB/NHDPLUS_H_0102_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 33887 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -70.40985 ymin: 44.41048 xmax: -67.71247 ymax: 46.4646
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0102 [16.651 seconds]
+• start target pseudoValidation_0402
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_01/NHDPLUS_H_0103_HU4_GDB/NHDPLUS_H_0103_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 48577 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -70.82062 ymin: 44.00174 xmax: -69.06375 ymax: 45.91171
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0103 [18.827 seconds]
+• start target pseudoValidation_0403
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_01/NHDPLUS_H_0104_HU4_GDB/NHDPLUS_H_0104_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 15872 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -71.34961 ymin: 43.90338 xmax: -69.85072 ymax: 45.33896
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0104 [11.966 seconds]
+• start target pseudoValidation_0404
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_01/NHDPLUS_H_0106_HU4_GDB/NHDPLUS_H_0106_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 33341 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -71.51243 ymin: 42.82211 xmax: -69.82785 ymax: 44.39038
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0106 [14.165 seconds]
+• start target pseudoValidation_0405
+• start target pseudoValidation_0406
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0305_HU4_GDB/NHDPLUS_H_0305_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 306209 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -82.80383 ymin: 32.21955 xmax: -79.19667 ymax: 36.14352
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0305 [1.106 minutes]
+• start target pseudoValidation_0407
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0306_HU4_GDB/NHDPLUS_H_0306_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 117720 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -83.66634 ymin: 31.32407 xmax: -80.65073 ymax: 35.16737
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0306 [32.326 seconds]
+• start target pseudoValidation_0408
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_01/NHDPLUS_H_0107_HU4_GDB/NHDPLUS_H_0107_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 41468 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -72.1364 ymin: 42.19977 xmax: -70.8098 ymax: 44.19654
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0107 [14.414 seconds]
+• start target pseudoValidation_0410
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_01/NHDPLUS_H_0108_HU4_GDB/NHDPLUS_H_0108_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 99077 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -73.19757 ymin: 41.26599 xmax: -71.08196 ymax: 45.29621
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0108 [26.422 seconds]
+• start target pseudoValidation_0411
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_01/NHDPLUS_H_0109_HU4_GDB/NHDPLUS_H_0109_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 72793 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -71.92954 ymin: 41.14607 xmax: -69.92798 ymax: 42.82211
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0109 [20.81 seconds]
+• start target pseudoValidation_0412
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_01/NHDPLUS_H_0110_HU4_GDB/NHDPLUS_H_0110_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 69593 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -73.73051 ymin: 40.91446 xmax: -71.69522 ymax: 42.6004
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0110 [20.15 seconds]
+• start target pseudoValidation_0413
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_02/NHDPLUS_H_0202_HU4_GDB/NHDPLUS_H_0202_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 77158 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -75.56652 ymin: 41.00141 xmax: -72.93863 ymax: 44.14971
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0202 [26.607 seconds]
+• start target pseudoValidation_0414
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_02/NHDPLUS_H_0204_HU4_GDB/NHDPLUS_H_0204_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 310835 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -76.38607 ymin: 36.81102 xmax: -73.97133 ymax: 42.45816
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0204 [1.199 minutes]
+• start target pseudoValidation_1002
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_02/NHDPLUS_H_0205_HU4_GDB/NHDPLUS_H_0205_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 118015 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -78.90907 ymin: 39.5235 xmax: -74.5888 ymax: 42.98098
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0205 [32.643 seconds]
+• start target pseudoValidation_1005
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_02/NHDPLUS_H_0207_HU4_GDB/NHDPLUS_H_0207_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 92881 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -79.69593 ymin: 37.88781 xmax: -76.17303 ymax: 40.23435
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0207 [26.054 seconds]
+• start target pseudoValidation_1007
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0401_HU4_GDB/NHDPLUS_H_0401_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 30359 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -93.1938 ymin: 46.17747 xmax: -89.1974 ymax: 48.3559
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0401 [14.274 seconds]
+• start target pseudoValidation_1008
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0402_HU4_GDB/NHDPLUS_H_0402_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 41678 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -90.41839 ymin: 46.13817 xmax: -84.67788 ymax: 47.48033
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0402 [16.72 seconds]
+• start target pseudoValidation_1009
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0403_HU4_GDB/NHDPLUS_H_0403_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 53834 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -89.67125 ymin: 43.36688 xmax: -84.72369 ymax: 46.73161
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0403 [17.711 seconds]
+• start target pseudoValidation_1015
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0404_HU4_GDB/NHDPLUS_H_0404_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 48797 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -88.43925 ymin: 41.36356 xmax: -86.3872 ymax: 43.72221
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0404 [14.331 seconds]
+• start target pseudoValidation_1016
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0405_HU4_GDB/NHDPLUS_H_0405_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 143363 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -86.53696 ymin: 41.26546 xmax: -83.97303 ymax: 43.53175
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0405 [29.031 seconds]
+• start target pseudoValidation_1018
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0406_HU4_GDB/NHDPLUS_H_0406_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 28291 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -86.54113 ymin: 43.05871 xmax: -84.47243 ymax: 45.78939
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0406 [13.171 seconds]
+• start target pseudoValidation_1021
+• start target pseudoValidation_1022
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0407_HU4_GDB/NHDPLUS_H_0407_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 10196 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -85.05511 ymin: 44.29614 xmax: -83.25995 ymax: 45.81435
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0407 [9.95 seconds]
+• start target pseudoValidation_1025
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0408_HU4_GDB/NHDPLUS_H_0408_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 25406 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -85.31792 ymin: 42.52785 xmax: -82.42198 ymax: 44.46822
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0408 [13.118 seconds]
+• start target pseudoValidation_1026
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0410_HU4_GDB/NHDPLUS_H_0410_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 119075 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -85.32848 ymin: 40.39166 xmax: -82.25997 ymax: 42.73308
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0410 [28.645 seconds]
+• start target pseudoValidation_1028
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0411_HU4_GDB/NHDPLUS_H_0411_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 18054 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -82.3641 ymin: 40.96936 xmax: -80.46283 ymax: 41.90993
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0411 [11.501 seconds]
+• start target pseudoValidation_1029
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0412_HU4_GDB/NHDPLUS_H_0412_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 10363 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -80.79816 ymin: 41.66387 xmax: -78.27609 ymax: 42.93276
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0412 [10.48 seconds]
+✔ skip target exportedCO2_0102
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0413_HU4_GDB/NHDPLUS_H_0413_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 17975 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -79.07039 ymin: 41.85062 xmax: -77.42852 ymax: 43.37657
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0413 [12.051 seconds]
+✔ skip target exportedCO2_0103
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0414_HU4_GDB/NHDPLUS_H_0414_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 41116 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -77.63446 ymin: 42.19071 xmax: -74.52159 ymax: 44.25837
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0414 [17.431 seconds]
+✔ skip target exportedCO2_0104
+• built target pseudoValidation_1002 [7.63 seconds]
+✔ skip target exportedCO2_0202
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1005_HU4_GDB/NHDPLUS_H_1005_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 160389 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -113.4051 ymin: 47.8059 xmax: -106.1292 ymax: 49.73436
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1005 [38.026 seconds]
+✔ skip target exportedCO2_0205
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1007_HU4_GDB/NHDPLUS_H_1007_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 62755 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -111.5056 ymin: 43.94848 xmax: -107.4755 ymax: 46.39325
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1007 [16.692 seconds]
+✔ skip target exportedCO2_0207
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1008_HU4_GDB/NHDPLUS_H_1008_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 183885 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -110.1705 ymin: 42.47112 xmax: -107.0173 ymax: 46.15472
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1008 [36.744 seconds]
+✔ skip target exportedCO2_0305
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1009_HU4_GDB/NHDPLUS_H_1009_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 153851 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -107.7498 ymin: 42.76895 xmax: -104.6545 ymax: 46.74181
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1009 [36.415 seconds]
+✔ skip target exportedCO2_0315
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1015_HU4_GDB/NHDPLUS_H_1015_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 38752 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -104.6729 ymin: 41.96412 xmax: -97.95771 ymax: 43.34831
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1015 [16.374 seconds]
+✔ skip target exportedCO2_0401
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1016_HU4_GDB/NHDPLUS_H_1016_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 39742 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -100.0229 ymin: 42.87127 xmax: -97.19652 ymax: 47.79398
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1016 [13.611 seconds]
+✔ skip target exportedCO2_0402
+✔ skip target exportedCO2_0403
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1021_HU4_GDB/NHDPLUS_H_1021_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 46608 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -102.2302 ymin: 40.84176 xmax: -97.32035 ymax: 42.4834
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1021 [21.496 seconds]
+✔ skip target exportedCO2_0404
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1022_HU4_GDB/NHDPLUS_H_1022_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 17064 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -99.58881 ymin: 41.12117 xmax: -96.24754 ymax: 42.6198
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1022 [13.716 seconds]
+✔ skip target exportedCO2_0405
+✔ skip target exportedCO2_0406
+✔ skip target exportedCO2_0407
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1025_HU4_GDB/NHDPLUS_H_1025_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 82568 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -103.779 ymin: 39.01117 xmax: -96.80089 ymax: 41.00142
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1025 [27.033 seconds]
+✔ skip target exportedCO2_0408
+✔ skip target exportedCO2_0410
+✔ skip target exportedCO2_0411
+✔ skip target exportedCO2_0412
+✔ skip target exportedCO2_0413
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1018_HU4_GDB/NHDPLUS_H_1018_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 201926 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -109.2027 ymin: 40.32764 xmax: -100.6748 ymax: 43.1958
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1018 [47.222 seconds]
+✔ skip target exportedCO2_0414
+✔ skip target exportedCO2_1301
+✔ skip target exportedCO2_1306
+✔ skip target exportedCO2_1402
+✔ skip target exportedCO2_1404
+✔ skip target exportedCO2_1405
+✔ skip target exportedCO2_1408
+✔ skip target exportedCO2_1502
+✔ skip target exportedCO2_1504
+✔ skip target exportedCO2_1506
+✔ skip target exportedCO2_1601
+✔ skip target exportedCO2_1604
+✔ skip target calibratedParameters_0901
+✔ skip target final_0901
+• start target pseudoValidation_0901
+✔ skip target calibratedParameters_0902
+✔ skip target final_0902
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1026_HU4_GDB/NHDPLUS_H_1026_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 83030 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -102.8048 ymin: 38.38225 xmax: -96.76229 ymax: 40.00231
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1026 [22.493 seconds]
+• start target pseudoValidation_0902
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1028_HU4_GDB/NHDPLUS_H_1028_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 97245 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -94.70068 ymin: 39.21063 xmax: -92.4325 ymax: 41.3648
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1028 [23.985 seconds]
+✔ skip target calibratedParameters_0903
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1029_HU4_GDB/NHDPLUS_H_1029_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 123452 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -96.21305 ymin: 37.03188 xmax: -91.4419 ymax: 38.89937
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1029 [32.014 seconds]
+✔ skip target final_0903
+• start target pseudoValidation_0903
+✔ skip target calibratedParameters_0904
+✔ skip target final_0904
+• start target pseudoValidation_0904
+✔ skip target hydrography_1101
+✔ skip target calibratedParameters_1101
+✔ skip target final_1101
+• start target pseudoValidation_1101
+✔ skip target exportedCO2_1101
+✔ skip target hydrography_1102
+✔ skip target calibratedParameters_1102
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_09/NHDPLUS_H_0901_HU4_GDB/NHDPLUS_H_0901_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 22964 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -104.7622 ymin: 47.72303 xmax: -99.60984 ymax: 50.52052
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0901 [11.766 seconds]
+✔ skip target final_1102
+• start target pseudoValidation_1102
+✔ skip target exportedCO2_1102
+✔ skip target hydrography_1103
+✔ skip target hydrography_1104
+✔ skip target calibratedParameters_1104
+✔ skip target final_1104
+• start target pseudoValidation_1104
+✔ skip target exportedCO2_1104
+✔ skip target hydrography_1105
+✔ skip target hydrography_1106
+✔ skip target hydrography_1107
+✔ skip target calibratedParameters_1107
+✔ skip target final_1107
+• start target pseudoValidation_1107
+✔ skip target exportedCO2_1107
+✔ skip target hydrography_1110
+✔ skip target calibratedParameters_1110
+✔ skip target final_1110
+• start target pseudoValidation_1110
+✔ skip target exportedCO2_1110
+✔ skip target hydrography_1111
+✔ skip target hydrography_1112
+✔ skip target calibratedParameters_1112
+✔ skip target final_1112
+• start target pseudoValidation_1112
+✔ skip target exportedCO2_1112
+✔ skip target hydrography_1113
+✔ skip target calibratedParameters_1114
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_09/NHDPLUS_H_0904_HU4_GDB/NHDPLUS_H_0904_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 14186 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -114.1587 ymin: 48.57787 xmax: -112.4758 ymax: 49.95603
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0904 [11.313 seconds]
+✔ skip target hydrography_1114
+✔ skip target hydrography_1012
+✔ skip target final_1012
+✔ skip target exportedCO2_1012
+• start target pseudoValidation_1012
+✔ skip target hydrography_1013
+✔ skip target hydrography_1014
+✔ skip target hydrography_1019
+✔ skip target final_1019
+✔ skip target exportedCO2_1019
 ✔ skip target exportedCO2_lvl0
-✔ skip target map_1710a
-✔ skip target calibratedParameters_1401
-✔ skip target calibratedParameters_1406
-✔ skip target calibratedParameters_1302
-✔ skip target calibratedParameters_1307
-✔ skip target calibratedParameters_1010
-✔ skip target calibratedParameters_1020
-✔ skip target calibratedParameters_1027
-✔ skip target calibratedParameters_1003
-✔ skip target final_1804
-✔ skip target calibratedParameters_1113
-✔ skip target calibratedParameters_1103
-✔ skip target calibratedParameters_1105
 ✔ skip target calibratedParameters_1109
-✔ skip target calibratedParameters_1204
-✔ skip target calibratedParameters_1206
-✔ skip target calibratedParameters_1209
-✔ skip target calibratedParameters_0602
-✔ skip target calibratedParameters_0503
-✔ skip target calibratedParameters_1505
-✔ skip target calibratedParameters_0105
-✔ skip target calibratedParameters_1602
-✔ skip target calibratedParameters_1605
-✔ skip target calibratedParameters_0701
-✔ skip target calibratedParameters_0203
-✔ skip target calibratedParameters_0206
-✔ skip target calibratedParameters_0713
-✔ skip target calibratedParameters_1705
-✔ skip target calibratedParameters_0316
-✔ skip target calibratedParameters_0418
-✔ skip target calibratedParameters_0419
-✔ skip target final_1401
-✔ skip target final_1406
-✔ skip target final_1302
-✔ skip target final_1307
-✔ skip target final_1010
-✔ skip target final_1020
-✔ skip target final_1027
-✔ skip target final_1003
-✔ skip target exportedCO2_1804
-✔ skip target map_1804
-✔ skip target final_1113
-✔ skip target final_1103
-✔ skip target final_1105
 ✔ skip target final_1109
+✔ skip target calibratedParameters_0602
+✔ skip target calibratedParameters_1204
 ✔ skip target final_1204
+• start target pseudoValidation_1204
+✔ skip target exportedCO2_1204
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_09/NHDPLUS_H_0902_HU4_GDB/NHDPLUS_H_0902_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 94693 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -100.5626 ymin: 45.48065 xmax: -94.07789 ymax: 49.99828
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0902 [24.16 seconds]
+✔ skip target calibratedParameters_1206
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_09/NHDPLUS_H_0903_HU4_GDB/NHDPLUS_H_0903_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 107133 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -95.54718 ymin: 47.43162 xmax: -89.86244 ymax: 49.84786
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0903 [24.889 seconds]
 ✔ skip target final_1206
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1101_HU4_GDB/NHDPLUS_H_1101_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 119071 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -94.22386 ymin: 35.18145 xmax: -90.14921 ymax: 37.70986
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1101 [33.904 seconds]
+• start target pseudoValidation_1206
+✔ skip target exportedCO2_1206
+• built target pseudoValidation_1104 [6.457 seconds]
+✔ skip target calibratedParameters_1209
 ✔ skip target final_1209
+• start target pseudoValidation_1209
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1112_HU4_GDB/NHDPLUS_H_1112_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 60432 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -103.7026 ymin: 34.33354 xmax: -98.75809 ymax: 35.61838
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1112 [20.467 seconds]
+✔ skip target exportedCO2_1209
 ✔ skip target final_0602
+• start target pseudoValidation_0602
+• start target pseudoValidation_1109
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1102_HU4_GDB/NHDPLUS_H_1102_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 217295 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -106.5959 ymin: 36.90221 xmax: -102.0147 ymax: 39.3821
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1102 [51.139 seconds]
+✔ skip target calibratedParameters_0503
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1107_HU4_GDB/NHDPLUS_H_1107_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 154447 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -97.42397 ymin: 35.79279 xmax: -93.59082 ymax: 38.86711
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1107 [35.335 seconds]
+✔ skip target exportedCO2_1109
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1110_HU4_GDB/NHDPLUS_H_1110_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 72535 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -103.8856 ymin: 35.04823 xmax: -95.45612 ymax: 36.97179
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1110 [22.99 seconds]
+✔ skip target calibratedParameters_1302
+✔ skip target final_1302
+✔ skip target calibratedParameters_1307
+✔ skip target final_1307
 ✔ skip target final_0503
+• start target pseudoValidation_0503
+✔ skip target calibratedParameters_1003
+✔ skip target final_1003
+✔ skip target exportedCO2_1003
+✔ skip target calibratedParameters_1010
+✔ skip target calibratedParameters_1401
+✔ skip target final_1401
+• start target pseudoValidation_1401
+✔ skip target calibratedParameters_1406
+✔ skip target final_1406
+• start target pseudoValidation_1406
+✔ skip target calibratedParameters_1020
+✔ skip target final_1020
+✔ skip target exportedCO2_1020
+✔ skip target calibratedParameters_1027
+✔ skip target final_1027
+✔ skip target exportedCO2_1027
+✔ skip target final_1010
+✔ skip target exportedCO2_1010
+• start target pseudoValidation_1302
+• start target pseudoValidation_1307
+✔ skip target calibratedParameters_0701
+✔ skip target calibratedParameters_1505
 ✔ skip target final_1505
-✔ skip target final_0105
-✔ skip target final_1602
-✔ skip target final_1605
 ✔ skip target final_0701
-✔ skip target final_0203
-✔ skip target final_0206
+• start target pseudoValidation_0701
+✔ skip target calibratedParameters_0713
 ✔ skip target final_0713
+• start target pseudoValidation_0713
+✔ skip target calibratedParameters_1602
+✔ skip target final_1602
+• start target pseudoValidation_1602
+✔ skip target calibratedParameters_1605
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1012_HU4_GDB/NHDPLUS_H_1012_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 328260 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -106.1002 ymin: 42.68743 xmax: -101.2478 ymax: 45.18176
+z_range:       zmin: -0.000025 zmax: 5456.907
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1012 [1.232 minutes]
+✔ skip target final_1605
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_12/NHDPLUS_H_1204_HU4_GDB/NHDPLUS_H_1204_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 41330 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -95.9836 ymin: 28.87709 xmax: -93.63393 ymax: 30.76701
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1204 [12.82 seconds]
+• start target pseudoValidation_1605
+• start target pseudoValidation_1505
+✔ skip target calibratedParameters_1705
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_06/NHDPLUS_H_0602_HU4_GDB/NHDPLUS_H_0602_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 37457 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -85.7359 ymin: 34.58184 xmax: -83.57456 ymax: 35.87067
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0602 [16.111 seconds]
 ✔ skip target final_1705
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1109_HU4_GDB/NHDPLUS_H_1109_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 91201 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -104.1842 ymin: 34.60781 xmax: -95.04233 ymax: 36.71582
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1109 [28.216 seconds]
+✔ skip target final_1804
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0503_HU4_GDB/NHDPLUS_H_0503_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 75104 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -82.8201 ymin: 38.61635 xmax: -79.77289 ymax: 41.76289
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0503 [26.502 seconds]
+• start target pseudoValidation_1804
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_14/NHDPLUS_H_1401_HU4_GDB/NHDPLUS_H_1401_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 135271 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -109.1042 ymin: 38.94858 xmax: -105.6312 ymax: 40.47984
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1401 [36.37 seconds]
+✔ skip target calibratedParameters_0203
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_14/NHDPLUS_H_1406_HU4_GDB/NHDPLUS_H_1406_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 62668 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -111.4867 ymin: 38.10624 xmax: -108.91 ymax: 40.82734
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1406 [18.979 seconds]
+✔ skip target calibratedParameters_0206
+• start target pseudoValidation_1705
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_13/NHDPLUS_H_1307_HU4_GDB/NHDPLUS_H_1307_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 42842 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -104.8818 ymin: 29.69319 xmax: -101.1413 ymax: 32.96528
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1307 [16.953 seconds]
+✔ skip target calibratedParameters_0105
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0701_HU4_GDB/NHDPLUS_H_0701_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 44839 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -95.57428 ymin: 44.65151 xmax: -92.76978 ymax: 47.7583
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0701 [16.888 seconds]
+✔ skip target final_0105
+✔ skip target final_0203
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_16/NHDPLUS_H_1602_HU4_GDB/NHDPLUS_H_1602_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 74479 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -115.0058 ymin: 37.95109 xmax: -110.8994 ymax: 42.46824
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1602 [22.272 seconds]
+✔ skip target final_0206
+✔ skip target calibratedParameters_0316
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_12/NHDPLUS_H_1206_HU4_GDB/NHDPLUS_H_1206_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 132591 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -100.7685 ymin: 31.34702 xmax: -96.85499 ymax: 33.63929
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1206 [30.034 seconds]
 ✔ skip target final_0316
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_12/NHDPLUS_H_1209_HU4_GDB/NHDPLUS_H_1209_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 164463 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -102.0237 ymin: 28.59068 xmax: -95.37811 ymax: 32.40576
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1209 [42.719 seconds]
+• start target pseudoValidation_0316
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_13/NHDPLUS_H_1302_HU4_GDB/NHDPLUS_H_1302_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 142957 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -108.5113 ymin: 33.02523 xmax: -105.2106 ymax: 37.18421
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1302 [32.676 seconds]
+✔ skip target calibratedParameters_0418
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0713_HU4_GDB/NHDPLUS_H_0713_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 115014 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -91.21656 ymin: 38.89433 xmax: -88.06372 ymax: 41.70382
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0713 [31.616 seconds]
+✔ skip target calibratedParameters_0419
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_16/NHDPLUS_H_1605_HU4_GDB/NHDPLUS_H_1605_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 69128 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -120.4638 ymin: 38.03693 xmax: -118.0395 ymax: 40.65565
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1605 [20.649 seconds]
+✔ skip target exportedCO2_0701
+✔ skip target exportedCO2_0713
 ✔ skip target final_0418
 ✔ skip target final_0419
-✔ skip target exportedCO2_1401
-✔ skip target map_1401
-✔ skip target exportedCO2_1406
-✔ skip target map_1406
-✔ skip target exportedCO2_1302
-✔ skip target map_1302
-✔ skip target exportedCO2_1307
-✔ skip target map_1307
-✔ skip target exportedCO2_1010
-✔ skip target map_1010
-✔ skip target exportedCO2_1020
-✔ skip target map_1020
-✔ skip target exportedCO2_1027
-✔ skip target map_1027
-✔ skip target exportedCO2_1003
-✔ skip target map_1003
-✔ skip target exportedCO2_1113
-✔ skip target map_1113
-✔ skip target exportedCO2_1103
-✔ skip target map_1103
-✔ skip target exportedCO2_1105
-✔ skip target map_1105
-✔ skip target exportedCO2_1109
-✔ skip target map_1109
-✔ skip target exportedCO2_1204
-✔ skip target map_1204
-✔ skip target exportedCO2_1206
-✔ skip target map_1206
-✔ skip target exportedCO2_1209
-✔ skip target map_1209
 ✔ skip target exportedCO2_0602
-✔ skip target map_0602
+✔ skip target exportedCO2_1804
 ✔ skip target exportedCO2_0503
-✔ skip target map_0503
-✔ skip target exportedCO2_1505
-✔ skip target map_1505
-✔ skip target exportedCO2_0105
-✔ skip target map_0105
-✔ skip target exportedCO2_1602
-✔ skip target map_1602
-✔ skip target exportedCO2_1605
-✔ skip target map_1605
-✔ skip target exportedCO2_0701
-✔ skip target map_0701
-✔ skip target exportedCO2_0203
-✔ skip target map_0203
-✔ skip target exportedCO2_0206
-✔ skip target map_0206
-✔ skip target exportedCO2_0713
-✔ skip target map_0713
 ✔ skip target exportedCO2_1705
-✔ skip target map_1705
+• start target pseudoValidation_0105
+• start target pseudoValidation_0203
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_15/NHDPLUS_H_1505_HU4_GDB/NHDPLUS_H_1505_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 120637 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -112.4558 ymin: 30.96983 xmax: -109.2642 ymax: 33.48686
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1505 [26.36 seconds]
+• start target pseudoValidation_0206
+• start target pseudoValidation_0418
+• start target pseudoValidation_0419
+• start target pseudoValidation_1003
+• start target pseudoValidation_1010
+• start target pseudoValidation_1019
+• start target pseudoValidation_1020
+• start target pseudoValidation_1027
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_17/NHDPLUS_H_1705_HU4_GDB/NHDPLUS_H_1705_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 178023 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -118.8439 ymin: 41.13205 xmax: -114.6391 ymax: 45.25622
+z_range:       zmin: 0 zmax: 0.0002
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1705 [44.55 seconds]
+✔ skip target exportedCO2_0105
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_03/NHDPLUS_H_0316_HU4_GDB/NHDPLUS_H_0316_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 144569 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -89.16843 ymin: 30.22944 xmax: -86.13989 ymax: 34.74864
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0316 [32.507 seconds]
+✔ skip target exportedCO2_0203
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_01/NHDPLUS_H_0105_HU4_GDB/NHDPLUS_H_0105_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 37478 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -69.86973 ymin: 43.69516 xmax: -66.19181 ymax: 45.94737
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0105 [13.61 seconds]
+✔ skip target exportedCO2_0206
 ✔ skip target exportedCO2_0316
-✔ skip target map_0316
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_02/NHDPLUS_H_0206_HU4_GDB/NHDPLUS_H_0206_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 37295 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -77.2018 ymin: 38.03721 xmax: -75.58534 ymax: 39.86513
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0206 [15.675 seconds]
 ✔ skip target exportedCO2_0418
-✔ skip target map_0418
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0418_HU4_GDB/NHDPLUS_H_0418_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 25 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -92.10007 ymin: 46.48782 xmax: -84.54736 ymax: 48.71684
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0418 [8.515 seconds]
 ✔ skip target exportedCO2_0419
-✔ skip target map_0419
+• built target pseudoValidation_0419 [7.93 seconds]
+✔ skip target exportedCO2_1302
+✔ skip target exportedCO2_1307
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1010_HU4_GDB/NHDPLUS_H_1010_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 89602 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -107.9055 ymin: 45.16128 xmax: -103.5265 ymax: 47.97882
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1010 [23.33 seconds]
+✔ skip target exportedCO2_1401
+✔ skip target exportedCO2_1406
+✔ skip target exportedCO2_1505
+✔ skip target exportedCO2_1602
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_18/NHDPLUS_H_1804_HU4_GDB/NHDPLUS_H_1804_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 385039 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -121.9341 ymin: 36.37044 xmax: -118.6565 ymax: 38.7554
+z_range:       zmin: 0 zmax: 3.444
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1804 [1.331 minutes]
+✔ skip target exportedCO2_1605
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_02/NHDPLUS_H_0203_HU4_GDB/NHDPLUS_H_0203_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 91513 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -75.04607 ymin: 40.1875 xmax: -71.85334 ymax: 41.58061
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0203 [27.512 seconds]
+✔ skip target calibratedParameters_1103
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1003_HU4_GDB/NHDPLUS_H_1003_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 92676 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -113.5121 ymin: 45.92681 xmax: -110.3029 ymax: 48.99667
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1003 [28.457 seconds]
+✔ skip target final_1103
+• start target pseudoValidation_1103
+✔ skip target exportedCO2_1103
+✔ skip target calibratedParameters_1105
+✔ skip target final_1105
+• start target pseudoValidation_1105
+✔ skip target exportedCO2_1105
+✔ skip target calibratedParameters_1113
+✔ skip target final_1113
+• start target pseudoValidation_1113
+✔ skip target exportedCO2_1113
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1020_HU4_GDB/NHDPLUS_H_1020_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 28714 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -100.8411 ymin: 40.43946 xmax: -95.87961 ymax: 41.92824
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1020 [15.302 seconds]
 ✔ skip target exportedCO2_lvl1
-✔ skip target calibratedParameters_1403
-✔ skip target calibratedParameters_1303
-✔ skip target final_1114
-✔ skip target calibratedParameters_1004
-✔ skip target final_1706
-✔ skip target calibratedParameters_1106
-✔ skip target calibratedParameters_1207
 ✔ skip target calibratedParameters_0603
-✔ skip target calibratedParameters_0509
-✔ skip target calibratedParameters_1507
-✔ skip target calibratedParameters_0704
-✔ skip target calibratedParameters_0208
-✔ skip target calibratedParameters_0420
-✔ skip target final_1403
-✔ skip target final_1303
-✔ skip target exportedCO2_1114
-✔ skip target map_1114
-✔ skip target final_1004
-✔ skip target exportedCO2_1706
-✔ skip target map_1706
-✔ skip target final_1106
+✔ skip target calibratedParameters_1207
 ✔ skip target final_1207
+• start target pseudoValidation_1207
+✔ skip target exportedCO2_1207
 ✔ skip target final_0603
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1027_HU4_GDB/NHDPLUS_H_1027_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 83978 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -99.15272 ymin: 38.64014 xmax: -94.5542 ymax: 41.27237
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1027 [26.776 seconds]
+• start target pseudoValidation_0603
+✔ skip target final_1114
+• start target pseudoValidation_1114
+✔ skip target calibratedParameters_0509
+✔ skip target calibratedParameters_1303
+✔ skip target final_1303
 ✔ skip target final_0509
+• start target pseudoValidation_0509
+✔ skip target exportedCO2_1114
+✔ skip target calibratedParameters_1004
+✔ skip target final_1004
+✔ skip target exportedCO2_1004
+✔ skip target calibratedParameters_1403
+✔ skip target final_1403
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1019_HU4_GDB/NHDPLUS_H_1019_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 232511 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -106.1981 ymin: 38.75642 xmax: -100.681 ymax: 41.47875
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1019 [45.396 seconds]
+• start target pseudoValidation_1403
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1103_HU4_GDB/NHDPLUS_H_1103_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 53739 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -102.4391 ymin: 37.00426 xmax: -96.51001 ymax: 38.71956
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1103 [17.001 seconds]
+• start target pseudoValidation_1303
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1105_HU4_GDB/NHDPLUS_H_1105_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 44439 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -99.83018 ymin: 35.52723 xmax: -96.26766 ymax: 37.12295
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1105 [16.813 seconds]
+✔ skip target calibratedParameters_0704
+✔ skip target calibratedParameters_1507
 ✔ skip target final_1507
 ✔ skip target final_0704
+• start target pseudoValidation_0704
+• start target pseudoValidation_1507
+✔ skip target final_1706
+✔ skip target calibratedParameters_0208
+• start target pseudoValidation_1706
 ✔ skip target final_0208
-✔ skip target final_0420
-✔ skip target exportedCO2_1403
-✔ skip target map_1403
-✔ skip target exportedCO2_1303
-✔ skip target map_1303
-✔ skip target exportedCO2_1004
-✔ skip target map_1004
-✔ skip target exportedCO2_1106
-✔ skip target map_1106
-✔ skip target exportedCO2_1207
-✔ skip target map_1207
-✔ skip target exportedCO2_0603
-✔ skip target map_0603
-✔ skip target exportedCO2_0509
-✔ skip target map_0509
-✔ skip target exportedCO2_1507
-✔ skip target map_1507
+✔ skip target calibratedParameters_0420
 ✔ skip target exportedCO2_0704
-✔ skip target map_0704
+✔ skip target final_0420
+✔ skip target exportedCO2_0603
+✔ skip target exportedCO2_0509
+✔ skip target exportedCO2_1706
+• start target pseudoValidation_0208
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1113_HU4_GDB/NHDPLUS_H_1113_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 191074 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -101.5034 ymin: 33.38925 xmax: -96.45916 ymax: 35.90408
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1113 [46.6 seconds]
+• start target pseudoValidation_0420
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_12/NHDPLUS_H_1207_HU4_GDB/NHDPLUS_H_1207_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 121648 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -99.15559 ymin: 28.875 xmax: -95.37439 ymax: 32.5449
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1207 [26.775 seconds]
+• start target pseudoValidation_1004
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_06/NHDPLUS_H_0603_HU4_GDB/NHDPLUS_H_0603_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 66325 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -88.43957 ymin: 34.11747 xmax: -85.51781 ymax: 35.47902
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0603 [17.731 seconds]
 ✔ skip target exportedCO2_0208
-✔ skip target map_0208
 ✔ skip target exportedCO2_0420
-✔ skip target map_0420
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0509_HU4_GDB/NHDPLUS_H_0509_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 109287 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -85.36301 ymin: 37.84697 xmax: -82.027 ymax: 39.91855
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0509 [30.179 seconds]
+✔ skip target exportedCO2_1303
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_14/NHDPLUS_H_1403_HU4_GDB/NHDPLUS_H_1403_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 57212 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -109.8851 ymin: 37.42133 xmax: -107.7351 ymax: 39.45549
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1403 [20.236 seconds]
+✔ skip target exportedCO2_1403
+✔ skip target exportedCO2_1507
+✔ skip target calibratedParameters_1106
+✔ skip target final_1106
+• start target pseudoValidation_1106
+✔ skip target exportedCO2_1106
 ✔ skip target exportedCO2_lvl2
-✔ skip target calibratedParameters_1407
-✔ skip target calibratedParameters_1006
-✔ skip target calibratedParameters_1111
-✔ skip target final_1702
-✔ skip target final_1304
 ✔ skip target calibratedParameters_0604
-✔ skip target calibratedParameters_0804
-✔ skip target calibratedParameters_0706
-✔ skip target calibratedParameters_0424
-✔ skip target final_1407
-✔ skip target final_1006
-✔ skip target final_1111
-✔ skip target exportedCO2_1702
-✔ skip target map_1702
-✔ skip target exportedCO2_1304
-✔ skip target map_1304
 ✔ skip target final_0604
-✔ skip target final_0804
-✔ skip target final_0706
-✔ skip target final_0424
-✔ skip target exportedCO2_1407
-✔ skip target map_1407
+• start target pseudoValidation_0604
+✔ skip target final_1304
+✔ skip target calibratedParameters_1006
+✔ skip target final_1006
 ✔ skip target exportedCO2_1006
-✔ skip target map_1006
-✔ skip target exportedCO2_1111
-✔ skip target map_1111
-✔ skip target exportedCO2_0604
-✔ skip target map_0604
+✔ skip target calibratedParameters_0804
+✔ skip target calibratedParameters_1407
+✔ skip target final_1407
+• start target pseudoValidation_1407
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_13/NHDPLUS_H_1303_HU4_GDB/NHDPLUS_H_1303_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 87743 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -109.0182 ymin: 30.24657 xmax: -106.2367 ymax: 33.51994
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1303 [21.955 seconds]
+✔ skip target final_0804
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0704_HU4_GDB/NHDPLUS_H_0704_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 46495 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -93.82747 ymin: 43.48937 xmax: -90.13182 ymax: 45.32272
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0704 [18.243 seconds]
+• start target pseudoValidation_0804
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_15/NHDPLUS_H_1507_HU4_GDB/NHDPLUS_H_1507_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 99931 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -114.5815 ymin: 31.98903 xmax: -111.7888 ymax: 34.71498
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1507 [28.441 seconds]
+• start target pseudoValidation_1304
+✔ skip target calibratedParameters_0706
+✔ skip target final_0706
+• start target pseudoValidation_0706
+✔ skip target final_1702
+• start target pseudoValidation_1702
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_06/NHDPLUS_H_0604_HU4_GDB/NHDPLUS_H_0604_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 61139 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -88.67568 ymin: 34.92488 xmax: -85.95236 ymax: 37.11959
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0604 [22.872 seconds]
 ✔ skip target exportedCO2_0804
-✔ skip target map_0804
+✔ skip target calibratedParameters_0424
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1114_HU4_GDB/NHDPLUS_H_1114_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 219085 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -96.86749 ymin: 31.21255 xmax: -92.41595 ymax: 34.88895
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1114 [59.702 seconds]
 ✔ skip target exportedCO2_0706
-✔ skip target map_0706
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_17/NHDPLUS_H_1706_HU4_GDB/NHDPLUS_H_1706_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 254367 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -119.0507 ymin: 43.79201 xmax: -113.0049 ymax: 47.62104
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1706 [1.06 minutes]
+✔ skip target final_0424
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_02/NHDPLUS_H_0208_HU4_GDB/NHDPLUS_H_0208_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 196660 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -80.52985 ymin: 36.67128 xmax: -75.22588 ymax: 38.98748
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0208 [50.416 seconds]
+✔ skip target exportedCO2_0604
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0420_HU4_GDB/NHDPLUS_H_0420_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 96171 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -85.11242 ymin: 45.81435 xmax: -80.80553 ymax: 47.58756
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0420 [23.377 seconds]
+✔ skip target exportedCO2_1702
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1004_HU4_GDB/NHDPLUS_H_1004_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 168386 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -110.7761 ymin: 45.96599 xmax: -105.8341 ymax: 48.22774
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1004 [34.587 seconds]
+• start target pseudoValidation_0424
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1106_HU4_GDB/NHDPLUS_H_1106_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 57598 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -99.42412 ymin: 36.10576 xmax: -96.17622 ymax: 37.61273
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1106 [23.811 seconds]
+• start target pseudoValidation_1006
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_14/NHDPLUS_H_1407_HU4_GDB/NHDPLUS_H_1407_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 47124 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -112.3257 ymin: 36.5022 xmax: -109.7637 ymax: 39.11994
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1407 [15.414 seconds]
 ✔ skip target exportedCO2_0424
-✔ skip target map_0424
+✔ skip target exportedCO2_1304
+✔ skip target exportedCO2_1407
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0706_HU4_GDB/NHDPLUS_H_0706_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 39515 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -92.66167 ymin: 41.88183 xmax: -89.70665 ymax: 43.79886
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0706 [18.171 seconds]
+✔ skip target calibratedParameters_1111
+✔ skip target final_1111
+• start target pseudoValidation_1111
+✔ skip target exportedCO2_1111
 ✔ skip target exportedCO2_lvl3
 ✔ skip target calibratedParameters_1308
-✔ skip target calibratedParameters_1011
-✔ skip target calibratedParameters_0514
-✔ skip target calibratedParameters_1501
-✔ skip target calibratedParameters_0808
-✔ skip target calibratedParameters_0708
-✔ skip target calibratedParameters_1707
-✔ skip target calibratedParameters_0409
 ✔ skip target final_1308
-✔ skip target final_1011
+✔ skip target calibratedParameters_0514
 ✔ skip target final_0514
-✔ skip target final_1501
+• start target pseudoValidation_0514
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_08/NHDPLUS_H_0804_HU4_GDB/NHDPLUS_H_0804_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 123734 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -94.33388 ymin: 31 xmax: -91.40209 ymax: 34.8568
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0804 [37.428 seconds]
+✔ skip target calibratedParameters_0808
+✔ skip target calibratedParameters_1011
 ✔ skip target final_0808
-✔ skip target final_0708
-✔ skip target final_1707
-✔ skip target final_0409
-✔ skip target exportedCO2_1308
-✔ skip target map_1308
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0424_HU4_GDB/NHDPLUS_H_0424_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 179 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -83.94445 ymin: 43.00476 xmax: -79.72797 ymax: 46.12801
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0424 [6.911 seconds]
+• start target pseudoValidation_0808
+✔ skip target final_1011
 ✔ skip target exportedCO2_1011
-✔ skip target map_1011
-✔ skip target exportedCO2_0514
-✔ skip target map_0514
-✔ skip target exportedCO2_1501
-✔ skip target map_1501
+• start target pseudoValidation_1308
+✔ skip target calibratedParameters_0708
+✔ skip target calibratedParameters_1501
+✔ skip target final_1501
+✔ skip target final_0708
+• start target pseudoValidation_0708
+• start target pseudoValidation_1501
+✔ skip target calibratedParameters_1707
+✔ skip target final_1707
+• start target pseudoValidation_1707
 ✔ skip target exportedCO2_0808
-✔ skip target map_0808
+✔ skip target calibratedParameters_0409
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1006_HU4_GDB/NHDPLUS_H_1006_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 83259 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -106.5881 ymin: 47.03394 xmax: -103.655 ymax: 49.39949
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1006 [25.62 seconds]
 ✔ skip target exportedCO2_0708
-✔ skip target map_0708
+✔ skip target final_0409
 ✔ skip target exportedCO2_1707
-✔ skip target map_1707
+✔ skip target exportedCO2_0514
+• start target pseudoValidation_0409
+• start target pseudoValidation_1011
 ✔ skip target exportedCO2_0409
-✔ skip target map_0409
+✔ skip target exportedCO2_1308
+✔ skip target exportedCO2_1501
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_13/NHDPLUS_H_1304_HU4_GDB/NHDPLUS_H_1304_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 289690 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -106.584 ymin: 27.96152 xmax: -100.4141 ymax: 31.98242
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1304 [1.253 minutes]
 ✔ skip target exportedCO2_lvl4
 ✔ skip target calibratedParameters_1309
-✔ skip target final_1013
-✔ skip target calibratedParameters_1503
-✔ skip target calibratedParameters_1708
-✔ skip target calibratedParameters_0426
 ✔ skip target final_1309
+✔ skip target final_1013
 ✔ skip target exportedCO2_1013
-✔ skip target map_1013
+• start target pseudoValidation_1309
+✔ skip target calibratedParameters_1503
 ✔ skip target final_1503
+• start target pseudoValidation_1503
+✔ skip target calibratedParameters_1708
 ✔ skip target final_1708
+• start target pseudoValidation_1708
+✔ skip target calibratedParameters_0426
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_11/NHDPLUS_H_1111_HU4_GDB/NHDPLUS_H_1111_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 98763 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -96.53658 ymin: 34.2189 xmax: -91.84907 ymax: 36.36863
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1111 [24.969 seconds]
 ✔ skip target final_0426
-✔ skip target exportedCO2_1309
-✔ skip target map_1309
-✔ skip target exportedCO2_1503
-✔ skip target map_1503
 ✔ skip target exportedCO2_1708
-✔ skip target map_1708
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_08/NHDPLUS_H_0808_HU4_GDB/NHDPLUS_H_0808_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 124614 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -93.8351 ymin: 29.39349 xmax: -91.17281 ymax: 31.44443
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0808 [36.687 seconds]
+• start target pseudoValidation_0426
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_13/NHDPLUS_H_1308_HU4_GDB/NHDPLUS_H_1308_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 75755 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -101.8168 ymin: 26.53347 xmax: -98.85338 ymax: 29.819
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1308 [26.704 seconds]
+• start target pseudoValidation_1013
 ✔ skip target exportedCO2_0426
-✔ skip target map_0426
+✔ skip target exportedCO2_1309
+✔ skip target exportedCO2_1503
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0409_HU4_GDB/NHDPLUS_H_0409_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 37607 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -83.64803 ymin: 42.0435 xmax: -80.64198 ymax: 43.68381
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0409 [16.098 seconds]
 ✔ skip target exportedCO2_lvl5
-✔ skip target final_1014
 ✔ skip target final_0427_1
-✔ skip target final_0427
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_13/NHDPLUS_H_1309_HU4_GDB/NHDPLUS_H_1309_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 19573 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -100.1983 ymin: 25.48007 xmax: -97.14458 ymax: 26.9043
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1309 [11.061 seconds]
+• start target pseudoValidation_0427_1
+✔ skip target final_1014
 ✔ skip target exportedCO2_1014
-✔ skip target map_1014
-✔ skip target exportedCO2_0427_1
-✔ skip target map_0427_1
+✔ skip target final_0427
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_17/NHDPLUS_H_1702_HU4_GDB/NHDPLUS_H_1702_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 423987 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -121.1755 ymin: 46.08303 xmax: -115.7668 ymax: 52.87948
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1702 [1.514 minutes]
+• start target pseudoValidation_0427
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_05/NHDPLUS_H_0514_HU4_GDB/NHDPLUS_H_0514_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 296920 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -89.261 ymin: 36.95115 xmax: -84.805 ymax: 38.99615
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0514 [1.06 minutes]
+• start target pseudoValidation_1014
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0708_HU4_GDB/NHDPLUS_H_0708_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 88888 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -93.91595 ymin: 40.32399 xmax: -89.89532 ymax: 43.94823
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0708 [34.48 seconds]
 ✔ skip target exportedCO2_0427
-✔ skip target map_0427
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_15/NHDPLUS_H_1501_HU4_GDB/NHDPLUS_H_1501_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 169544 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -115.7025 ymin: 35.11076 xmax: -111.5117 ymax: 39.29939
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1501 [47.708 seconds]
+✔ skip target exportedCO2_0427_1
 ✔ skip target exportedCO2_lvl6
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1011_HU4_GDB/NHDPLUS_H_1011_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 81777 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -105.1988 ymin: 44.53993 xmax: -101.084 ymax: 48.73665
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1011 [24.355 seconds]
 ✔ skip target calibratedParameters_1017
-✔ skip target calibratedParameters_0428
-✔ skip target calibratedParameters_0430
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_15/NHDPLUS_H_1503_HU4_GDB/NHDPLUS_H_1503_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 69667 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -115.4197 ymin: 31.53874 xmax: -112.5529 ymax: 36.04099
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1503 [19.188 seconds]
 ✔ skip target final_1017
+✔ skip target exportedCO2_1017
+• built target pseudoValidation_0426 [8.294 seconds]
+✔ skip target calibratedParameters_0430
+✔ skip target calibratedParameters_0428
 ✔ skip target final_0428
 ✔ skip target final_0430
-✔ skip target exportedCO2_1017
-✔ skip target map_1017
+• start target pseudoValidation_0428
+• start target pseudoValidation_0430
+• start target pseudoValidation_1017
 ✔ skip target exportedCO2_0428
-✔ skip target map_0428
 ✔ skip target exportedCO2_0430
-✔ skip target map_0430
 ✔ skip target exportedCO2_lvl7
 ✔ skip target calibratedParameters_1023
-✔ skip target calibratedParameters_0429
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_17/NHDPLUS_H_1707_HU4_GDB/NHDPLUS_H_1707_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 273469 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -122.1447 ymin: 43.24288 xmax: -117.6817 ymax: 46.51237
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1707 [1.256 minutes]
 ✔ skip target final_1023
-✔ skip target final_0429
 ✔ skip target exportedCO2_1023
-✔ skip target map_1023
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1013_HU4_GDB/NHDPLUS_H_1013_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 180801 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -103.9958 ymin: 44.41389 xmax: -98.9145 ymax: 47.84865
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1013 [43.865 seconds]
+✔ skip target calibratedParameters_0429
+✔ skip target final_0429
+• start target pseudoValidation_0429
+• start target pseudoValidation_1023
 ✔ skip target exportedCO2_0429
-✔ skip target map_0429
 ✔ skip target exportedCO2_lvl8
 ✔ skip target calibratedParameters_1024
 ✔ skip target final_1024
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_17/NHDPLUS_H_1708_HU4_GDB/NHDPLUS_H_1708_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 206046 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -124.083 ymin: 45.15649 xmax: -121.3824 ymax: 46.86964
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1708 [47.231 seconds]
 ✔ skip target exportedCO2_1024
-✔ skip target map_1024
 ✔ skip target exportedCO2_lvl9
 ✔ skip target calibratedParameters_1030
 ✔ skip target final_1030
 ✔ skip target exportedCO2_1030
-✔ skip target map_1030
 ✔ skip target exportedCO2_lvl10
 ✔ skip target calibratedParameters_0711
 ✔ skip target final_0711
+• start target pseudoValidation_0711
 ✔ skip target exportedCO2_0711
-✔ skip target map_0711
+• start target pseudoValidation_1024
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0427_HU4_GDB/NHDPLUS_H_0427_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 147049 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -80.20669 ymin: 42.62968 xmax: -76.40522 ymax: 45.36957
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0427 [36.245 seconds]
+• start target pseudoValidation_1030
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1014_HU4_GDB/NHDPLUS_H_1014_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 120880 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -103.8412 ymin: 42.52321 xmax: -98.34035 ymax: 44.88943
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1014 [35.756 seconds]
 ✔ skip target exportedCO2_lvl11
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0428_HU4_GDB/NHDPLUS_H_0428_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 16 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -79.19987 ymin: 43.26239 xmax: -76.37074 ymax: 44.21175
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0428 [8.454 seconds]
 ✔ skip target final_0714
+• start target pseudoValidation_0714
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1017_HU4_GDB/NHDPLUS_H_1017_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 53075 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -98.72838 ymin: 42.2783 xmax: -95.61784 ymax: 45.57382
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1017 [21.647 seconds]
 ✔ skip target exportedCO2_0714
-✔ skip target map_0714
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0429_HU4_GDB/NHDPLUS_H_0429_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 56438 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -76.63562 ymin: 43.73169 xmax: -73.85451 ymax: 45.41475
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0429 [23.31 seconds]
 ✔ skip target exportedCO2_lvl12
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1023_HU4_GDB/NHDPLUS_H_1023_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 39834 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -96.69802 ymin: 41.05328 xmax: -94.84719 ymax: 43.68832
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1023 [20.72 seconds]
 ✔ skip target calibratedParameters_0801
 ✔ skip target final_0801
+• start target pseudoValidation_0801
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0427_HU4_GDB/NHDPLUS_H_0427_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 147049 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -80.20669 ymin: 42.62968 xmax: -76.40522 ymax: 45.36957
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0427_1 [37.186 seconds]
 ✔ skip target exportedCO2_0801
-✔ skip target map_0801
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_04/NHDPLUS_H_0430_HU4_GDB/NHDPLUS_H_0430_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 116911 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -74.45237 ymin: 43.24461 xmax: -70.82392 ymax: 46.11087
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0430 [39.111 seconds]
 ✔ skip target exportedCO2_lvl13
 ✔ skip target final_0802
+• start target pseudoValidation_0802
 ✔ skip target exportedCO2_0802
-✔ skip target map_0802
 ✔ skip target exportedCO2_lvl14
 ✔ skip target final_0803
+• start target pseudoValidation_0803
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0711_HU4_GDB/NHDPLUS_H_0711_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 49496 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -92.73225 ymin: 38.69558 xmax: -89.95021 ymax: 40.81734
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0711 [16.748 seconds]
 ✔ skip target exportedCO2_0803
-✔ skip target map_0803
 ✔ skip target exportedCO2_lvl15
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1030_HU4_GDB/NHDPLUS_H_1030_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 58140 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -94.81768 ymin: 38.32238 xmax: -90.12017 ymax: 39.59072
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1030 [20.548 seconds]
 ✔ skip target calibratedParameters_0806
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_07/NHDPLUS_H_0714_HU4_GDB/NHDPLUS_H_0714_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 85784 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -91.78781 ymin: 36.95489 xmax: -88.16875 ymax: 40.18294
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0714 [25.348 seconds]
 ✔ skip target final_0806
+• start target pseudoValidation_0806
 ✔ skip target exportedCO2_0806
-✔ skip target map_0806
 ✔ skip target exportedCO2_lvl16
 ✔ skip target calibratedParameters_0807
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_10/NHDPLUS_H_1024_HU4_GDB/NHDPLUS_H_1024_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 90278 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -96.75869 ymin: 39.11156 xmax: -94.27855 ymax: 42.03921
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_1024 [24.62 seconds]
 ✔ skip target final_0807
+• start target pseudoValidation_0807
 ✔ skip target exportedCO2_0807
-✔ skip target map_0807
 ✔ skip target exportedCO2_lvl17
 ✔ skip target calibratedParameters_0809
 ✔ skip target final_0809
-✔ skip target map_0809
-✔ skip target combined_rivermaps
-• start target figMainMap1_jt
-Spherical geometry (s2) switched off
-Reading layer `na_shp_fin' from data source 
-  `/nas/cee-water/cjgleason/craig/canada_shapefile/na_shp_fin.shp' 
-  using driver `ESRI Shapefile'
-Simple feature collection with 156 features and 8 fields
-Geometry type: POLYGON
-Dimension:     XY
-Bounding box:  xmin: -141.003 ymin: 14.55055 xmax: -52.61736 ymax: 71.99693
-Geodetic CRS:  WGS 84
-• built target figMainMap1_jt [50.586 minutes]
-• end pipeline [54.656 minutes]
+• start target pseudoValidation_0809
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_08/NHDPLUS_H_0801_HU4_GDB/NHDPLUS_H_0801_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 83393 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -90.32054 ymin: 34.54909 xmax: -88.29221 ymax: 37.15448
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0801 [20.151 seconds]
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_08/NHDPLUS_H_0802_HU4_GDB/NHDPLUS_H_0802_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 112077 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -92.31418 ymin: 33.73996 xmax: -89.53778 ymax: 37.85838
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0802 [29.9 seconds]
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_08/NHDPLUS_H_0807_HU4_GDB/NHDPLUS_H_0807_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 34477 features and 17 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -91.68338 ymin: 29.98067 xmax: -90.17995 ymax: 31.43841
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0807 [12.459 seconds]
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_08/NHDPLUS_H_0803_HU4_GDB/NHDPLUS_H_0803_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 176452 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -91.25025 ymin: 32.31496 xmax: -88.83701 ymax: 34.99868
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0803 [44.831 seconds]
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_08/NHDPLUS_H_0809_HU4_GDB/NHDPLUS_H_0809_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 46555 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -91.3402 ymin: 28.90597 xmax: -88.82075 ymax: 30.90949
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0809 [15.353 seconds]
+Reading layer `NHDFlowline' from data source 
+  `/nas/cee-water/cjgleason/craig/CONUS_ephemeral_data/HUC2_08/NHDPLUS_H_0806_HU4_GDB/NHDPLUS_H_0806_HU4_GDB.gdb' 
+  using driver `OpenFileGDB'
+Simple feature collection with 65832 features and 18 fields
+Geometry type: MULTILINESTRING
+Dimension:     XYZM
+Bounding box:  xmin: -91.65857 ymin: 30.99575 xmax: -89.05534 ymax: 33.69641
+z_range:       zmin: 0 zmax: 0
+m_range:       mmin: 0 mmax: 100
+Geodetic CRS:  NAD83
+• built target pseudoValidation_0806 [17.561 seconds]
+• start target combined_pseudoValidation
+• built target combined_pseudoValidation [4.131 seconds]
+• start target figPseudoValidation
+• built target figPseudoValidation [8.212 seconds]
+• end pipeline [30.677 minutes]
+There were 50 or more warnings (use warnings() to see the first 50)

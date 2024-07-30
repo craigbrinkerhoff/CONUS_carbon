@@ -63,7 +63,7 @@ getSourcesByRiver <- function(hydrography, model, Cgw_ppm, calibratedParameters,
   #calibrated parameter vectors
   Fwc_ppm_s <-  ifelse(hydrography$waterbody == 'River', calibratedParameters$Fwc_riv, calibratedParameters$Fwc_lake) #ppm/s
   Cbz_ppm <-   ifelse(hydrography$waterbody == 'River', calibratedParameters$Cbz_riv, calibratedParameters$Cbz_lake) #ppm/s
-  Fwc_ppm_s <- ifelse(Fwc_ppm_s < 0,0,Fwc_ppm_s)   #if negative, i.e. mineralization sink, just set to zero for these realtive calcs
+  Fwc_ppm_s <- ifelse(Fwc_ppm_s < 0,0,Fwc_ppm_s)   #if negative, i.e. mineralization sink, just set to zero for these relative calculations
 
   #network topology vectors
   StartFlag_vec <- hydrography$StartFlag
@@ -205,16 +205,16 @@ getSourcesByBasin <- function(model, results, calibratedParameters, Cgw_ppm, emi
     henry <- median(model$henry, na.rm=T)
     Q_fin <- sum(exportedQ$Q_cms) - upstreamQ
     Q_fin <- ifelse(Q_fin < 0, 0, Q_fin) #if it's a losing basin, no net gw introduced. set to 0 water entering network
-    GWcontrib <- sum(((Cgw_ppm)*henry*1e-6)*(1/0.001)*12.01*Q_fin*(60*60*24*365)) * 1e-12#Tg-C/yr
+    GWcontrib <- sum(((Cgw_ppm)*henry*1e-6)*(1/0.001)*12.01*Q_fin*(60*60*24*365)) * 1e-12 #[Tg-C/yr]
 
     exportedCO2 <- sum(exportedQ$exported_CO2_TgC_yr, na.rm=T)
     
     #CALCULATE BASIN WC RESPIRATION CONTRIBUTION--------------------------------------------------------------------
-    model$respiration_gC_m3_s <-  ((ifelse(model$waterbody == 'River', calibratedParameters$Fwc_riv, calibratedParameters$Fwc_lake)*model$henry)/1000000)*(1/0.001)*12.01 #gC/m3/s
-    model$respiration_TgC_yr <- model$respiration_gC_m3_s * ifelse(model$waterbody == 'River', model$W*model$D*model$LengthKM*1000, model$frac_lakeVol_m3) * (60*60*24*365) * 1e-12 #TgC/yr
+    model$respiration_gC_m3_s <-  ((ifelse(model$waterbody == 'River', calibratedParameters$Fwc_riv, calibratedParameters$Fwc_lake)*model$henry)/1000000)*(1/0.001)*12.01 #[gC/m3/s]
+    model$respiration_TgC_yr <- model$respiration_gC_m3_s * ifelse(model$waterbody == 'River', model$W*model$D*model$LengthKM*1000, model$frac_lakeVol_m3) * (60*60*24*365) * 1e-12 #[TgC/yr]
 
-    model$benthic_gC_m2_s <- (model$k_bz*model$D*(ifelse(model$waterbody == 'River', calibratedParameters$Cbz_riv, calibratedParameters$Cbz_lake)*model$henry)/1000000)*(1/0.001)*12.01 #gC/m2/s
-    model$benthic_TgC_yr <- model$benthic_gC_m2_s * ifelse(model$waterbody == 'River', model$W*model$LengthKM*1000, model$frac_lakeSurfaceArea_m2) * (60*60*24*365) * 1e-12 #TgC/yr
+    model$benthic_gC_m2_s <- (model$k_bz*model$D*(ifelse(model$waterbody == 'River', calibratedParameters$Cbz_riv, calibratedParameters$Cbz_lake)*model$henry)/1000000)*(1/0.001)*12.01 #[gC/m2/s]
+    model$benthic_TgC_yr <- model$benthic_gC_m2_s * ifelse(model$waterbody == 'River', model$W*model$LengthKM*1000, model$frac_lakeSurfaceArea_m2) * (60*60*24*365) * 1e-12 #[TgC/yr]
 
 
     #BUILD OUTPUT---------------------------------------------------------------------------

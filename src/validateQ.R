@@ -1,11 +1,14 @@
 ##########################
-## Validate NHD discharge model
+## Functions to vValidate NHD discharge model
 ## Craig Brinkerhoff
 ## Winter 2023
 ##########################
 
 
-#' Return the set of USGS gages that are joined to the NHD-HR a priori (therefore these gaugs meet the USGS QA/QC requirements)
+
+
+
+#' Return the set of USGS gages that are joined to the NHD-HR a priori (therefore these gaugs meet the USGS minimum QA/QC requirements)
 #'
 #' @name getNHDGages
 #'

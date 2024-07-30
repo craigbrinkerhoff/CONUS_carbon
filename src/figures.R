@@ -64,7 +64,7 @@ eromValidationFig <- function(USGS_data, nhdGages){
 
 
 
-#' build figures of calibration performance (supplementary figures)
+#' build figures of calibration performance
 #'
 #' @name calibrationFigures
 #'
@@ -88,7 +88,7 @@ calibrationFigures <- function(combined_calib){
 	forPlot <- data.frame('huc4'=substr(names(combined_fitness), 22,26),
 						  'fitness'=combined_fitness)
 
-	#build plot (extended data fig 2)
+	#build calibration summary plot (the eCDFs)
 	plot <- ggplot(forPlot, aes(x=fitness)) +
 		stat_ecdf(size=2, color='black') +
 		geom_vline(xintercept = median(forPlot$fitness, na.rm=T), color='darkgrey', linetype='dotted', size=1.5) + 
@@ -194,7 +194,7 @@ calibrationFigures <- function(combined_calib){
   			b <- b + 20
     	}
 
-		#build 6 panel plot of calibration performance
+		#build 6 panel plot of calibration performance (last six basins)
     	else {
     		print(length(plot))
     		#plot design
@@ -230,14 +230,15 @@ calibrationFigures <- function(combined_calib){
 
 
 
-#' build figure comparing transport and upscaling models (figure 2)
+
+#' build main text figure comparing transport and upscaling models
 #'
 #' @name compareModels
 #'
 #' @param path_to_data: character path to data repo
 #' @param ourModel: df of random sample of model rivers (n per basin for all basins)
 #' @param lumpedList: upscaling model results
-#' @param glorich: in situ data df
+#' @param glorich: in situ data df (glorich database)
 #'
 #' @import patchwork
 #' @import sf
@@ -247,7 +248,7 @@ calibrationFigures <- function(combined_calib){
 #' @import dplyr
 #' @import reshape2
 #'
-#' @return manuscript figure 2 written to file
+#' @return print statement (figure written to file)
 compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
 	#set ggplot theme
   	theme_set(theme_classic())
@@ -262,7 +263,7 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
     					  'cal_sigma'=sum(lumped$cal_uncertainty, na.rm=T),
 						  'lumped_sigma'=sum(lumped$lumped_uncertainty, na.rm=T))
 
-	#wrangle df into ggplot-form
+	#wrangle df into ggplot-friendly format
   	forPlot <- tidyr::gather(numbers, key=key, value=value, c('Distributed', 'Lumped_full'))
   	forPlot[forPlot$key != 'Distributed',]$cal_sigma <- NA #don't apply to upscaling model
 	forPlot[forPlot$key != 'Lumped_full',]$lumped_sigma <- NA #don't apply to transport model
@@ -297,7 +298,7 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
   	glorich$W <- exp(glorich$a) * glorich$nhdQ_cms^glorich$b
   	glorich$V <- glorich$nhdQ_cms / (glorich$D*glorich$W)
 
-	#get eD and then k600
+	#get eD and k600
   	glorich$eD <- 9.8*glorich$V*glorich$nhd_slope #[m2/s3] Ulseth et al 2019
   	glorich$k600_m_dy <- ifelse(glorich$eD <= 0.02, exp(3.10+0.35*log(glorich$eD)), exp(6.43+1.18*log(glorich$eD))) #Ulseth etal 2019
 
@@ -359,7 +360,7 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
     colnames(glorich) <- c('k600_m_dy', 'CO2_ppm','model')
     glorich <- dplyr::select(glorich, c('model', 'k600_m_dy', 'CO2_ppm'))
 
-    #BUILD FCO2 VARIABLE SPACE (adapted from https://github.com/rocher-ros/co2_domains_publication/blob/master/co2_domains_figs_stats.R)------------------------------------------------------
+    #BUILD FCO2 VARIABLE SPACE (adapted from https://github.com/rocher-ros/co2_domains_publication/blob/master/co2_domains_figs_stats.R). Thanks!!------------------------------------------------------
 	pco2 <- seq(from=4600, to= 401, by=-10)
 	k600 <- seq(from= 1, to=850, length.out = length(pco2) )
 	kpco2 <- list( k600, pco2)
@@ -430,7 +431,7 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
 	#WRITE TO FILE------------------------------------------------------------
   	ggsave('cache/figures/modelsCompare.jpg', comboPlot, width=18, height=14)
 
-	#RETURN UNCERTAINTIES (just for some manual checking)
+	#RETURN UNCERTAINTIES (just for some manual checking and verification)
   	return(numbers)
 }
 
@@ -439,7 +440,7 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
 
 
 
-#' produce figure comparing transport and upscaling models (extended data figures 2+)
+#' produce figure comparing transport and upscaling models
 #'
 #' @name conceptualPlot
 #'
@@ -455,7 +456,7 @@ compareModels <- function(path_to_data, ourModel, lumpedList, glorich) {
 #' @import stringr
 #' @import ggplot2
 #'
-#' @return manuscript extended data conceptual figures written to file
+#' @return print statement (figure written to file)
 conceptualPlot <- function(final_model, glorich_data, huc4_id){
 	#set ggplot theme
 	theme_set(theme_classic())
@@ -479,11 +480,11 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
   	##CALCULATE UPSCALING MODEL FOR THE BASIN----------------------------------------------------------------------------------------
   	riverCO2 <- glorich_data[glorich_data$HUC2 == huc2,]$river #[ppm]
   	lakeCO2 <- glorich_data[glorich_data$HUC2 == huc2,]$lake #[ppm]
-  	temp_c <- mean(network$Water_temp_c, na.rm=T)   #regional average water temperature following raymond 2013
+  	temp_c <- mean(network$Water_temp_c, na.rm=T) #regional average water temperature following raymond 2013
   	henry <- henry_func(temp_c)
   	sc <- 1911-118.11*temp_c+3.453*temp_c^2-0.0413*temp_c^3 #Raymond2012/Wanninkof 1991
 
-	###RIVERS
+	###RIVER CALCULATION
   	rivers_by_order <- dplyr::group_by(network[network$waterbody == 'River',], StreamOrde) %>%
     	dplyr::summarise(kco2_m_s = mean(k_co2_m_s, na.rm=T),
     					 k600_m_s = mean(k600_m_s, na.rm=T),
@@ -505,20 +506,16 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
         	                ifelse(area_skm < 1, 1.16,
             	              ifelse(area_skm < 3.16, 1.32,
                 	            ifelse(area_skm < 10, 1.9, 1.9))))) %>%
-    	dplyr::mutate(kco2_m_dy = k600_m_dy/(600/sc)^-0.5) %>% #m/dy
-    	dplyr::mutate(kco2_m_s = (kco2_m_dy)/(24*60*60))  #m/s
+    	dplyr::mutate(kco2_m_dy = k600_m_dy/(600/sc)^-0.5) %>% #[m/dy]
+    	dplyr::mutate(kco2_m_s = (kco2_m_dy)/(24*60*60))  #[m/s]
 
   	#calculate a basin fco2
   	lakes_by_area$lakes_FCO2_lumped <- ((lakeCO2-400)*henry*1e-6)*lakes_by_area$kco2_m_s*(1/0.001)*12.01*(60*60*24*365) #[g-C/m2/yr]
   	lakes_FCO2_lumped_total <- sum(lakes_by_area$lakes_FCO2_lumped*lakes_by_area$area_skm*1e6, na.rm=T) #[g-C/yr]
 
-  	#COMBINED EMISSIONS RIVERS + LAKES/RESERVOIRS
+  	#COMBINED EMISSIONS FOR RIVERS + LAKES/RESERVOIRS
   	lumpedFCO2_gC_C_m2_yr <- rivers_FCO2_lumped + sum(lakes_by_area$lakes_FCO2_lumped, na.rm=T)
   	network$lumped_FCO2_gC_m2_yr <- lumpedFCO2_gC_C_m2_yr
-
-
-
-
 
   	##CALCULATE LUMPED CO2 MODEL FOR BASIN (see methods)----------------------------------------------------------------------------------------
   	network$semi_FCO2_gC_m2_yr <- ifelse(network$waterbody == 'River', ((riverCO2-400)*henry*1e-6)*network$k_co2_m_s*(1/0.001)*12.01*(60*60*24*365), ((lakeCO2-400)*henry*1e-6)*network$k_co2_m_s*(1/0.001)*12.01*(60*60*24*365)) #[g-C/m2/yr]
@@ -531,7 +528,7 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
   	#CALCULATE TOTAL TRANSPORT MODEL FLUX----------------------------------------------------------------------------------------------
 	network$FCO2_gC_yr <- ifelse(network$waterbody == 'River', network$FCO2_gC_m2_yr*network$W_m*network$LengthKM*1000, network$FCO2_gC_m2_yr*network$lakeSA_m2) #[g-C/yr] 	
 
-  	## BASIN FLUXES----------------------------------------------------------------------------------------------
+  	## AGGREGATE TO WHOLE-BASIN FLUXES----------------------------------------------------------------------------------------------
   	lumpedFCO2_GgC_C_yr <- (rivers_FCO2_lumped_total + lakes_FCO2_lumped_total) * 1e-9 #[Gg-C-yr]
   	semiDistFCO2_GgC_C_yr <- sum(network$semi_FCO2_gC_yr, na.rm=T)*1e-9 #[Gg-C-yr]
   	semi2DistFCO2_GgC_C_yr <- sum(network$semi2_FCO2_gC_yr, na.rm=T)*1e-9 #[Gg-C-yr]
@@ -547,7 +544,7 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
   	plotD <- patchwork::wrap_elements(grid::textGrob(paste0('Mechanistic Transport\n',round(distFCO2_GgC_yr,0), ' Gg-C/yr'), y=0.6, gp=grid::gpar(col="black", fontsize=34)))
 
 
-  	##K VS. CO2 PLOTS----------------------------------------------------------------------------------------
+  	## K VS. CO2 PLOTS----------------------------------------------------------------------------------------
   	network$lumpedCO2_ppm <- ifelse(network$waterbody == 'River', riverCO2, lakeCO2)
 
 	#PLOT UPSCALING
@@ -798,9 +795,9 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
 #'
 #' @name sourcesMap
 #'
-#' @param path_to_data: character path to data repo
-#' @param results: sf object of model results
-#' @param combined_sources_by_order: df of by-stream-order results for figure
+#' @param path_to_data: path to data repo
+#' @param results: model results shapefile
+#' @param combined_sources_by_order: df of results by stream order
 #'
 #' @import dplyr
 #' @import sf
@@ -809,7 +806,7 @@ conceptualPlot <- function(final_model, glorich_data, huc4_id){
 #' @import patchwork
 #' @import ggplot2
 #'
-#' @return manuscript figure 3 written to file
+#' @return print statement (figure written to file)
 sourcesMap <- function(path_to_data, results, combined_sources_by_order){
 	#set ggplot theme
 	theme_set(theme_classic())
@@ -902,7 +899,7 @@ sourcesMap <- function(path_to_data, results, combined_sources_by_order){
     	xlab('')+
     	ylab('')
 
-  	# plot %HZ
+  	# plot %BZ
   	mapBZ <- ggplot(results) +
     	geom_sf(aes(fill=perc_BZ), #actual map
         	    color='black',
@@ -1003,18 +1000,18 @@ sourcesMap <- function(path_to_data, results, combined_sources_by_order){
 
 
 
-#' build figure of lake CO2 emissions (figure 4)
+#' build paper figure of lake CO2 emissions
 #'
 #' @name lakesMap
 #'
 #' @param path_to_data: character path to data repo
-#' @param results: sf object of model results
+#' @param results: model results df
 #'
 #' @import dplyr
 #' @import sf
 #' @import gpplot2
 #'
-#' @return manuscript figure 4 written to file
+#' @return print statement (figure written to file)
 lakesMap <- function(path_to_data, results){
 	#set ggplot theme
 	theme_set(theme_classic())
@@ -1037,7 +1034,7 @@ lakesMap <- function(path_to_data, results){
 
   	#setup results to map
   	results$perc_Lakes <- round((results$lakeFCO2_TgC_yr/results$sumFCO2_TgC_yr )*100,0) #calculate percent
-  	results[!is.na(results$lakeFCO2_TgC_yr) & results$lakeFCO2_TgC_yr < 0,]$perc_Lakes <- 0 #if lakes are a sink, just set to 0
+  	results[!is.na(results$lakeFCO2_TgC_yr) & results$lakeFCO2_TgC_yr < 0,]$perc_Lakes <- 0 #if lakes are a sink, set to 0
 
 	#PERC LAKES MAP-------------------------------------------------
   	mapLakes <- ggplot(results) +
@@ -1079,17 +1076,17 @@ lakesMap <- function(path_to_data, results){
 
 
 
-#' prep sf objects for mapping for figure 1. This is done basin by basin so that sf processing (this function) cna be ran in parallel and signficiantly speed everything up
+#' prep sf objects for mapping for fco2 map. This is done basin by basin so that sf processing (this function) cna be ran in parallel and signficiantly speed everything up
 #'
 #' @name indvRiverMaps
 #'
-#' @param results: sf object of model results
+#' @param results: model df
 #' @param huc4: basin ID
 #'
 #' @import dplyr
 #' @import sf
 #'
-#' @return sf object maps for x basin
+#' @return sf object with legend for x basin
 indvRiverMaps <- function(results, huc4){
 	#get basin IDs
 	huc2 <- substr(huc4, 1, 2)
@@ -1134,18 +1131,18 @@ indvRiverMaps <- function(results, huc4){
 
 
 
-#' CONUS FCO2 map (figure 1 subplot A)
+#' CONUS FCO2 map (top half)
 #'
 #' @name mainMapFunction1
 #'
-#' @param mapList: combined list of sf objects per basin (makes mapping easier)
+#' @param mapList: combined list of sf objects per basin (makes mapping possible)
 #'
 #' @import ggplot2
 #' @import dplyr
 #' @import sf
 #' @import RColorBrewer
 #'
-#' @return writes figure 1A to file (use illustrator to make the final figure with Figure 1b-e)
+#' @return print statement (writes figure to file). Illustrator is used to combine into a single figure
 mainMapFunction1 <- function(mapList){
 	#remove NAs (great lakes)
 	mapList <- mapList[!is.na(mapList)]
@@ -1154,46 +1151,22 @@ mainMapFunction1 <- function(mapList){
 	theme_set(theme_classic())
 
 	# READ IN CONUS BOUNDARY--------------------------------------
-  	# states <- sf::st_read(paste0(path_to_data, '/other_shapefiles/cb_2018_us_state_5m.shp'))
-  	# states <- dplyr::filter(states, !(NAME %in% c('Alaska',
-    #                                             'American Samoa',
-    #                                             'Commonwealth of the Northern Mariana Islands',
-    #                                             'Guam',
-    #                                             'District of Columbia',
-    #                                             'Puerto Rico',
-    #                                             'United States Virgin Islands',
-    #                                             'Hawaii'))) #remove non CONUS states/territories
+  	states <- sf::st_read(paste0(path_to_data, '/other_shapefiles/cb_2018_us_state_5m.shp'))
+  	states <- dplyr::filter(states, !(NAME %in% c('Alaska',
+                                                'American Samoa',
+                                                'Commonwealth of the Northern Mariana Islands',
+                                                'Guam',
+                                                'District of Columbia',
+                                                'Puerto Rico',
+                                                'United States Virgin Islands',
+                                                'Hawaii'))) #remove non CONUS states/territories
 												
-  	# states <- sf::st_union(states)
+  	states <- sf::st_union(states)
 
 	sf::sf_use_s2(FALSE)
 
-	states <- sf::st_read('/nas/cee-water/cjgleason/craig/canada_shapefile/na_shp_fin.shp')
-	#states <- dplyr::filter(states, name %in% c('Mexico', 'Canada', 'United States of America'))
-	#states <- sf::st_cast(states, "POLYGON")
-
-
-	#Canada boundary
-	# canada <- sf::st_read('/nas/cee-water/cjgleason/craig/canada_shapefile/lpr_000b16a_e.shp')
-	# canada <- sf::st_make_valid(canada)
-	# canada <- sf::st_transform(canada, crs=4326)
-	# canada <- sf::st_union(canada)
-	# # canada <- sf::st_crop(canada, xmin = -140, xmax = -60,
-    # #                          ymin = 30, ymax = 55)
-
-	# #Mexico boundary
-	# Mexico <- sf::st_read('/nas/cee-water/cjgleason/craig/canada_shapefile/mex_admbnda_adm0_govmex_20210618.shp')
-	# Mexico <- sf::st_make_valid(Mexico)
-	# Mexico <- sf::st_transform(Mexico, crs=4326)
-	# Mexico <- sf::st_union(Mexico)
-	# # Mexico <- sf::st_crop(Mexico, xmin = -140, xmax = -60,
-    # #                          ymin = 25, ymax = 55)
-
-	# boundaries_1 <- rbind(states, canada)
-	# boundaries <- rbind(boundaries_1, Mexico)
-
   	#BIG MAIN MAP------------------------------------------
-	#unfortuantely, list of sf objects must each be manually specified to do this. Objects are by basin to do the shapefile prep in parallel
+	#unfortuantely, list of sf objects must each be manually specified to do this. Objects are by basin so that each basin can be built in parallel
 	bigMap <- ggplot()+
 		geom_sf(data=mapList[[1]], aes(color = CO2_col),linewidth=0.1) +
 		geom_sf(data = mapList[[2]], aes(color = CO2_col),linewidth=0.1) +
@@ -1444,10 +1417,10 @@ mainMapFunction1 <- function(mapList){
     			alpha=0)
 
 	#WRITE TO FILE---------------------------------------------------------
-	ggsave(filename="cache/figures/mainMap_1_jt.jpg",plot=bigMap,width=20,height=15)
+	ggsave(filename="cache/figures/mainMap_1.jpg",plot=bigMap,width=20,height=15)
 	
 	#RETURN FILEPATH-------------------------------------------
-	return('see cache/figures/_jt2')
+	return('see cache/figures/')
 }
 
 
@@ -1457,7 +1430,7 @@ mainMapFunction1 <- function(mapList){
 
 
 
-#' CONUS FCO2 map (figure 1 subplot b-e)
+#' CONUS FCO2 map (second half))
 #'
 #' @name mainMapFunction2
 #'
@@ -1476,7 +1449,7 @@ mainMapFunction1 <- function(mapList){
 #' @import patchwork
 #' @import RColorBrewer
 #'
-#' @return writes figure 1b-e to file (use illustrator to make the final figure with Figure 1A)
+#' @return print statement (writes figure to file). Illustrator is used to combine into a single figure
 mainMapFunction2 <- function(map_0205, map_0206,map_0207,map_0208,map_0502, map_0503, map_0501, map_0505){
 	#set ggplot theme
 	theme_set(theme_classic())
@@ -1651,7 +1624,7 @@ mainMapFunction2 <- function(map_0205, map_0206,map_0207,map_0208,map_0502, map_
   	comboPlot <- patchwork::wrap_plots(B=inset4 + colScale + fillScale, C=inset3 + colScale + fillScale, D=inset2 + colScale, E=inset1 + colScale, design=design)
 
 	#WRITE TO FILE---------------------------------------------------
-	ggsave(filename="cache/figures/mainMap_2_jt.jpg",plot=comboPlot,width=20,height=5)
+	ggsave(filename="cache/figures/mainMap_2.jpg",plot=comboPlot,width=20,height=5)
 	
 	#RETURN FILEPATH--------------------------------------------------------------------
 	return('see cache/figures/')
@@ -1663,6 +1636,653 @@ mainMapFunction2 <- function(map_0205, map_0206,map_0207,map_0208,map_0502, map_
 
 
 
+#' prep sf objects for mapping for k600 map. This is done basin by basin so that sf processing (this function) cna be ran in parallel and signficiantly speed everything up
+#'
+#' @name indvRiverMaps_k600
+#'
+#' @param results: sf object of model results
+#' @param huc4: basin ID
+#'
+#' @import dplyr
+#' @import sf
+#'
+#' @return sf object map for x basin
+indvRiverMaps_k600 <- function(results, huc4){
+	#get basin IDs
+	huc2 <- substr(huc4, 1, 2)
+	huc4 <- ifelse(nchar(huc4)==5,substr(huc4,1,4),huc4)
+
+	#skip great lakes
+	if(huc4 %in% c('0418', '0419', '0424', '0426', '0428')){
+		return(NA)
+	}
+	#all other basins
+	else{
+    	# read in shapefile
+  		shapefile <- sf::st_read(dsn = paste0(path_to_data, '/HUC2_', huc2, '/NHDPLUS_H_', huc4, '_HU4_GDB/NHDPLUS_H_', huc4, '_HU4_GDB.gdb'), layer='NHDFlowline') %>%
+  			sf::st_zm() %>%
+  			dplyr::left_join(results, by='NHDPlusID') %>%
+  			dplyr::filter(!is.na(StreamOrde))
+
+  		#fix multicurves (if necessary)
+  		shapefile <- fixGeometries(shapefile)
+  	
+  		# bin fco2 for mapping
+  		fin<-shapefile %>%
+    		dplyr::mutate(k_col = dplyr::case_when(
+      			k600_m_s*86400 <= 2.5 ~ '0-2.5'
+      			,k600_m_s*86400 <= 5 ~ '2.5-5'
+      			,k600_m_s*86400 <= 10 ~ '5-10'
+      			,k600_m_s*86400 <= 15 ~ '10-15'
+      			,k600_m_s*86400 <= 50 ~ '15-50'
+      			,TRUE ~ '50+'
+    			)) %>%
+    		dplyr::select(c('k_col', 'Q_m3_s', ))
+
+    	fin$k_col <- factor(fin$k_col, levels = c('0-2.5', '2.5-5', '5-10', '10-15', '15-50', '50+')) #[m/dy]
+	
+	#return sf object
+  	return(fin)
+	}
+}
+
+
+
+
+
+
+#' CONUS k600 map
+#'
+#' @name mainMapFunction_k600
+#'
+#' @param mapList: combined list of sf objects per basin (makes mapping easier)
+#'
+#' @import ggplot2
+#' @import dplyr
+#' @import sf
+#' @import RColorBrewer
+#'
+#' @return print statement (writes figure to file)
+mainMapFunction_k600 <- function(mapList){
+	#remove NAs (great lakes)
+	mapList <- mapList[!is.na(mapList)]
+
+	#set ggplot theme
+	theme_set(theme_classic())
+
+	# READ IN CONUS BOUNDARY--------------------------------------
+  	states <- sf::st_read(paste0(path_to_data, '/other_shapefiles/cb_2018_us_state_5m.shp'))
+  	states <- dplyr::filter(states, !(NAME %in% c('Alaska',
+                                                'American Samoa',
+                                                'Commonwealth of the Northern Mariana Islands',
+                                                'Guam',
+                                                'District of Columbia',
+                                                'Puerto Rico',
+                                                'United States Virgin Islands',
+                                                'Hawaii'))) #remove non CONUS states/territories
+												
+  	states <- sf::st_union(states)
+
+	sf::sf_use_s2(FALSE)
+
+  	#BIG MAIN MAP------------------------------------------
+	#unfortuantely, list of sf objects must each be manually specified to do this. Objects are by basin so that each basin can be built in parallel
+	bigMap <- ggplot()+
+		geom_sf(data=mapList[[1]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[2]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[3]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[4]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[5]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[6]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[7]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[8]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[9]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[10]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[11]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[12]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[13]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[14]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[15]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[16]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[17]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[18]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[19]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[20]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[21]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[22]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[23]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[24]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[25]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[26]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[27]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[28]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[29]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[30]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[31]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[32]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[33]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[34]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[35]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[36]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[37]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[38]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[39]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[40]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[41]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[42]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[43]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[44]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[45]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[46]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[47]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[48]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[49]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[50]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[51]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[52]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[53]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[54]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[55]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[56]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[57]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[58]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[59]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[60]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[61]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[62]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[63]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[64]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[65]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[66]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[67]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[68]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[69]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[70]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[71]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[72]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[73]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[74]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[75]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[76]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[77]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[78]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[79]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[80]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[81]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[82]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[83]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[84]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[85]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[86]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[87]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[88]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[89]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[90]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[91]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[92]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[93]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[94]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[95]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[96]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[97]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[98]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[99]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[100]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[101]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[102]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[103]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[104]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[105]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[106]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[107]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[108]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[109]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[110]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[111]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[112]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[113]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[114]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[115]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[116]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[117]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[118]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[119]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[120]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[121]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[122]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[123]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[124]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[125]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[126]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[127]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[128]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[129]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[130]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[131]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[132]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[133]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[134]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[135]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[136]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[137]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[138]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[139]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[140]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[141]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[142]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[143]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[144]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[145]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[146]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[147]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[148]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[149]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[150]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[151]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[152]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[153]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[154]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[155]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[156]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[157]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[158]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[159]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[160]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[161]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[162]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[163]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[164]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[165]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[166]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[167]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[168]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[169]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[170]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[171]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[172]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[173]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[174]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[175]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[176]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[177]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[178]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[179]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[180]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[181]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[182]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[183]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[184]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[185]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[186]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[187]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[188]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[189]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[190]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[191]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[192]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[193]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[194]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[195]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[196]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[197]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[198]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[199]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[200]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[201]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[202]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[203]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[204]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[205]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[206]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data = mapList[[207]], aes(color = k_col),linewidth=0.1) +
+		geom_sf(data=states, #conus boundary
+        	    color='black',
+            	linewidth=0.75,
+            	alpha=0)+
+		scale_color_brewer(palette='RdYlBu', direction=-1,name=expression(bold(k[600]~(m/d))))+
+ 		theme(plot.title = element_text(face = "italic", size = 26),
+    	  	axis.text = element_text(size = 22),
+        	plot.tag = element_text(size=26,
+             	                  face='bold'),
+        	legend.position=c(0.9,0.15),
+ 			legend.text = element_text(size=18),
+ 			legend.title = element_text(size=22,face="bold"),
+ 			legend.spacing.y = unit(0.1, 'cm'))+
+ 		guides(color = guide_legend(override.aes = list(linewidth=8), byrow = TRUE))
+
+
+	#WRITE TO FILE---------------------------------------------------------
+	ggsave(filename="cache/figures/mainMap_k600.jpg",plot=bigMap,width=20,height=15)
+	
+	#RETURN FILEPATH-------------------------------------------
+	return('see cache/figures/')
+}
+
+
+
+
+
+#' prep sf objects for mapping for k600 map. This is done basin by basin so that sf processing (this function) cna be ran in parallel and signficiantly speed everything up
+#'
+#' @name indvRiverMaps_pco2
+#'
+#' @param results: sf object of model results
+#' @param huc4: basin ID
+#'
+#' @import dplyr
+#' @import sf
+#'
+#' @return sf object map for x basin
+indvRiverMaps_pco2 <- function(results, huc4){
+	#get basin IDs
+	huc2 <- substr(huc4, 1, 2)
+	huc4 <- ifelse(nchar(huc4)==5,substr(huc4,1,4),huc4)
+
+	#skip great lakes
+	if(huc4 %in% c('0418', '0419', '0424', '0426', '0428')){
+		return(NA)
+	}
+	#all other basins
+	else{
+    	# read in shapefile
+  		shapefile <- sf::st_read(dsn = paste0(path_to_data, '/HUC2_', huc2, '/NHDPLUS_H_', huc4, '_HU4_GDB/NHDPLUS_H_', huc4, '_HU4_GDB.gdb'), layer='NHDFlowline') %>%
+  			sf::st_zm() %>%
+  			dplyr::left_join(results, by='NHDPlusID') %>%
+  			dplyr::filter(!is.na(StreamOrde))
+
+  		#fix multicurves (if necessary)
+  		shapefile <- fixGeometries(shapefile)
+  	
+  		# bin fco2 for mapping
+  		fin<-shapefile %>%
+    		dplyr::mutate(CO2_col = dplyr::case_when(
+      			CO2_ppm <= 500 ~ '0-500'
+      			,CO2_ppm <= 1000 ~ '500-1000'
+      			,CO2_ppm <= 2500 ~ '1000-2500'
+      			,CO2_ppm <= 5000 ~ '2500-5000'
+      			,CO2_ppm <= 10000 ~ '5000-10000'
+      			,TRUE ~ '10000+'
+    			)) %>%
+    		dplyr::select(c('CO2_col', 'Q_m3_s', ))
+
+    	fin$CO2_col <- factor(fin$CO2_col, levels = c('0-500', '500-1000', '1000-2500', '2500-5000', '5000-10000', '10000+')) #[ppm]
+	
+	#return sf object
+  	return(fin)
+	}
+}
+
+
+
+
+
+#' CONUS map for pCO2
+#'
+#' @name mainMapFunction_pco2
+#'
+#' @param mapList: combined list of sf objects per basin (makes mapping easier)
+#'
+#' @import ggplot2
+#' @import dplyr
+#' @import sf
+#' @import RColorBrewer
+#'
+#' @return print statement (writes figure to file)
+mainMapFunction_pco2 <- function(mapList){
+	#remove NAs (great lakes)
+	mapList <- mapList[!is.na(mapList)]
+
+	#set ggplot theme
+	theme_set(theme_classic())
+
+	# READ IN CONUS BOUNDARY--------------------------------------
+  	states <- sf::st_read(paste0(path_to_data, '/other_shapefiles/cb_2018_us_state_5m.shp'))
+  	states <- dplyr::filter(states, !(NAME %in% c('Alaska',
+                                                'American Samoa',
+                                                'Commonwealth of the Northern Mariana Islands',
+                                                'Guam',
+                                                'District of Columbia',
+                                                'Puerto Rico',
+                                                'United States Virgin Islands',
+                                                'Hawaii'))) #remove non CONUS states/territories
+												
+  	states <- sf::st_union(states)
+
+	sf::sf_use_s2(FALSE)
+
+  	#BIG MAIN MAP------------------------------------------
+	#unfortuantely, list of sf objects must each be manually specified to do this. Objects are by basin so that each basin can be built in parallel
+	bigMap <- ggplot()+
+		geom_sf(data=mapList[[1]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[2]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[3]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[4]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[5]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[6]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[7]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[8]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[9]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[10]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[11]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[12]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[13]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[14]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[15]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[16]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[17]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[18]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[19]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[20]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[21]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[22]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[23]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[24]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[25]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[26]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[27]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[28]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[29]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[30]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[31]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[32]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[33]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[34]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[35]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[36]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[37]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[38]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[39]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[40]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[41]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[42]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[43]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[44]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[45]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[46]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[47]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[48]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[49]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[50]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[51]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[52]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[53]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[54]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[55]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[56]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[57]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[58]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[59]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[60]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[61]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[62]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[63]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[64]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[65]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[66]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[67]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[68]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[69]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[70]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[71]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[72]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[73]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[74]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[75]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[76]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[77]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[78]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[79]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[80]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[81]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[82]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[83]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[84]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[85]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[86]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[87]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[88]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[89]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[90]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[91]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[92]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[93]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[94]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[95]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[96]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[97]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[98]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[99]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[100]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[101]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[102]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[103]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[104]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[105]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[106]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[107]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[108]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[109]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[110]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[111]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[112]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[113]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[114]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[115]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[116]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[117]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[118]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[119]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[120]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[121]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[122]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[123]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[124]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[125]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[126]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[127]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[128]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[129]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[130]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[131]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[132]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[133]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[134]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[135]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[136]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[137]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[138]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[139]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[140]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[141]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[142]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[143]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[144]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[145]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[146]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[147]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[148]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[149]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[150]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[151]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[152]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[153]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[154]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[155]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[156]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[157]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[158]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[159]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[160]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[161]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[162]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[163]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[164]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[165]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[166]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[167]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[168]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[169]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[170]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[171]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[172]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[173]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[174]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[175]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[176]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[177]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[178]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[179]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[180]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[181]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[182]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[183]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[184]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[185]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[186]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[187]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[188]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[189]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[190]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[191]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[192]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[193]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[194]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[195]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[196]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[197]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[198]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[199]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[200]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[201]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[202]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[203]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[204]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[205]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[206]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data = mapList[[207]], aes(color = CO2_col),linewidth=0.1) +
+		geom_sf(data=states, #conus boundary
+        	    color='black',
+            	linewidth=0.75,
+            	alpha=0)+
+		scale_color_brewer(palette='RdYlBu', direction=-1,name=expression(bold(pCO[2]~(ppm))))+
+ 		theme(plot.title = element_text(face = "italic", size = 26),
+    	  	axis.text = element_text(size = 22),
+        	plot.tag = element_text(size=26,
+             	                  face='bold'),
+        	legend.position=c(0.9,0.15),
+ 			legend.text = element_text(size=18),
+ 			legend.title = element_text(size=22,face="bold"),
+ 			legend.spacing.y = unit(0.1, 'cm'))+
+ 		guides(color = guide_legend(override.aes = list(linewidth=8), byrow = TRUE))
+
+
+	#WRITE TO FILE---------------------------------------------------------
+	ggsave(filename="cache/figures/mainMap_pco2.jpg",plot=bigMap,width=20,height=15)
+	
+	#RETURN FILEPATH-------------------------------------------
+	return('see cache/figures/')
+}
+
 
 
 
@@ -1671,14 +2291,14 @@ mainMapFunction2 <- function(map_0205, map_0206,map_0207,map_0208,map_0502, map_
 #'
 #' @name compareAgainstLumped
 #'
-#' @param path_to_data: character path to data repo
+#' @param path_to_data: path to data repo
 #' @param results: sf object of model results
 #'
 #' @import dplyr
 #' @import sf
 #' @import ggplot2
 #'
-#' @return manuscript extended data figure 1 written to file
+#' @return print statement (writes figure to file)
 compareAgainstLumped <- function(path_to_data, results){
 	#set ggplot theme
 	theme_set(theme_classic())
@@ -1750,7 +2370,7 @@ compareAgainstLumped <- function(path_to_data, results){
 #' @import ggplot2
 #' @import tidyr
 #'
-#' @return writes extended data fig 8 to file
+#' @return print statement (writes figure to file)
 sources_by_order_regional <- function(combined_results_by_order){
   #set ggplot theme
   theme_set(theme_classic())
@@ -1797,7 +2417,7 @@ sources_by_order_regional <- function(combined_results_by_order){
           legend.text = element_text(size=24),
       	  title = element_text(size=26, face='bold'))	
 
-  ####OURCES BY ORDER WEST---------------------------------------------------
+  ####SOURCES BY ORDER WEST---------------------------------------------------
   #prep data
   westDF <- westDF %>%
    	tidyr::gather(key=key, value=value, c('percGW_reach_median', 'percBZ_reach_median', 'percWC_reach_median'))
@@ -1836,4 +2456,49 @@ sources_by_order_regional <- function(combined_results_by_order){
 	
 	#RETURN FILEPATH------------------------------------------------
 	return('see cache/figures/')
+}
+
+
+
+
+
+
+#' build nhd discharge validation figure
+#'
+#' @name pseudoValidation
+#'
+#' @param combined_pseudoValidation: df of all pseudovalidation results, i.e. glorich samples joined to NHD (and various QAQC attributes)
+#'
+#' @import dplyr
+#' @import ggplot2
+#'
+#' @return pseudo pCO2 validation figure written to file
+pseudoValidation <- function(combined_pseudoValidation){
+	#set ggplot theme
+	theme_set(theme_classic())
+
+	#wrangle
+	forPlot <- combined_pseudoValidation %>%
+		tidyr::drop_na()
+
+	#BUILD PLOT------------------------------------------------
+  	plot <- ggplot(forPlot, aes(x=pCO2_calib_ppm, y=pCO2_model_ppm, color=waterbody)) +
+    	geom_abline(linetype='dashed', color='darkgrey', size=2)+
+    	geom_point(size=4)+
+		scale_color_brewer(palette='Set2', name='', labels=c('Lake/Reservoir', 'River'))+
+    	xlab('Basin median in situ pCO2 [ppm]')+
+    	ylab('Basin median modeled pCO2 [ppm]')+
+    	scale_y_log10()+
+    	scale_x_log10()+
+    	theme(axis.text=element_text(size=20),
+        	  axis.title=element_text(size=24,face="bold"),
+          	legend.text = element_text(size=20),
+          	legend.position='bottom',
+          	plot.title = element_text(size = 30, face = "bold"))
+
+	#WRITE TO FILE-------------------------------------------------
+  	ggsave('cache/figures/modelPseudoValidation.jpg', plot, width=10, height=10)
+  	
+	#RETURN FILE PATH--------------------------------------------
+	return(paste('see cache/figures/modelPseudoValidation.jpg'))
 }

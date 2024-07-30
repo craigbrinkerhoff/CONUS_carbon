@@ -9,17 +9,14 @@
 #'
 #' @name setupHydrography
 #'
-#' @param path_to_data: path to DATA REPO
+#' @param path_to_data: path to data repo
 #' @param huc4: basin id
 #'
 #' @import sf
 #' @import dplyr
-#' @import terra
-#' @import tidyr
-#' @import ggplot2
 #' @import readr
 #'
-#' @return usable routing file for NHD
+#' @return NHD-HR routing file for CO2 model
 setupHydrography <- function(path_to_data, huc4){
   indiana_hucs <- c('0508', '0509', '0514', '0512', '0712', '0404', '0405', '0410') #indiana-effected basins
 
@@ -139,7 +136,7 @@ setupHydrography <- function(path_to_data, huc4){
     temp$temp_c_12 <- NHD_HR_temp / 100
   }
 
-  #take the mean
+  #get mean annual air temps
   temp$airTemp_mean_c <- rowMeans(temp[,2:ncol(temp)], na.rm=T)
   temp <- dplyr::select(temp, c('NHDPlusID', 'airTemp_mean_c'))
 
@@ -173,9 +170,9 @@ setupHydrography <- function(path_to_data, huc4){
   nhd$StreamOrde <- nhd$StreamCalc #stream calc handles divergent streams correctly: https://pubs.usgs.gov/of/2019/1096/ofr20191096.pdf
   nhd$Q_cms <- nhd$QBMA * 0.0283 #cfs to cms
 
-  #HANDLE INDIANA AFFECTED STREAM ORDERING (remap using the augmented shapefiles------------------------------------------------------
+  #HANDLE INDIANA EFFECTED STREAM ORDERING (remap using the augmented shapefiles)------------------------------------------------------
   if(huc4 %in% indiana_hucs){
-    thresh <- c(2,2,2,2,3,2,3,2) #see README
+    thresh <- c(2,2,2,2,3,2,3,2) #see README file for notes and description of this process
     thresh <- thresh[which(indiana_hucs == huc4)]
     nhd$StreamOrde <- ifelse(nhd$indiana_fl == 1, nhd$StreamOrde - thresh, nhd$StreamOrde)
   }
@@ -203,17 +200,17 @@ setupHydrography <- function(path_to_data, huc4){
     nhd[k,]$Slope <- fixBadSlopes(nhd[k,]$Slope, slope_vec, nhd[k,]$FromNode, fromNode_vec, nhd[k,]$ToNode, toNode_vec)
   }
 
-  #FIX MISSING AIR TEMPS (when appropriate, use average temp of the directly upstrea reaches)--------------------------------------------------------
+  #FIX MISSING AIR TEMPS (when appropriate, use average temp of the directly upstream reaches)--------------------------------------------------------
   temp_vec <- as.vector(nhd$airTemp_mean_c)
   badTemps <- which(is.na(temp_vec))
   for(k in badTemps){
     nhd[k,]$airTemp_mean_c <- fixBadTemps(nhd[k,]$airTemp_mean_c, temp_vec, nhd[k,]$FromNode, fromNode_vec, nhd[k,]$ToNode, toNode_vec) #temp, temp_vec, fromNode, fromNode_vec, toNode, toNode_vec)
   }
 
-  #no impossible reaches
+  #filter reaches with no flow and no slope
   nhd <- dplyr::filter(nhd, Slope > 0 & Q_cms > 0)
 
-  #CALCULATE FRACTIONAL LAKE AREA AND VOLUME FOR EACH THROUGHFLOW LINE---------------------------------------------------------------
+  #CALCULATE FRACTIONAL LAKE AREA AND VOLUME FOR EACH THROUGHFLOW LINE (Brinkerhoff et al. 2021)---------------------------------------------------------------
   sumThroughFlow <- dplyr::filter(as.data.frame(nhd), is.na(WBArea_Permanent_Identifier)==0) %>%
     dplyr::group_by(WBArea_Permanent_Identifier) %>%
     dplyr::summarise(sumThroughFlow = sum(LengthKM))
@@ -222,8 +219,8 @@ setupHydrography <- function(path_to_data, huc4){
   nhd$frac_lakeVol_m3 <- nhd$lakeVol_m3 * nhd$lakePercent #[m3]
   nhd$frac_lakeSurfaceArea_m2 <- nhd$LakeAreaSqKm * nhd$lakePercent * 1e6 #[m2]
 
-  #CALCULATE TONS OF NVARIABLES FOR THE MODEL-------------------------------------------------------------
-  #hydraulic geometry parameters
+  #CALCULATE NECESSARY VARIABLES FOR THE MODEL-------------------------------------------------------------
+  #hydraulic geometry
   depAHG <- readr::read_rds('/nas/cee-water/cjgleason/craig/RSK600/cache/depAHG.rds') #these are hard coded here. the models are available at the ref in the paper
   widAHG <- readr::read_rds('/nas/cee-water/cjgleason/craig/RSK600/cache/widAHG.rds')
   nhd$a <- widAHG$coefficients[1]
@@ -231,21 +228,21 @@ setupHydrography <- function(path_to_data, huc4){
   nhd$c <- depAHG$coefficients[1]
   nhd$f <- depAHG$coefficients[2]
 
-  #get w, d, v differentially by river vs lake/reservoir
+  #calculate w, d, v differently for river vs lake/reservoir (see ~src/utils.R)
   nhd$D <- mapply(depth_func, nhd$waterbody, nhd$Q_cms, nhd$frac_lakeVol_m3, nhd$frac_lakeSurfaceArea_m2, nhd$c, nhd$f) #[m]
   nhd$W <- mapply(width_func, nhd$waterbody, nhd$Q_cms, nhd$a, nhd$b) #[m]
   nhd$V <- mapply(velocity_func, nhd$waterbody, nhd$Q_cms, nhd$W, nhd$D) #[m/s]
 
-  #temperature
+  #convert temperature to celsius
   nhd$temp_c <- 3.941 + 0.818*nhd$airTemp_mean_c #[c] #convert air temp to water temp following Lauerwald etal 2015: r2 0.88
 
-  #hydraulic residence time [seconds]
+  #calculate hydraulic residence time [seconds]
   nhd$HRT <- mapply(restimeWater, nhd$frac_lakeVol_m3, nhd$LengthKM, nhd$V, nhd$Q_cms, nhd$waterbody) #[s]
 
-  #Henry's constant.
+  #calculate Henry's constant.
   nhd$henry <- mapply(henry_func, nhd$temp_c) #[mol/atm*L]
 
-  #gas exchange rate constants
+  #calculate gas exchange rate constants differently for river vs lake/reservoir
   nhd$k_co2 <- mapply(kco2_func, nhd$V, nhd$Slope, nhd$D, nhd$temp_c, nhd$frac_lakeSurfaceArea_m2, nhd$waterbody) #[1/s]
   nhd$k_bz <- mapply(kbz_func, nhd$Slope, nhd$D, nhd$waterbody, nhd$temp_c) #[1/s]
 
@@ -268,7 +265,8 @@ setupHydrography <- function(path_to_data, huc4){
 
 
 
-#' Split 1710 hydrography into two for treating as seperate basins. These are coastal streams N and S of Colombia River mouth, so together there are millions of streams and it makes compute difficult. So we split the basin along the Colombia to make compute easier, but also give the basins more physical meaning
+#' Split 1710 hydrography into two for treating as seperate basins. These are coastal watersheds N and S of Colombia River mouth, so together there are millions of streams and it makes compute very difficult.
+#'    So, we split the basin along the Colombia to make compute easier, but also give the basins more physical meaning
 #'
 #' @name split1710
 #'

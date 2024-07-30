@@ -70,7 +70,7 @@ calibrateModelWrapper <- function(hydrography, huc4, glorich_data, Cgw, Catm, em
                             pmutation = mutationRate,
                             optim=TRUE, #L-BFGS-B optimization
                             keepBest=TRUE,
-                            postFitness = saveIntermediateResults, #for saving intermediate solutions in case of catastrophe (see src/utils.R)
+                            postFitness = saveIntermediateResults, #for saving intermediate solutions in case of catastrophe (see ~/src/utils.R)
                             seed = 12) #reproducibility
     
     end <- Sys.time()
@@ -212,7 +212,7 @@ calibrateModel <- function(par, hydrography, huc4, glorich_data, Cgw, Catm, emer
 #'
 #' @return cost function value, evaluate given a set of parameter values
 grabCalibratedParameters_from_logs <- function(huc4){
-  dirs <- list.dirs('/nas/cee-water/cjgleason/craig/CONUS_carbon/cache/20230203_172811-fxvFGQ') #temp files are pasted here for easier indexing (and to have a second copy since these are worth their weight in gold...)
+  dirs <- list.dirs('/nas/cee-water/cjgleason/craig/CONUS_carbon/cache/20230203_172811-fxvFGQ') #See README and _targets.R for explanation of why we did this. The temp files (when needed) are pasted here for easier indexing (and to have a second copy since these are worth their weight in gold...)
   string <- dirs[grepl(huc4, dirs, fixed=T)][6] #results folder
   
   log <- readr::read_rds(paste0(string, '/1.rds'))
