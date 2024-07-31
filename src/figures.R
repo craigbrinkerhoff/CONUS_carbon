@@ -2479,15 +2479,22 @@ pseudoValidation <- function(combined_pseudoValidation){
 
 	#wrangle
 	forPlot <- combined_pseudoValidation %>%
-		tidyr::drop_na()
+		dplyr::mutate(huc2 = substr(huc4,1,2))%>%
+		dplyr::group_by(huc2)%>%
+		dplyr::summarise(pCO2_calib_ppm = sum(pCO2_calib_ppm, na.rm=T),
+						pCO2_model_ppm = sum(pCO2_model_ppm, na.rm=T),
+						n=n()) %>%
+		tidyr::drop_na() %>%
+		dplyr::mutate(pCO2_calib_ppm = pCO2_calib_ppm/(n()*2),
+						pCO2_model_ppm = pCO2_model_ppm/(n()*2))
 
 	#BUILD PLOT------------------------------------------------
-  	plot <- ggplot(forPlot, aes(x=pCO2_calib_ppm, y=pCO2_model_ppm, color=waterbody)) +
+  	plot <- ggplot(forPlot, aes(x=pCO2_calib_ppm, y=pCO2_model_ppm)) +
     	geom_abline(linetype='dashed', color='darkgrey', size=2)+
-    	geom_point(size=4)+
-		scale_color_brewer(palette='Set2', name='', labels=c('Lake/Reservoir', 'River'))+
-    	xlab('Basin median in situ pCO2 [ppm]')+
-    	ylab('Basin median modeled pCO2 [ppm]')+
+    	geom_point(size=8)+
+		#scale_color_brewer(palette='Set2', name='', labels=c('Lake/Reservoir', 'River'))+
+    	xlab('HUC2 median in situ pCO2 [ppm]')+
+    	ylab('HUC2 median modeled pCO2 [ppm]')+
     	scale_y_log10()+
     	scale_x_log10()+
     	theme(axis.text=element_text(size=20),
