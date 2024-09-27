@@ -843,7 +843,7 @@ sourcesMap <- function(path_to_data, results, combined_sources_by_order){
             	linewidth=0.75,
             	alpha=0)+
     	labs(tag='B')+
-    	ggtitle('% Groundwater loading')+    	
+    	ggtitle(bquote(bold('% Upland\ngroundwater'~CO[2])))+    	
     	scale_fill_gradient2(name='',
     						low='white',
     						mid='#7ca982',
@@ -876,7 +876,7 @@ sourcesMap <- function(path_to_data, results, combined_sources_by_order){
             	linewidth=0.75,
             	alpha=0)+
     	labs(tag='C')+
-    	ggtitle('% Net water-column\nrespiration')+    	
+    	ggtitle(bquote(bold('% Water column\nnet respiration')))+    	
     	scale_fill_gradient2(name='',
     						low='white',
     						mid='#7ca982',
@@ -909,7 +909,7 @@ sourcesMap <- function(path_to_data, results, combined_sources_by_order){
             	linewidth=0.75,
             	alpha=0)+
     	labs(tag='A')+
-    	ggtitle('% Hyporheic zone\nrespiration')+    	
+    	ggtitle(bquote(bold('% Stream corridor\nsubsurface respiration')))+    	
     	scale_fill_gradient2(name='',
     						low='white',
     						mid='#7ca982',
@@ -958,7 +958,7 @@ sourcesMap <- function(path_to_data, results, combined_sources_by_order){
      xlab('Stream Order') +
      ylab('Median % of emissions')+
      scale_fill_manual(name='',
-     				   labels=c('Hyporheic zone respiration', 'Groundwater', 'Net water-column respiration'),
+     				   labels=c('Stream corridor subsurface respiration', bquote('Upland groundwater'~CO[2]), 'Water column net respiration'),
                        values=c('#edae49', '#d1495b', '#00798c'))+
      ylim(0,100)+ #these can't go beyond 100%, so this is ok
      labs(tag='D')+
